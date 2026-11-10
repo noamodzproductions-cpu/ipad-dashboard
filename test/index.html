@@ -694,6 +694,7 @@ function renderProjets(){
     '<button data-act="pmonth" data-arg="-1" style="font-size:44px">‹</button>' +
     '<div class="month grow">' + monthLabel(viewMonth) + '</div>' +
     '<button data-act="pmonth" data-arg="1" style="font-size:44px">›</button>' +
+    '<button data-act="link" data-arg="https://claude.ai/artifact/Ff3ZbqjcB6FYCZBsdPyeoW" aria-label="Missions du jour" style="padding:0"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/></svg></button>' +
     '<button class="primary" data-act="padd">+ Projet</button></div><div class="content">';
   if (!list.length) h += '<div class="empty">Aucun projet ce mois-ci.<br>Appui long sur une carte pour la modifier.</div>';
   h += '<div class="pgrid">';
@@ -735,6 +736,7 @@ function handle(act, arg){
   var dv = data.devis, a, i, p;
   switch (act){
     case 'go': closeModal(); go(arg); return;
+    case 'link': closeModal(); window.open(arg, '_blank'); return;
     case 'cstart':
       unlockAudio();
       a = arg.split(':');

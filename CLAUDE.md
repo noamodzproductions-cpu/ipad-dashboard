@@ -6,6 +6,7 @@ Avant toute modif visuelle, lire DESIGN.md et respecter les contraintes iPad Air
 - Web app pour iPad Air 1 (iOS 12.5, Safari 12), 1024×768 en paysage, publiée sur GitHub Pages.
 - `index.html` = version normale (en service). `test/index.html` = version d'essai du style DESIGN.md.
 - Ne jamais modifier la version normale quand on travaille sur `/test`.
+- Écran Projets : bouton icône « Missions du jour » (à gauche de « + Projet ») qui ouvre la page Claude « Aujourd'hui » (https://claude.ai/artifact/Ff3ZbqjcB6FYCZBsdPyeoW), mise à jour 2×/jour par la routine Suivi. Ne pas supprimer.
 
 ## Contraintes Safari 12
 - Un seul fichier HTML/CSS/JS vanilla, sans framework, sans dépendance, sans police web (police système -apple-system).
