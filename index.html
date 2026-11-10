@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Dashboard Noam</title>
+<style>
+:root{
+  --bg:#000; --panel:#161616; --btn:#2a2a2a; --line:#333;
+  --text:#f2f2f2; --muted:#9a9a9a; --accent:#2f7cf6; --onaccent:#fff;
+  --green:#1e8e4e; --orange:#d9711c; --red:#c62828; --ok:#2fbf6a; --ko:#e0453a; --warn:#f0a020;
+}
+body.night{
+  --bg:#000; --panel:#070707; --btn:#101010; --line:#181818;
+  --text:#7a2626; --muted:#4a4a4a; --accent:#3a1212; --onaccent:#8a3030;
+  --green:#0e2614; --orange:#2e1a06; --red:#300909; --ok:#1f4a2a; --ko:#5a1a1a; --warn:#5a3a10;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+input,textarea{-webkit-user-select:text;user-select:text}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+body{position:fixed;top:0;left:0;right:0;bottom:0}
+button{font-family:inherit;color:var(--text);border:0;background:var(--btn);border-radius:14px;min-height:70px;min-width:70px;font-size:28px;font-weight:600;padding:0 22px;-webkit-appearance:none;cursor:pointer;line-height:1.15}
+button:active{opacity:.55}
+button.primary{background:var(--accent);color:var(--onaccent)}
+button.danger{background:var(--ko);color:#fff}
+body.night button.danger{color:var(--text)}
+[data-act]{cursor:pointer}
+input,textarea{font-family:inherit;font-size:30px;color:var(--text);background:var(--btn);border:2px solid var(--line);border-radius:12px;height:70px;padding:0 16px;-webkit-appearance:none;outline:none}
+textarea{height:auto;font-size:16px;padding:12px;width:100%;font-family:Menlo,monospace}
+.hidden{display:none !important}
+.row{display:flex;align-items:center}
+.row > * + *{margin-left:14px}
+.grow{flex:1;min-width:0}
+.screen{position:absolute;top:20px;left:0;right:0;bottom:0;display:none;flex-direction:column}
+.screen.active{display:flex}
+.top{height:90px;padding:0 16px;flex-shrink:0}
+.title{font-size:40px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.content{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px}
+.foot{height:100px;padding:0 16px 14px;flex-shrink:0}
+.foot button{height:86px;font-size:32px}
+.num{font-variant-numeric:tabular-nums;-webkit-font-feature-settings:"tnum";font-feature-settings:"tnum"}
+.muted{color:var(--muted)}
+.card{background:var(--panel);border-radius:18px;padding:16px;margin-bottom:14px}
+
+/* Accueil */
+.home-top{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.clock{font-size:250px;font-weight:200;line-height:1;letter-spacing:-6px}
+.date{font-size:54px;color:var(--muted);margin-top:4px}
+.banner{height:100px;margin:0 16px 16px;border-radius:18px;font-size:50px;font-weight:700;text-align:center;line-height:100px;color:#fff}
+body.night .banner{color:var(--text)}
+.home-btns{padding:0 16px 16px;height:186px}
+.home-btns button{flex:1;height:170px;font-size:42px;border-radius:22px}
+
+/* Couleurs chrono */
+.c-green{background:var(--green)}
+.c-orange{background:var(--orange)}
+.c-red{background:var(--red)}
+.c-idle{background:var(--panel)}
+.c-done{-webkit-animation:flash .6s steps(1) infinite;animation:flash .6s steps(1) infinite}
+@-webkit-keyframes flash{0%{background:var(--red)}50%{background:#fff;color:#000}}
+@keyframes flash{0%{background:var(--red)}50%{background:#fff;color:#000}}
+body.night .c-done{-webkit-animation-name:flashn;animation-name:flashn}
+@-webkit-keyframes flashn{0%{background:var(--red)}50%{background:#000}}
+@keyframes flashn{0%{background:var(--red)}50%{background:#000}}
+
+/* Chrono */
+.presets{padding:0 16px 16px;flex-shrink:0}
+.presets button{flex:1;height:100px;font-size:28px;padding:0 8px}
+.presets button.pz{background:#1d3550}
+body.night .presets button.pz{background:var(--btn)}
+.sess{font-size:30px;color:var(--muted);white-space:nowrap}
+.sess b{color:var(--text);font-size:44px}
+.cbox{flex:1;margin:0 16px 16px;border-radius:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;min-height:0}
+body.night .cbox{color:var(--text)}
+.clabel{font-size:44px;font-weight:600}
+.ctime{font-size:250px;font-weight:300;line-height:1}
+.ctrls{padding:0 16px 16px;flex-shrink:0}
+.ctrls button{flex:1;height:100px;font-size:40px}
+
+/* Devis */
+.dots{font-size:0;white-space:nowrap}
+.dots span{display:inline-block;width:20px;height:20px;border-radius:10px;background:var(--btn);margin:0 6px}
+.dots span.on{background:var(--text)}
+.brut{font-size:40px;font-weight:700;white-space:nowrap}
+.brut small{font-size:22px;color:var(--muted);font-weight:400}
+.dlabel{font-size:32px;font-weight:700;width:96px}
+.dinput{width:250px;font-size:28px}
+.badge{font-size:24px;font-weight:700;padding:10px 16px;border-radius:12px;background:var(--warn);color:#000;white-space:nowrap}
+body.night .badge{color:var(--text)}
+.dprice{font-size:44px;font-weight:700;white-space:nowrap}
+.stp-l{font-size:22px;color:var(--muted);margin-bottom:6px;white-space:nowrap}
+.sb{width:80px;height:80px;font-size:50px;padding:0;font-weight:400}
+.sv{min-width:76px;text-align:center;font-size:50px;font-weight:700}
+.tog{height:70px;font-size:25px;padding:0 16px;width:240px;text-align:left;white-space:nowrap;overflow:hidden}
+.tog.on{background:var(--accent);color:var(--onaccent)}
+.tog + .tog{margin-top:10px}
+.addday{width:100%;height:84px;font-size:32px;border:3px dashed var(--line);background:transparent}
+.fbtn{flex:1;height:120px;font-size:32px}
+.fline .fl{font-size:30px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fline .fd{font-size:24px;color:var(--muted);white-space:nowrap}
+.fline .fv{font-size:36px;font-weight:700;white-space:nowrap}
+.xbtn{width:80px;padding:0;font-size:34px;background:var(--ko);color:#fff}
+body.night .xbtn{color:var(--text)}
+.pp{display:flex;flex-direction:column;align-items:center;padding-top:10px}
+.pp .sb{width:130px;height:130px;font-size:80px}
+.pp .sv{min-width:200px;font-size:110px}
+.pp-l{font-size:36px;color:var(--muted);margin-bottom:14px}
+.pp-f{font-size:34px;color:var(--muted);margin:22px 0}
+.pp .tog{width:420px;height:90px;font-size:32px;text-align:center}
+.pp-t{font-size:64px;font-weight:700;margin-top:22px}
+.res{display:flex;height:100%}
+.res-l{width:520px;flex-shrink:0;padding-right:20px;display:flex;flex-direction:column;justify-content:center}
+.res-r{flex:1;min-width:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--panel);border-radius:18px;padding:16px}
+.big-l{font-size:30px;font-weight:700;color:var(--muted);letter-spacing:1px}
+.big-v{font-size:110px;font-weight:800;line-height:1.05;margin-bottom:10px;white-space:nowrap}
+.mid{font-size:34px;margin-bottom:8px;white-space:nowrap}
+.net{color:var(--ok)}
+.dl{font-size:26px;padding:10px 0;border-bottom:1px solid var(--line)}
+.dl .grow{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl b{white-space:nowrap}
+.dh{font-size:22px;color:var(--muted);font-weight:700;margin-top:12px;letter-spacing:1px}
+
+/* Projets */
+.month{font-size:40px;font-weight:700;text-align:center;white-space:nowrap}
+.pgrid{display:flex;flex-wrap:wrap}
+.pcard{width:32%;margin-right:2%;margin-bottom:16px;background:var(--panel);border-radius:18px;padding:16px}
+.pcard:nth-child(3n){margin-right:0}
+.pc-c{font-size:32px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-m{font-size:36px;margin:4px 0 12px}
+.pcard button{width:100%;display:block;font-size:30px}
+.pcard button + button{margin-top:10px}
+.st0{background:#2a5d9f}.st1{background:#7b4bb7}.st2{background:#c27a12}.st3{background:#a8325a}.st4{background:#1e8e4e}
+body.night .st0,body.night .st1,body.night .st2,body.night .st3,body.night .st4{background:var(--btn)}
+.paid{background:var(--ok);color:#fff}
+.unpaid{background:var(--ko);color:#fff}
+body.night .paid,body.night .unpaid{color:var(--text)}
+body.night .paid{background:var(--ok)}
+.tots{height:110px;padding:0 16px 14px;flex-shrink:0}
+.tot{flex:1;background:var(--panel);border-radius:16px;height:96px;padding:10px 14px;min-width:0}
+.tot-l{font-size:20px;color:var(--muted);white-space:nowrap}
+.tot-v{font-size:34px;font-weight:700;white-space:nowrap}
+.empty{font-size:30px;color:var(--muted);text-align:center;padding:40px 0}
+
+/* Réglages */
+.sgrid{display:flex;flex-wrap:wrap}
+.sitem{width:235px;margin-right:17px;margin-bottom:14px;background:var(--panel);border-radius:16px;padding:12px 14px;height:128px}
+.sitem:nth-child(4n){margin-right:0}
+.sitem-l{font-size:21px;color:var(--muted);height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sitem input{width:140px;font-size:34px;font-weight:700;text-align:right}
+.sitem .u{font-size:28px;color:var(--muted)}
+
+/* Fenêtres */
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:none;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.overlay.show{display:block}
+#confirm{z-index:60;background:rgba(0,0,0,.88)}
+.mbox{max-width:900px;margin:0 auto;padding:40px 30px}
+.mtitle{font-size:46px;font-weight:700;margin-bottom:26px}
+.mrow{margin-bottom:20px}
+.mrow label{display:block;font-size:26px;color:var(--muted);width:200px;flex-shrink:0}
+.mrow input[type=text]{flex:1}
+.mrow input[type=number]{width:220px;text-align:right;font-weight:700}
+.chip{height:70px;font-size:26px}
+.mprev{font-size:44px;font-weight:700;margin:26px 0}
+.mbtns button{flex:1;height:90px;font-size:34px}
+.cbox2{background:var(--panel);border-radius:22px;max-width:700px;margin:200px auto 0;padding:36px}
+.cbox2 .cmsg{font-size:38px;font-weight:600;margin-bottom:30px;text-align:center}
+</style>
+</head>
+<body>
+
+<section id="s-home" class="screen active">
+  <div class="home-top">
+    <div id="clock" class="clock num">00:00</div>
+    <div id="date" class="date"></div>
+  </div>
+  <div id="banner" class="banner num hidden" data-act="go" data-arg="chrono"></div>
+  <div class="home-btns row">
+    <button data-act="go" data-arg="chrono">Chrono</button>
+    <button data-act="go" data-arg="devis">Devis</button>
+    <button data-act="go" data-arg="projets">Projets</button>
+    <button data-act="go" data-arg="reglages">Réglages</button>
+  </div>
+</section>
+
+<section id="s-chrono" class="screen">
+  <div class="top row">
+    <button data-act="go" data-arg="home">‹ Accueil</button>
+    <div class="title grow">Chrono</div>
+    <div class="sess">Sessions aujourd’hui : <b id="sess" class="num">0</b></div>
+  </div>
+  <div class="presets row">
+    <button data-act="cstart" data-arg="work:25">Travail<br>25 min</button>
+    <button data-act="cstart" data-arg="work:50">Travail<br>50 min</button>
+    <button data-act="cstart" data-arg="work:90">Travail<br>90 min</button>
+    <button class="pz" data-act="cstart" data-arg="pause:5">Pause<br>5 min</button>
+    <button class="pz" data-act="cstart" data-arg="pause:10">Pause<br>10 min</button>
+  </div>
+  <div id="cbox" class="cbox c-idle">
+    <div id="clabel" class="clabel">Choisis une durée</div>
+    <div id="ctime" class="ctime num">--:--</div>
+  </div>
+  <div class="ctrls row">
+    <button id="ctoggle" data-act="ctoggle">Pause</button>
+    <button data-act="cstop">Stop</button>
+  </div>
+</section>
+
+<section id="s-devis" class="screen"></section>
+<section id="s-projets" class="screen"></section>
+<section id="s-reglages" class="screen"></section>
+
+<div id="modal" class="overlay"></div>
+<div id="confirm" class="overlay">
+  <div class="cbox2">
+    <div id="cf-msg" class="cmsg"></div>
+    <div class="row mbtns">
+      <button data-act="cfno">Annuler</button>
+      <button id="cf-ok" class="danger" data-act="cfyes">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/*CALC-START*/
+var DEFAULTS = {demi:300, jour:500, taux:60, retours:25, nuit:25, weekend:30, urgence:30, uber:30, marge:32, photo:'', urssaf:24};
+
+function num(v){
+  if (v === null || v === undefined) return 0;
+  var n = parseFloat(String(v).replace(',', '.'));
+  return isFinite(n) ? n : 0;
+}
+
+function easter(y){
+  var a=y%19, b=Math.floor(y/100), c=y%100, d=Math.floor(b/4), e=b%4,
+      f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30,
+      i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451),
+      mo=Math.floor((h+l-7*m+114)/31), da=((h+l-7*m+114)%31)+1;
+  return [mo, da];
+}
+
+var FIXED = {'1-1':'Jour de l’an','5-1':'Fête du travail','5-8':'8 mai 1945','7-14':'Fête nationale',
+             '8-15':'Assomption','11-1':'Toussaint','11-11':'Armistice','12-25':'Noël'};
+
+function holidayName(y, mo, d){
+  var key = mo + '-' + d;
+  if (FIXED[key]) return FIXED[key];
+  var e = easter(y);
+  var diff = Math.round((Date.UTC(y, mo-1, d) - Date.UTC(y, e[0]-1, e[1])) / 86400000);
+  if (diff === 1) return 'Lundi de Pâques';
+  if (diff === 39) return 'Ascension';
+  if (diff === 50) return 'Lundi de Pentecôte';
+  return null;
+}
+
+/* dateStr = "AAAA-MM-JJ" */
+function dayInfo(dateStr){
+  var r = {valid:false, weekend:false, ferie:null, dow:-1};
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr || '');
+  if (!m) return r;
+  var y = +m[1], mo = +m[2], d = +m[3];
+  var dt = new Date(y, mo-1, d);
+  r.valid = true;
+  r.dow = dt.getDay();
+  r.weekend = (r.dow === 0 || r.dow === 6);
+  r.ferie = holidayName(y, mo, d);
+  return r;
+}
+
+function dayCalc(day, st){
+  var base = num(day.demi) * num(st.demi) + num(day.jour) * num(st.jour);
+  var info = dayInfo(day.date);
+  var maj = 0;
+  if (info.ferie || info.weekend) maj += num(st.weekend) / 100;
+  if (day.nuit) maj += num(st.nuit) / 100;
+  var prix = base * (1 + maj);
+  var photo = day.photo ? num(st.photo) : 0;
+  return {base:base, maj:maj, prix:prix, photo:photo, total:prix + photo, info:info};
+}
+
+function fraisBilled(reel, marge){ return num(reel) * (1 + num(marge) / 100); }
+
+function montageCalc(dv, st){
+  var h = num(dv.heures);
+  var base = h * (1 + num(st.retours) / 100) * num(st.taux);
+  var urg = dv.urgence ? base * num(st.urgence) / 100 : 0;
+  return {heures:h, base:base, urgence:urg, total:base + urg};
+}
+
+function calcDevis(dv, st){
+  var lines = [], brut = 0, reels = 0, i;
+  var tournage = 0;
+  for (i = 0; i < dv.days.length; i++){
+    var c = dayCalc(dv.days[i], st);
+    tournage += c.total;
+    if (c.prix > 0) lines.push({g:'Tournage', label:'Jour ' + (i+1) + dayDesc(dv.days[i], c), amount:c.prix});
+    if (c.photo > 0) lines.push({g:'Tournage', label:'Jour ' + (i+1) + ' — photo', amount:c.photo});
+  }
+  var frais = 0;
+  for (i = 0; i < dv.frais.length; i++){
+    var f = dv.frais[i];
+    var b = fraisBilled(f.reel, f.marge);
+    frais += b; reels += num(f.reel);
+    lines.push({g:'Frais', label:f.label + ' (' + Math.round(num(f.reel)) + ' € + ' + num(f.marge) + ' %)', amount:b});
+  }
+  var trajReel = num(dv.trajets) * num(st.uber);
+  if (trajReel > 0){
+    var tb = fraisBilled(trajReel, st.marge);
+    frais += tb; reels += trajReel;
+    lines.push({g:'Frais', label:'Trajets × ' + num(dv.trajets) + ' (' + Math.round(trajReel) + ' € + ' + num(st.marge) + ' %)', amount:tb});
+  }
+  var mo = montageCalc(dv, st);
+  if (mo.base > 0) lines.push({g:'Montage', label:'Montage ' + mo.heures + ' h', amount:mo.base});
+  if (mo.urgence > 0) lines.push({g:'Montage', label:'Urgence < 48h (+' + num(st.urgence) + ' %)', amount:mo.urgence});
+  brut = tournage + frais + mo.total;
+  var urssaf = brut * num(st.urssaf) / 100;
+  return {lines:lines, tournage:tournage, frais:frais, montage:mo.total, brut:brut, urssaf:urssaf, reels:reels, net:brut - urssaf - reels};
+}
+
+function dayDesc(day, c){
+  var p = [];
+  if (num(day.jour)) p.push(num(day.jour) + ' j');
+  if (num(day.demi)) p.push(num(day.demi) + ' ½ j');
+  var s = p.length ? ' — ' + p.join(' + ') : '';
+  if (c.info.ferie) s += ', férié';
+  else if (c.info.weekend) s += ', week-end';
+  if (day.nuit) s += ', nuit';
+  return s;
+}
+/*CALC-END*/
+
+var KEY = 'noamdash';
+var JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+var MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+var STATUTS = ['Tournage','Montage','V1','Retours','Livré'];
+var PAGES = ['Tournage','Frais de prod','Post-prod','Résultat'];
+var SET_DEFS = [
+  ['demi','Demi-journée','€'], ['jour','Journée','€'], ['taux','Taux horaire montage','€/h'], ['retours','Retours / export','%'],
+  ['nuit','Majoration nuit','%'], ['weekend','Week-end / férié','%'], ['urgence','Urgence < 48h','%'], ['uber','Uber par aller-retour','€'],
+  ['marge','Marge frais par défaut','%'], ['photo','Forfait photo','€'], ['urssaf','Taux URSSAF','%']
+];
+var FRAIS_TYPES = {
+  matos:{title:'Location matos', lab:'Libellé', def:'Location matos', chips:[]},
+  personne:{title:'Personne à payer', lab:'Nom / rôle', def:'Personne', chips:['Photographe','Cadreur','Ingé son','Assistant']},
+  autre:{title:'Train / Hôtel / Autre', lab:'Libellé', def:'Autre', chips:['Train','Hôtel','Repas','Autre']}
+};
+var IDLE_MS = 120000;
+
+var $ = function(id){ return document.getElementById(id); };
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function eur(x){
+  var n = Math.round(num(x));
+  var s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return (n < 0 ? '−' : '') + s + ' €';
+}
+function isoDate(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function monthKey(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1); }
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function newDay(){ return {date:isoDate(new Date()), nuit:false, demi:0, jour:0, photo:false}; }
+function newDevis(){ return {page:0, days:[newDay()], frais:[], trajets:0, heures:0, urgence:false}; }
+
+var data;
+function normalize(d){
+  d = (d && typeof d === 'object') ? d : {};
+  var s = {}, k;
+  for (k in DEFAULTS) s[k] = DEFAULTS[k];
+  if (d.settings) for (k in d.settings) if (DEFAULTS.hasOwnProperty(k)) s[k] = d.settings[k];
+  d.settings = s;
+  if (!d.devis || !d.devis.days || !d.devis.days.length) d.devis = newDevis();
+  if (!d.devis.frais) d.devis.frais = [];
+  d.devis.page = Math.max(0, Math.min(3, num(d.devis.page)));
+  if (!(d.projects instanceof Array)) d.projects = [];
+  if (!d.sessions || typeof d.sessions !== 'object') d.sessions = {};
+  if (d.chrono === undefined) d.chrono = null;
+  return d;
+}
+function load(){
+  var raw = null;
+  try { raw = window.localStorage.getItem(KEY); } catch(e){}
+  try { data = normalize(raw ? JSON.parse(raw) : null); } catch(e){ data = normalize(null); }
+}
+function save(){
+  try { window.localStorage.setItem(KEY, JSON.stringify(data)); } catch(e){}
+}
+
+/* ---------- Navigation ---------- */
+var current = 'home';
+var viewMonth = monthKey(new Date());
+function go(name){
+  if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
+  current = name;
+  var ids = ['home','chrono','devis','projets','reglages'];
+  for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
+  if (name === 'devis') renderDevis();
+  if (name === 'projets') renderProjets();
+  if (name === 'reglages') renderReglages();
+  tick();
+}
+
+/* ---------- Audio ---------- */
+var AC = window.AudioContext || window.webkitAudioContext;
+var actx = null;
+function unlockAudio(){
+  if (!AC) return;
+  try {
+    if (!actx) actx = new AC();
+    if (actx.state === 'suspended' && actx.resume) actx.resume();
+    var b = actx.createBuffer(1, 1, 22050), src = actx.createBufferSource();
+    src.buffer = b; src.connect(actx.destination); src.start(0);
+  } catch(e){}
+}
+function beep(){
+  if (!actx) return;
+  try {
+    if (actx.state === 'suspended' && actx.resume) actx.resume();
+    var t0 = actx.currentTime + 0.05;
+    for (var i = 0; i < 8; i++){
+      var t = t0 + i * 0.45, o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'square'; o.frequency.value = (i % 2) ? 1175 : 880;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.35, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + 0.32);
+    }
+  } catch(e){}
+}
+
+/* ---------- Chrono ---------- */
+function remaining(c){
+  if (!c) return 0;
+  if (c.done) return 0;
+  if (c.running) return Math.max(0, c.endAt - Date.now());
+  return c.rem;
+}
+function fmtTime(ms){
+  var s = Math.ceil(ms / 1000), m = Math.floor(s / 60);
+  return pad(m) + ':' + pad(s % 60);
+}
+function colorClass(c){
+  if (!c) return 'c-idle';
+  if (c.done) return 'c-done';
+  var f = remaining(c) / c.dur;
+  return f > 0.5 ? 'c-green' : (f > 0.2 ? 'c-orange' : 'c-red');
+}
+function todayCount(){ return data.sessions[isoDate(new Date())] || 0; }
+function checkChronoEnd(silent){
+  var c = data.chrono;
+  if (c && c.running && !c.done && Date.now() >= c.endAt){
+    c.done = true; c.running = false; c.rem = 0;
+    if (c.kind === 'work'){
+      var k = isoDate(new Date(c.endAt));
+      data.sessions[k] = (data.sessions[k] || 0) + 1;
+    }
+    save();
+    if (!silent) beep();
+  }
+}
+function chronoLabel(c){
+  var base = (c.kind === 'work' ? 'Travail ' : 'Pause ') + c.min + ' min';
+  if (c.done) return (c.kind === 'work' ? 'Travail terminé !' : 'Pause terminée !');
+  if (!c.running) return base + ' — en pause';
+  return base;
+}
+
+/* ---------- Tick ---------- */
+var lastActivity = Date.now();
+var lastHM = '', lastDate = '';
+function tick(){
+  var now = new Date();
+  var hm = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  if (hm !== lastHM){ $('clock').textContent = hm; lastHM = hm; }
+  var ds = JOURS[now.getDay()] + ' ' + (now.getDate() === 1 ? '1er' : now.getDate()) + ' ' + MOIS[now.getMonth()];
+  if (ds !== lastDate){ $('date').textContent = ds; lastDate = ds; }
+  var h = now.getHours(), night = (h >= 21 || h < 7);
+  if (document.body.classList.contains('night') !== night) document.body.classList.toggle('night', night);
+
+  checkChronoEnd(false);
+  var c = data.chrono, cc = colorClass(c);
+  var bn = $('banner');
+  if (c){
+    bn.className = 'banner num ' + cc;
+    bn.textContent = c.done ? chronoLabel(c) : ((c.kind === 'work' ? 'Travail' : 'Pause') + (c.running ? '' : ' (en pause)') + ' · ' + fmtTime(remaining(c)));
+  } else bn.className = 'banner hidden';
+  if (current === 'chrono'){
+    $('cbox').className = 'cbox ' + cc;
+    $('ctime').textContent = c ? fmtTime(remaining(c)) : '--:--';
+    $('clabel').textContent = c ? chronoLabel(c) : 'Choisis une durée';
+    var tg = $('ctoggle');
+    tg.textContent = (c && !c.running && !c.done) ? 'Reprendre' : 'Pause';
+    tg.style.opacity = (c && !c.done) ? '1' : '.35';
+    $('sess').textContent = todayCount();
+  }
+
+  if (Date.now() - lastActivity > IDLE_MS){
+    lastActivity = Date.now();
+    if (current !== 'home' || modalOpen() || confirmOpen()){
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      closeModal(); closeConfirm();
+      go('home');
+    }
+  }
+}
+function markActivity(){ lastActivity = Date.now(); }
+
+/* ---------- Devis ---------- */
+function stepper(label, value, act, arg){
+  return '<div class="stp">' + (label ? '<div class="stp-l">' + label + '</div>' : '') +
+    '<div class="row"><button class="sb" data-act="' + act + '" data-arg="' + arg + ':-1">–</button>' +
+    '<div class="sv num">' + value + '</div>' +
+    '<button class="sb" data-act="' + act + '" data-arg="' + arg + ':1">+</button></div></div>';
+}
+function badgeText(info, st){
+  if (info.ferie) return 'Férié +' + num(st.weekend) + ' % · ' + info.ferie;
+  if (info.weekend) return 'Week-end +' + num(st.weekend) + ' %';
+  return '';
+}
+function renderDevis(){
+  var dv = data.devis, st = data.settings, r = calcDevis(dv, st), p = dv.page;
+  var old = document.querySelector('#s-devis .content');
+  var scroll = old ? old.scrollTop : 0;
+  var dots = '';
+  for (var i = 0; i < 4; i++) dots += '<span' + (i === p ? ' class="on"' : '') + '></span>';
+  var h = '<div class="top row"><button data-act="go" data-arg="home">‹ Accueil</button>' +
+    '<div class="title grow">' + (p+1) + '. ' + PAGES[p] + '</div><div class="dots">' + dots + '</div>' +
+    '<div class="brut num"><small>Brut </small><span id="dv-brut">' + eur(r.brut) + '</span></div></div>';
+  h += '<div class="content">' + devisPage(p, dv, st, r) + '</div>';
+  h += '<div class="foot row"><button class="grow" data-act="dvprev">← Retour</button>' +
+    (p < 3 ? '<button class="grow primary" data-act="dvnext">Suivant →</button>'
+           : '<button class="grow danger" data-act="dvnew">Nouveau devis</button>') + '</div>';
+  $('s-devis').innerHTML = h;
+  var nc = document.querySelector('#s-devis .content');
+  if (nc && old) nc.scrollTop = scroll;
+}
+function devisPage(p, dv, st, r){
+  var h = '', i;
+  if (p === 0){
+    for (i = 0; i < dv.days.length; i++){
+      var d = dv.days[i], c = dayCalc(d, st), bt = badgeText(c.info, st);
+      h += '<div class="card"><div class="row">' +
+        '<div class="dlabel">Jour ' + (i+1) + '</div>' +
+        '<input class="dinput" type="date" data-day="' + i + '" value="' + esc(d.date) + '">' +
+        '<div class="badge' + (bt ? '' : ' hidden') + '" id="badge-' + i + '">' + esc(bt) + '</div>' +
+        '<div class="grow"></div><div class="dprice num" id="dprice-' + i + '">' + eur(c.total) + '</div>' +
+        (dv.days.length > 1 ? '<button class="xbtn" data-act="ddel" data-arg="' + i + '">✕</button>' : '') +
+        '</div><div class="row" style="margin-top:14px">' +
+        stepper('Demi-journées · ' + eur(st.demi), num(d.demi), 'dstep', 'demi:' + i) +
+        stepper('Journées · ' + eur(st.jour), num(d.jour), 'dstep', 'jour:' + i) +
+        '<div class="grow"></div><div>' +
+        '<button class="tog' + (d.nuit ? ' on' : '') + '" data-act="dtog" data-arg="nuit:' + i + '">' + (d.nuit ? '✓ ' : '') + 'De nuit +' + num(st.nuit) + ' %</button>' +
+        '<button class="tog' + (d.photo ? ' on' : '') + '" data-act="dtog" data-arg="photo:' + i + '">' + (d.photo ? '✓ ' : '') + (num(st.photo) ? 'Photo +' + eur(st.photo) : 'Photo en plus') + '</button>' +
+        '</div></div></div>';
+    }
+    h += '<button class="addday" data-act="dadd">+ Ajouter un jour</button>';
+  } else if (p === 1){
+    h += '<div class="row" style="margin-bottom:14px">' +
+      '<button class="fbtn" data-act="fopen" data-arg="matos">Location<br>matos</button>' +
+      '<button class="fbtn" data-act="fopen" data-arg="personne">Personne<br>à payer</button>' +
+      '<button class="fbtn" data-act="fopen" data-arg="autre">Train / Hôtel<br>/ Autre</button></div>';
+    var tr = num(dv.trajets) * num(st.uber);
+    h += '<div class="card row"><div class="grow"><div class="fl" style="font-size:32px;font-weight:700">Trajets (Uber)</div>' +
+      '<div class="fd muted" style="font-size:24px">' + eur(st.uber) + ' réels par aller-retour · marge ' + num(st.marge) + ' %</div></div>' +
+      stepper('', num(dv.trajets), 'tstep', 't') +
+      '<div class="fv num" style="font-size:36px;font-weight:700;min-width:150px;text-align:right">' + eur(fraisBilled(tr, st.marge)) + '</div></div>';
+    if (!dv.frais.length) h += '<div class="empty">Aucun autre frais ajouté</div>';
+    for (i = 0; i < dv.frais.length; i++){
+      var f = dv.frais[i];
+      h += '<div class="card row fline"><div class="grow"><div class="fl">' + esc(f.label) + '</div>' +
+        '<div class="fd">réel ' + eur(f.reel) + ' · marge ' + num(f.marge) + ' %</div></div>' +
+        '<div class="fv num">' + eur(fraisBilled(f.reel, f.marge)) + '</div>' +
+        '<button class="xbtn" data-act="fdel" data-arg="' + i + '">✕</button></div>';
+    }
+  } else if (p === 2){
+    var mo = montageCalc(dv, st), coef = String(1 + num(st.retours) / 100).replace('.', ',');
+    h += '<div class="pp"><div class="pp-l">Heures de montage</div>' +
+      stepper('', num(dv.heures) + ' h', 'hstep', 'h') +
+      '<div class="pp-f num">' + mo.heures + ' h × ' + coef + ' (retours + export) × ' + eur(st.taux) + ' = ' + eur(mo.base) + '</div>' +
+      '<button class="tog' + (dv.urgence ? ' on' : '') + '" data-act="urg">' + (dv.urgence ? '✓ ' : '') + 'Urgence < 48h +' + num(st.urgence) + ' %</button>' +
+      '<div class="pp-t num">Montage : ' + eur(mo.total) + '</div></div>';
+  } else {
+    h += '<div class="res"><div class="res-l">' +
+      '<div class="big-l">À FACTURER (BRUT)</div><div class="big-v num">' + eur(r.brut) + '</div>' +
+      '<div class="mid num"><span class="muted">URSSAF ' + num(st.urssaf) + ' % :</span> − ' + eur(r.urssaf) + '</div>' +
+      '<div class="mid num"><span class="muted">Frais réels :</span> − ' + eur(r.reels) + '</div>' +
+      '<div class="big-l" style="margin-top:20px">TU TOUCHES (NET)</div><div class="big-v num net">' + eur(r.net) + '</div>' +
+      '</div><div class="res-r">';
+    var groups = [['Tournage', r.tournage], ['Frais', r.frais], ['Montage', r.montage]];
+    for (var g = 0; g < groups.length; g++){
+      h += '<div class="dh row"><div class="grow">' + groups[g][0].toUpperCase() + '</div><div class="num">' + eur(groups[g][1]) + '</div></div>';
+      var any = false;
+      for (i = 0; i < r.lines.length; i++) if (r.lines[i].g === groups[g][0]){
+        any = true;
+        h += '<div class="dl row"><div class="grow">' + esc(r.lines[i].label) + '</div><b class="num">' + eur(r.lines[i].amount) + '</b></div>';
+      }
+      if (!any) h += '<div class="dl muted">—</div>';
+    }
+    h += '</div></div>';
+  }
+  return h;
+}
+function updateDevisLive(){
+  var dv = data.devis, st = data.settings;
+  $('dv-brut').textContent = eur(calcDevis(dv, st).brut);
+  for (var i = 0; i < dv.days.length; i++){
+    var c = dayCalc(dv.days[i], st), b = $('badge-' + i), pr = $('dprice-' + i);
+    if (b){ var t = badgeText(c.info, st); b.textContent = t; b.className = 'badge' + (t ? '' : ' hidden'); }
+    if (pr) pr.textContent = eur(c.total);
+  }
+}
+
+/* ---------- Fenêtres ---------- */
+var modal = null, confirmCb = null;
+function modalOpen(){ return !!modal; }
+function confirmOpen(){ return !!confirmCb; }
+function openModal(state, html){ modal = state; var m = $('modal'); m.innerHTML = '<div class="mbox">' + html + '</div>'; m.className = 'overlay show'; m.scrollTop = 0; }
+function closeModal(){ modal = null; $('modal').className = 'overlay'; $('modal').innerHTML = ''; }
+function askConfirm(msg, okLabel, cb){ confirmCb = cb; $('cf-msg').textContent = msg; $('cf-ok').textContent = okLabel; $('confirm').className = 'overlay show'; }
+function closeConfirm(){ confirmCb = null; $('confirm').className = 'overlay'; }
+
+function margeRow(v){
+  return '<div class="mrow row"><label>Marge</label>' +
+    '<button class="sb" data-act="mmarge" data-arg="-1">–</button>' +
+    '<input type="number" inputmode="decimal" id="m-marge" data-bind="marge" value="' + esc(v) + '" style="width:150px">' +
+    '<button class="sb" data-act="mmarge" data-arg="1">+</button><span style="font-size:30px">%</span></div>';
+}
+function openFrais(type){
+  var T = FRAIS_TYPES[type];
+  var st = {kind:'frais', type:type, label:type === 'matos' ? T.def : '', reel:'', marge:num(data.settings.marge)};
+  var chips = '';
+  for (var i = 0; i < T.chips.length; i++) chips += '<button class="chip" data-act="mchip" data-arg="' + esc(T.chips[i]) + '">' + esc(T.chips[i]) + '</button>';
+  openModal(st,
+    '<div class="mtitle">' + T.title + '</div>' +
+    '<div class="mrow row"><label>' + T.lab + '</label><input type="text" id="m-label" data-bind="label" value="' + esc(st.label) + '"></div>' +
+    (chips ? '<div class="mrow row"><label></label>' + chips + '</div>' : '') +
+    '<div class="mrow row"><label>Prix réel</label><input type="number" inputmode="decimal" id="m-reel" data-bind="reel" value="" placeholder="0"><span style="font-size:30px">€</span></div>' +
+    margeRow(st.marge) +
+    '<div class="mprev num" id="m-prev"></div>' +
+    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="primary" data-act="fsave">Ajouter</button></div>');
+  updatePreview();
+}
+function updatePreview(){
+  if (!modal || modal.kind !== 'frais') return;
+  $('m-prev').textContent = 'Facturé : ' + eur(fraisBilled(modal.reel, modal.marge));
+}
+function openProject(id){
+  var p = null;
+  for (var i = 0; i < data.projects.length; i++) if (data.projects[i].id === id) p = data.projects[i];
+  var st = {kind:'project', id:p ? p.id : null, client:p ? p.client : '', amount:p ? p.amount : ''};
+  openModal(st,
+    '<div class="mtitle">' + (p ? 'Modifier le projet' : 'Nouveau projet') + '</div>' +
+    '<div class="mrow row"><label>Client</label><input type="text" id="m-client" data-bind="client" value="' + esc(st.client) + '"></div>' +
+    '<div class="mrow row"><label>Montant brut</label><input type="number" inputmode="decimal" data-bind="amount" value="' + esc(st.amount) + '" placeholder="0"><span style="font-size:30px">€</span></div>' +
+    '<div class="row mbtns" style="margin-top:30px"><button data-act="mclose">Annuler</button>' +
+    (p ? '<button class="danger" data-act="pdel">Supprimer</button>' : '') +
+    '<button class="primary" data-act="psave">Enregistrer</button></div>');
+}
+
+/* ---------- Projets ---------- */
+function monthLabel(k){ var a = k.split('-'); return cap(MOIS[+a[1]-1]) + ' ' + a[0]; }
+function shiftMonth(k, d){ var a = k.split('-'); return monthKey(new Date(+a[0], +a[1]-1+d, 1)); }
+function renderProjets(){
+  var old = document.querySelector('#s-projets .content'), scroll = old ? old.scrollTop : 0;
+  var list = [], i, brut = 0, paid = 0;
+  for (i = 0; i < data.projects.length; i++) if (data.projects[i].month === viewMonth) list.push(data.projects[i]);
+  var h = '<div class="top row"><button data-act="go" data-arg="home">‹ Accueil</button>' +
+    '<button data-act="pmonth" data-arg="-1" style="font-size:44px">‹</button>' +
+    '<div class="month grow">' + monthLabel(viewMonth) + '</div>' +
+    '<button data-act="pmonth" data-arg="1" style="font-size:44px">›</button>' +
+    '<button class="primary" data-act="padd">+ Projet</button></div><div class="content">';
+  if (!list.length) h += '<div class="empty">Aucun projet ce mois-ci.<br>Appui long sur une carte pour la modifier.</div>';
+  h += '<div class="pgrid">';
+  for (i = 0; i < list.length; i++){
+    var p = list[i];
+    brut += num(p.amount); if (p.paid) paid += num(p.amount);
+    h += '<div class="pcard" data-lp="' + esc(p.id) + '"><div class="pc-c">' + esc(p.client || 'Sans nom') + '</div>' +
+      '<div class="pc-m num">' + eur(p.amount) + '</div>' +
+      '<button class="st' + p.status + '" data-act="pstat" data-arg="' + esc(p.id) + '">' + STATUTS[p.status] + ' →</button>' +
+      '<button class="' + (p.paid ? 'paid' : 'unpaid') + '" data-act="ppaid" data-arg="' + esc(p.id) + '">' + (p.paid ? '✓ Payé' : '✕ Pas payé') + '</button></div>';
+  }
+  var u = brut * num(data.settings.urssaf) / 100;
+  h += '</div></div><div class="tots row">' +
+    tot('Brut', brut) + tot('URSSAF ' + num(data.settings.urssaf) + ' %', u) + tot('Net', brut - u) +
+    tot('Encaissé', paid, 'net') + tot('À encaisser', brut - paid) + '</div>';
+  $('s-projets').innerHTML = h;
+  var nc = document.querySelector('#s-projets .content');
+  if (nc && old) nc.scrollTop = scroll;
+}
+function tot(l, v, cls){ return '<div class="tot"><div class="tot-l">' + l + '</div><div class="tot-v num ' + (cls || '') + '">' + eur(v) + '</div></div>'; }
+function findProject(id){ for (var i = 0; i < data.projects.length; i++) if (data.projects[i].id === id) return i; return -1; }
+
+/* ---------- Réglages ---------- */
+function renderReglages(){
+  var h = '<div class="top row"><button data-act="go" data-arg="home">‹ Accueil</button><div class="title grow">Réglages</div></div><div class="content"><div class="sgrid">';
+  for (var i = 0; i < SET_DEFS.length; i++){
+    var d = SET_DEFS[i];
+    h += '<div class="sitem"><div class="sitem-l">' + d[1] + '</div><div class="row">' +
+      '<input type="number" inputmode="decimal" data-set="' + d[0] + '" value="' + esc(data.settings[d[0]]) + '"' + (d[0] === 'photo' ? ' placeholder="—"' : '') + '>' +
+      '<span class="u">' + d[2] + '</span></div></div>';
+  }
+  h += '</div><div class="row" style="margin-top:6px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
+    '<div class="muted" style="font-size:22px;margin-top:14px">Les données restent sur cet iPad (localStorage). Exporte régulièrement et colle le texte dans Notes pour le sauvegarder.</div></div>';
+  $('s-reglages').innerHTML = h;
+}
+
+/* ---------- Actions ---------- */
+function handle(act, arg){
+  var dv = data.devis, a, i, p;
+  switch (act){
+    case 'go': closeModal(); go(arg); return;
+    case 'cstart':
+      unlockAudio();
+      a = arg.split(':');
+      var ms = (+a[1]) * 60000;
+      data.chrono = {kind:a[0], min:+a[1], dur:ms, endAt:Date.now() + ms, rem:ms, running:true, done:false};
+      save(); break;
+    case 'ctoggle':
+      var c = data.chrono;
+      if (!c || c.done) return;
+      if (c.running){ c.rem = Math.max(0, c.endAt - Date.now()); c.running = false; }
+      else { unlockAudio(); c.endAt = Date.now() + c.rem; c.running = true; }
+      save(); break;
+    case 'cstop': data.chrono = null; save(); break;
+
+    case 'dvnext': dv.page = Math.min(3, dv.page + 1); save(); renderDevis(); return;
+    case 'dvprev': if (dv.page === 0){ go('home'); return; } dv.page--; save(); renderDevis(); return;
+    case 'dvnew':
+      askConfirm('Effacer ce devis et en commencer un nouveau ?', 'Effacer', function(){ data.devis = newDevis(); save(); renderDevis(); });
+      return;
+    case 'dadd': dv.days.push(newDay()); save(); renderDevis();
+      var ct = document.querySelector('#s-devis .content'); if (ct) ct.scrollTop = ct.scrollHeight; return;
+    case 'ddel': dv.days.splice(+arg, 1); save(); renderDevis(); return;
+    case 'dstep':
+      a = arg.split(':'); var day = dv.days[+a[1]];
+      day[a[0]] = Math.max(0, num(day[a[0]]) + (+a[2])); save(); renderDevis(); return;
+    case 'dtog': a = arg.split(':'); dv.days[+a[1]][a[0]] = !dv.days[+a[1]][a[0]]; save(); renderDevis(); return;
+    case 'tstep': dv.trajets = Math.max(0, num(dv.trajets) + (+arg.split(':')[1])); save(); renderDevis(); return;
+    case 'hstep': dv.heures = Math.max(0, num(dv.heures) + (+arg.split(':')[1])); save(); renderDevis(); return;
+    case 'urg': dv.urgence = !dv.urgence; save(); renderDevis(); return;
+    case 'fopen': openFrais(arg); return;
+    case 'fdel': dv.frais.splice(+arg, 1); save(); renderDevis(); return;
+    case 'mchip': if (modal){ modal.label = arg; $('m-label').value = arg; } return;
+    case 'mmarge':
+      if (!modal) return;
+      modal.marge = Math.max(0, num(modal.marge) + (+arg)); $('m-marge').value = modal.marge; updatePreview(); return;
+    case 'mclose': closeModal(); return;
+    case 'fsave':
+      if (!modal) return;
+      if (num(modal.reel) <= 0){ var ri = $('m-reel'); ri.style.borderColor = 'var(--ko)'; return; }
+      dv.frais.push({type:modal.type, label:(modal.label || '').replace(/^\s+|\s+$/g, '') || FRAIS_TYPES[modal.type].def, reel:num(modal.reel), marge:num(modal.marge)});
+      save(); closeModal(); renderDevis(); return;
+
+    case 'pmonth': viewMonth = shiftMonth(viewMonth, +arg); renderProjets(); return;
+    case 'padd': openProject(null); return;
+    case 'pstat': i = findProject(arg); if (i < 0) return; p = data.projects[i]; p.status = (p.status + 1) % STATUTS.length; save(); renderProjets(); return;
+    case 'ppaid': i = findProject(arg); if (i < 0) return; data.projects[i].paid = !data.projects[i].paid; save(); renderProjets(); return;
+    case 'psave':
+      if (!modal) return;
+      var cl = (modal.client || '').replace(/^\s+|\s+$/g, '');
+      if (!cl){ $('m-client').style.borderColor = 'var(--ko)'; return; }
+      if (modal.id){ i = findProject(modal.id); if (i >= 0){ data.projects[i].client = cl; data.projects[i].amount = num(modal.amount); } }
+      else data.projects.push({id:Date.now().toString(36) + Math.floor(Math.random()*1e6).toString(36), month:viewMonth, client:cl, amount:num(modal.amount), status:0, paid:false});
+      save(); closeModal(); renderProjets(); return;
+    case 'pdel':
+      if (!modal) return;
+      var pid = modal.id;
+      askConfirm('Supprimer ce projet ?', 'Supprimer', function(){ i = findProject(pid); if (i >= 0) data.projects.splice(i, 1); save(); closeModal(); renderProjets(); });
+      return;
+
+    case 'exp':
+      openModal({kind:'export'}, '<div class="mtitle">Exporter</div><div class="muted" style="font-size:24px;margin-bottom:14px">Copie ce texte et garde-le (Notes, mail…).</div>' +
+        '<textarea id="m-txt" rows="14" readonly>' + esc(JSON.stringify(data)) + '</textarea>' +
+        '<div class="row mbtns" style="margin-top:20px"><button data-act="selall">Tout sélectionner / copier</button><button class="primary" data-act="mclose">Fermer</button></div>');
+      return;
+    case 'selall':
+      var ta = $('m-txt'); ta.removeAttribute('readonly'); ta.focus(); ta.setSelectionRange(0, ta.value.length);
+      try { document.execCommand('copy'); } catch(e){}
+      ta.setAttribute('readonly', 'readonly'); return;
+    case 'imp':
+      openModal({kind:'import'}, '<div class="mtitle">Importer</div><div class="muted" style="font-size:24px;margin-bottom:14px">Colle ici un texte exporté. Toutes les données actuelles seront remplacées.</div>' +
+        '<textarea id="m-txt" rows="12"></textarea><div id="m-err" style="color:var(--ko);font-size:26px;margin-top:10px"></div>' +
+        '<div class="row mbtns" style="margin-top:20px"><button data-act="mclose">Annuler</button><button class="primary" data-act="impok">Importer</button></div>');
+      return;
+    case 'impok':
+      var parsed = null;
+      try { parsed = JSON.parse($('m-txt').value); } catch(e){}
+      if (!parsed || typeof parsed !== 'object' || !parsed.settings){ $('m-err').textContent = 'Texte invalide.'; return; }
+      askConfirm('Remplacer toutes les données par celles importées ?', 'Remplacer', function(){ data = normalize(parsed); save(); closeModal(); go('reglages'); });
+      return;
+
+    case 'cfyes': var cb = confirmCb; closeConfirm(); if (cb) cb(); return;
+    case 'cfno': closeConfirm(); return;
+  }
+  tick();
+}
+
+function closestAttr(el, attr){
+  while (el && el.nodeType === 1){ if (el.hasAttribute(attr)) return el; el = el.parentNode; }
+  return null;
+}
+
+/* Appui long */
+var lpTimer = null, lpFired = false, lpX = 0, lpY = 0;
+function lpStart(target, x, y){
+  lpFired = false;
+  var card = closestAttr(target, 'data-lp');
+  clearTimeout(lpTimer);
+  if (!card) return;
+  lpX = x; lpY = y;
+  var id = card.getAttribute('data-lp');
+  lpTimer = setTimeout(function(){ lpFired = true; openProject(id); }, 650);
+}
+function lpMove(x, y){ if (Math.abs(x - lpX) > 12 || Math.abs(y - lpY) > 12) clearTimeout(lpTimer); }
+var lpSwallowUntil = 0;
+function lpEnd(){ clearTimeout(lpTimer); if (lpFired){ lpFired = false; lpSwallowUntil = Date.now() + 400; } }
+
+document.addEventListener('touchstart', function(e){ markActivity(); var t = e.touches[0]; lpStart(e.target, t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchmove', function(e){ var t = e.touches[0]; lpMove(t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchend', lpEnd, {passive:true});
+document.addEventListener('touchcancel', lpEnd, {passive:true});
+document.addEventListener('mousedown', function(e){ markActivity(); lpStart(e.target, e.clientX, e.clientY); });
+document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clientX, e.clientY); });
+document.addEventListener('mouseup', lpEnd);
+document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
+document.addEventListener('keydown', markActivity);
+
+document.addEventListener('click', function(e){
+  markActivity();
+  if (lpFired || Date.now() < lpSwallowUntil){ lpFired = false; lpSwallowUntil = 0; e.preventDefault(); e.stopPropagation(); return; }
+  var el = closestAttr(e.target, 'data-act');
+  if (!el) return;
+  handle(el.getAttribute('data-act'), el.getAttribute('data-arg') || '');
+}, true);
+
+document.addEventListener('input', function(e){
+  markActivity();
+  var t = e.target;
+  if (t.hasAttribute('data-bind') && modal){ modal[t.getAttribute('data-bind')] = t.value; t.style.borderColor = ''; updatePreview(); }
+  else if (t.hasAttribute('data-set')){ data.settings[t.getAttribute('data-set')] = t.value === '' ? '' : num(t.value); save(); }
+});
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if (t.hasAttribute('data-day')){
+    var d = data.devis.days[+t.getAttribute('data-day')];
+    if (d){ d.date = t.value; save(); updateDevisLive(); }
+  } else if (t.hasAttribute('data-set')){
+    var k = t.getAttribute('data-set');
+    if (t.value === '' && k !== 'photo'){ data.settings[k] = DEFAULTS[k]; t.value = DEFAULTS[k]; }
+    else data.settings[k] = t.value === '' ? '' : num(t.value);
+    save();
+  }
+});
+document.addEventListener('visibilitychange', function(){ if (!document.hidden){ markActivity(); tick(); } });
+
+/* ---------- Démarrage ---------- */
+load();
+checkChronoEnd(true);
+tick();
+setInterval(tick, 500);
+if ('serviceWorker' in navigator && location.protocol === 'https:'){
+  try { navigator.serviceWorker.register('sw.js'); } catch(e){}
+}
+})();
+</script>
+</body>
+</html>
