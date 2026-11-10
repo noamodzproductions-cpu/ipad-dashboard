@@ -15,7 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 input,textarea{-webkit-user-select:text;user-select:text}
 html,body{height:100%;width:100%;overflow:hidden}
-body{position:fixed;top:0;left:0;right:0;bottom:0;background:#0b0b0d url(bg.jpg) 0 0/1024px 768px no-repeat;color:#fff;font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;color:#fff;font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 button{font-family:inherit;color:#fff;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.14);border-radius:9999px;min-height:70px;min-width:70px;font-size:26px;font-weight:600;padding:0 26px;-webkit-appearance:none;cursor:pointer;line-height:1.15}
 button:active{opacity:.7}
 button.white{background:#fff;color:#111;border-color:#fff}
@@ -35,8 +35,8 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .inl{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin-left:6px}
 
 /* Verre dépoli SANS calcul : fond flouté (blur.jpg) calé une fois par alignGlass() */
-.glass{position:relative;border-radius:28px;border:1px solid rgba(255,255,255,.24);background-color:rgba(255,255,255,.08);background-image:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10)),url(blur.jpg);background-repeat:no-repeat;background-size:100% 100%,1024px 768px;overflow:hidden}
-.glass.light{color:#111;border-color:#E9E9EC;background-color:#E9E9EC;background-image:linear-gradient(rgba(240,240,243,.80),rgba(240,240,243,.80)),url(blur.jpg)}
+.glass{position:relative;border-radius:28px;border:1px solid rgba(255,255,255,.16);background:#1c1c1e;overflow:hidden}
+.glass.light{color:#111;border-color:#E9E9EC;background:#E9E9EC}
 .card{padding:24px}
 .tap:active{opacity:.8}
 .flash{background:#fff !important;color:#111 !important}
@@ -184,7 +184,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .u{font-size:24px;color:rgba(255,255,255,.65)}
 
 /* Fenêtres : fond flouté pré-calculé, sans backdrop-filter */
-.overlay{position:fixed;top:0;left:0;right:0;bottom:0;display:none;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;background-color:#0b0b0d;background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),url(blur.jpg);background-repeat:no-repeat;background-size:100% 100%,1024px 768px}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;display:none;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000}
 .overlay.show{display:block}
 #confirm{z-index:60;background:rgba(0,0,0,.6)}
 .mbox{max-width:900px;margin:0 auto;padding:48px 30px}

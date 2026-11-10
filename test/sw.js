@@ -1,6 +1,6 @@
 // Cache hors ligne : réseau d'abord, cache en secours.
-var C = 'noamdash-test-v2';
-var FILES = ['./', './index.html', './apple-touch-icon.png', './bg.jpg', './blur.jpg'];
+var C = 'noamdash-test-v3';
+var FILES = ['./', './index.html', './apple-touch-icon.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(C).then(function (c) { return c.addAll(FILES); }));
   self.skipWaiting();
