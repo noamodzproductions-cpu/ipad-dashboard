@@ -13,12 +13,12 @@
 /* Style inspiré de DESIGN.md (Mobbin), adapté iPad Air 1 / Safari 12 :
    police système, pas de flou, pas d'animation en boucle, pas de flex gap. */
 :root{
-  --band:#141414; --canvas:#ffffff; --soft:#f3f3f3; --field:#f0f0f0; --hair:#e0e0e0;
-  --ink:#141414; --muted:#707070; --faint:#adadad;
+  --band:#000; --canvas:#0d0d0f; --soft:rgba(255,255,255,.08); --field:rgba(255,255,255,.11); --hair:rgba(255,255,255,.16);
+  --ink:#f2f2f2; --muted:#a0a0a0; --faint:#5c5c5c;
   --accent:#0066ff; --onaccent:#ffffff;
-  --orange:#ff8a00; --red:#e5322d; --ok:#0f8a3f; --ko:#d92d27;
-  --okbg:#e6f5ec; --kobg:#fdeceb; --warnbg:#fff1dc; --warnfg:#9a5200;
-  --tile:#141414; --ontile:#ffffff;
+  --orange:#ff8a00; --red:#e5322d; --ok:#3ccf74; --ko:#ff5a52;
+  --okbg:rgba(60,207,116,.16); --kobg:rgba(255,90,82,.16); --warnbg:rgba(255,170,0,.18); --warnfg:#ffbf5c;
+  --tile:#ffffff; --ontile:#141414;
 }
 body.night{
   --band:#000; --canvas:#000; --soft:#111111; --field:#161616; --hair:#242424;
@@ -175,6 +175,13 @@ body.night #confirm{background:rgba(0,0,0,.8)}
 .mbtns button{flex:1;height:90px;font-size:32px}
 .cbox2{background:var(--canvas);border-radius:24px;max-width:700px;margin:200px auto 0;padding:40px;border:1px solid var(--hair)}
 .cbox2 .cmsg{font-size:36px;font-weight:600;margin-bottom:30px;text-align:center}
+
+/* Une seule version sombre : fond d'écran flouté à l'avance dans fond.jpg (aucun flou calculé par l'iPad) */
+html,body{background:#000 url(fond.jpg) center/cover no-repeat}
+.screen{background:transparent}
+.sb,.tog,.dinput,.sitem input,.st0,.st1,.st2,.st3{background:var(--field)}
+.res-r{background:rgba(0,0,0,.35)}
+.home-btns button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16)}
 </style>
 </head>
 <body>
@@ -489,7 +496,7 @@ function tick(){
   if (hm !== lastHM){ $('clock').textContent = hm; lastHM = hm; }
   var ds = JOURS[now.getDay()] + ' ' + (now.getDate() === 1 ? '1er' : now.getDate()) + ' ' + MOIS[now.getMonth()];
   if (ds !== lastDate){ $('date').textContent = ds; lastDate = ds; }
-  var h = now.getHours(), night = (h >= 21 || h < 7);
+  var night = false; /* /test : une seule version sombre, pas de mode nuit */
   if (document.body.classList.contains('night') !== night) document.body.classList.toggle('night', night);
 
   checkChronoEnd(false);
