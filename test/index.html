@@ -175,6 +175,20 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tot-l{font-size:15px;font-weight:600;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
 .tot-v{font-size:30px;font-weight:700;white-space:nowrap;margin-top:4px}
 
+/* Projets = tâches du jour (taches.json, rempli par la routine Suivi) */
+.task{display:flex;align-items:center;padding:16px 22px;margin-bottom:12px}
+.task.urg{border-left:6px solid #A78BFA}
+.tchk{flex-shrink:0;width:64px;height:64px;line-height:58px;text-align:center;border-radius:20px;border:3px solid rgba(255,255,255,.4);margin-right:22px;font-size:34px;font-weight:700;color:#111}
+.task.on{opacity:.45}
+.task.on .tchk{background:#4ade80;border-color:#4ade80}
+.task.on .ttxt{text-decoration:line-through}
+.ttag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.16);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;white-space:nowrap}
+.ttxt{font-size:26px;font-weight:500;line-height:1.25}
+.tall{padding:28px;text-align:center;font-size:30px;font-weight:700;color:#4ade80;margin-bottom:12px}
+.tdem{padding:20px 24px;margin-top:6px}
+.tdem-l{font-size:22px;color:rgba(255,255,255,.75);line-height:1.5;margin-top:8px}
+.tupd{font-size:17px;text-align:center;margin-top:14px}
+
 /* Réglages */
 .sgrid{display:flex;flex-wrap:wrap}
 .sitem{width:230px;margin-right:16px;margin-bottom:14px;height:124px;padding:14px 16px;border-radius:24px}
@@ -215,6 +229,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-devis" class="screen"></section>
 <section id="s-projets" class="screen"></section>
 <section id="s-reglages" class="screen"></section>
+<section id="s-taches" class="screen"></section>
 
 <div id="modal" class="overlay"></div>
 <div id="confirm" class="overlay">
@@ -430,13 +445,14 @@ function hdr(title, sub, right){
 function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
   current = name;
-  var ids = ['home','chrono','devis','projets','reglages'];
+  var ids = ['home','chrono','devis','projets','reglages','taches'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
   if (name === 'home') renderHome();
   if (name === 'chrono') renderChrono();
   if (name === 'devis') renderDevis();
   if (name === 'projets') renderProjets();
   if (name === 'reglages') renderReglages();
+  if (name === 'taches'){ renderTaches(); loadTasks(function(){ if (current === 'taches') renderTaches(); }); }
   tick();
 }
 
@@ -579,7 +595,7 @@ function renderHome(){
       '<div class="hring" id="hc-ring">' + ringSvg('hc-bar') + '<div class="wring-c"><div class="hc-time num" id="hc-time"></div></div></div></div></div>' +
     '<div class="br"><div class="br-top">' +
       '<div class="glass light widget" data-act="go" data-arg="devis"><div class="wtile">' + ico(IC.euro) + '</div>' + chev + '<div class="wname">Devis</div></div>' +
-      '<div class="glass widget" data-act="link" data-arg="' + MISSIONS + '"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
+      '<div class="glass widget" data-act="go" data-arg="taches"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
     '</div><div class="br-bot"><div class="glass widget"></div></div></div>';
   $('widgets').innerHTML = h;
   /* taille du temps adaptée à l'anneau (calculée une fois) */
@@ -794,6 +810,51 @@ function renderProjets(){
 }
 function findProject(id){ for (var i = 0; i < data.projects.length; i++) if (data.projects[i].id === id) return i; return -1; }
 
+/* ---------- Projets (tâches du jour) ----------
+   Source : ../taches.json (même format que le bloc #today de la page Claude « Aujourd'hui »).
+   Lu par XMLHttpRequest, gardé en cache pour le hors-ligne. Les coches restent sur cet iPad. */
+var TASKS_URL = '../taches.json';
+function loadTasks(cb){
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', TASKS_URL + '?t=' + Date.now(), true);
+    x.onload = function(){
+      if (x.status !== 200) return;
+      try { var j = JSON.parse(x.responseText); if (j && j.tasks){ if (!data.tasksCache || data.tasksCache.date !== j.date) data.tasksDone = {}; data.tasksCache = j; save(); if (cb) cb(); } } catch(e){}
+    };
+    x.send();
+  } catch(e){}
+}
+function renderTaches(){
+  var t = data.tasksCache, mine = data.tasksDone || {}, h, i, todo = [], fait = [];
+  if (t && t.tasks) for (i = 0; i < t.tasks.length; i++){
+    var k = t.tasks[i], isDone = mine.hasOwnProperty(k.id) ? mine[k.id] : !!k.done;
+    (isDone ? fait : todo).push(k);
+  }
+  h = hdr('Projets', t ? esc(t.jour || '') : '', t ? '<div class="bpill num">' + todo.length + '<small> / ' + (todo.length + fait.length) + '</small></div>' : '');
+  h += '<div class="content">';
+  if (!t) h += '<div class="empty">Pas encore de tâches.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
+  else {
+    if (!todo.length) h += '<div class="glass tall">Tout est fait ✓</div>';
+    var all = todo.concat(fait);
+    for (i = 0; i < all.length; i++){
+      var tk = all[i], on = i >= todo.length, urg = /^URGENT/.test(tk.text || '');
+      h += '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="tdone" data-arg="' + esc(tk.id) + '">' +
+        '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow"><div class="ttag">' + esc(tk.client || '') + '</div>' +
+        '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
+    }
+    if (t.demain && t.demain.items && t.demain.items.length)
+      h += '<div class="glass tdem"><div class="label">' + esc(t.demain.jour || 'Demain') + '</div><div class="tdem-l">' + t.demain.items.map(esc).join('<br>') + '</div></div>';
+    if (t.updated) h += '<div class="muted tupd">Mis à jour ' + esc(t.updated) + '</div>';
+  }
+  h += '</div>';
+  var old = document.querySelector('#s-taches .content'), scroll = old ? old.scrollTop : 0;
+  $('s-taches').innerHTML = h;
+  var nc = document.querySelector('#s-taches .content');
+  if (nc && old) nc.scrollTop = scroll;
+  alignGlass($('s-taches'));
+}
+
 /* ---------- Réglages ---------- */
 function renderReglages(){
   var h = hdr('Réglages') + '<div class="content"><div class="sgrid">';
@@ -857,6 +918,14 @@ function handle(act, arg){
       dv.frais.push({type:modal.type, label:(modal.label || '').replace(/^\s+|\s+$/g, '') || FRAIS_TYPES[modal.type].def, reel:num(modal.reel), marge:num(modal.marge)});
       save(); closeModal(); renderDevis(); return;
 
+    case 'tdone':
+      if (!data.tasksCache) return;
+      var tl = data.tasksCache.tasks || [], cur = null;
+      for (i = 0; i < tl.length; i++) if (tl[i].id === arg) cur = tl[i];
+      if (!cur) return;
+      if (!data.tasksDone) data.tasksDone = {};
+      var was = data.tasksDone.hasOwnProperty(arg) ? data.tasksDone[arg] : !!cur.done;
+      data.tasksDone[arg] = !was; save(); renderTaches(); return;
     case 'pmonth': viewMonth = shiftMonth(viewMonth, +arg); renderProjets(); return;
     case 'padd': openProject(null); return;
     case 'pstat': i = findProject(arg); if (i < 0) return; p = data.projects[i]; p.status = (p.status + 1) % STATUTS.length; save(); renderProjets(); return;
@@ -972,6 +1041,7 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 load();
 checkChronoEnd(true);
 go('home');
+loadTasks(null);
 setInterval(tick, 500);
 if ('serviceWorker' in navigator && location.protocol === 'https:'){
   try { navigator.serviceWorker.register('sw.js'); } catch(e){}

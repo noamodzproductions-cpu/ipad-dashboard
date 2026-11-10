@@ -1,0 +1,48 @@
+{
+ "updated": "mardi 10 nov. à 20h10",
+ "date": "2026-11-10",
+ "jour": "Mardi 10 novembre",
+ "note": "Urgent : story Michalak, V1 Cercle, photos KURV",
+ "tasks": [
+  {
+   "id": "mich-story-ouverture",
+   "client": "Michalak",
+   "text": "URGENT · Story « Ouverture demain » : plan sur une porte, autre musique, virer le tél → Noélie (9:16)",
+   "done": true
+  },
+  {
+   "id": "theia-montage",
+   "client": "Cercle de l'Espoir",
+   "text": "URGENT · V1 interview Marie-Thérèse (sans le discours) → Xuan-nam",
+   "done": false
+  },
+  {
+   "id": "kurv-retouche-photos",
+   "client": "KURV",
+   "text": "URGENT · Retoucher ~10 photos Studio Curve → Nathalie",
+   "done": true
+  },
+  {
+   "id": "mc-sanex-v2",
+   "client": "Marie Claire",
+   "text": "Corriger la vidéo Sanex → Frame",
+   "done": false
+  },
+  {
+   "id": "astotel-lorette-ssd",
+   "client": "Astotel",
+   "text": "Rushs + photos Lorette → SSD",
+   "done": false
+  }
+ ],
+ "demain": {
+  "jour": "Mercredi 11",
+  "items": [
+   "Vidéo thé : fondu sur le logo à la fin",
+   "Retoucher photos macaron + pain perdu",
+   "Recentrer la photo travel mug",
+   "Toutes les photos du 30 oct. → Drive, prévenir Noélie",
+   "Point Zac + Noélie : rushs du matin, reels ou IA ?"
+  ]
+ }
+}
