@@ -61,19 +61,24 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .foot button{flex:1;height:86px;font-size:30px}
 .empty{font-size:26px;color:rgba(255,255,255,.6);text-align:center;padding:30px 0}
 
-/* Accueil : 3 widgets */
+/* Accueil : bento large, 3 widgets (Chrono + Projets en haut, Devis en bas) */
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
-.widgets{flex:1;min-height:0;display:flex}
-.widget{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.widgets{flex:1;min-height:0;display:flex;flex-direction:column}
+.brow{flex:1.45;min-height:0;display:flex}
+.brow.b2{flex:1;margin-top:18px}
+.widget{flex:1;min-width:0;margin-left:18px;display:flex;align-items:center;padding:24px 32px}
 .widget:first-child{margin-left:0}
 .widget:active{opacity:.8}
-.wtop{height:230px;display:flex;align-items:center;justify-content:center}
-.wtile{width:140px;height:140px;border-radius:30%;background:#fff;color:#111;padding:34px}
-.wtile svg{display:block;width:72px;height:72px}
-.wname{font-size:40px;font-weight:600;margin-top:24px}
-.wring{position:relative;width:230px;height:230px}
+.wtile{flex-shrink:0;width:130px;height:130px;border-radius:30%;background:#fff;color:#111;padding:32px}
+.wtile svg{display:block;width:66px;height:66px}
+.light .wtile{background:#111;color:#fff}
+.wname{font-size:44px;font-weight:600;margin-left:30px;white-space:nowrap}
+.wring{flex-shrink:0;position:relative;width:200px;height:200px}
 .wring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
-.hc-time{font-size:56px;font-weight:300;letter-spacing:-1.5px}
+.hc-time{font-size:50px;font-weight:300;letter-spacing:-1.5px}
+.chev{position:absolute;top:20px;right:20px;width:48px;height:48px;border-radius:24px;background:rgba(255,255,255,.18)}
+.chev svg{display:block;width:22px;height:22px;margin:13px auto}
+.light .chev{background:#111;color:#fff}
 
 /* Interrupteurs iOS */
 .tgl{position:relative;display:inline-block;width:64px;height:38px;border-radius:19px;background:rgba(255,255,255,.22)}
@@ -563,10 +568,14 @@ function monthProjects(mk){
   return r;
 }
 function renderHome(){
-  var h = '<div class="glass widget" id="hc-card" data-act="go" data-arg="chrono"><div class="wtop"><div class="wring">' + ringSvg('hc-bar') +
-    '<div class="wring-c"><div class="hc-time num" id="hc-time"></div></div></div></div><div class="wname">Chrono</div></div>';
-  h += '<div class="glass widget" data-act="go" data-arg="devis"><div class="wtop"><div class="wtile">' + ico(IC.euro) + '</div></div><div class="wname">Devis</div></div>';
-  h += '<div class="glass widget" data-act="link" data-arg="' + MISSIONS + '"><div class="wtop"><div class="wtile">' + ico(IC.check) + '</div></div><div class="wname">Projets</div></div>';
+  var chev = '<div class="chev">' + ico(IC.arrow) + '</div>';
+  var h = '<div class="brow">' +
+    '<div class="glass widget" id="hc-card" data-act="go" data-arg="chrono"><div class="wring">' + ringSvg('hc-bar') +
+      '<div class="wring-c"><div class="hc-time num" id="hc-time"></div></div></div><div class="wname">Chrono</div>' + chev + '</div>' +
+    '<div class="glass widget" data-act="link" data-arg="' + MISSIONS + '"><div class="wtile">' + ico(IC.check) + '</div><div class="wname">Projets</div>' + chev + '</div>' +
+    '</div><div class="brow b2">' +
+    '<div class="glass light widget" data-act="go" data-arg="devis"><div class="wtile">' + ico(IC.euro) + '</div><div class="wname">Devis</div>' + chev + '</div>' +
+    '</div>';
   $('widgets').innerHTML = h;
   alignGlass($('s-home'));
   updateChrono();
