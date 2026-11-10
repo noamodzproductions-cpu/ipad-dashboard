@@ -7,7 +7,10 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - `index.html` = version normale (en service). `test/index.html` = version d'essai au style de `accueil-bento.html` (maquette de référence, look et disposition seulement).
 - Ne jamais modifier la version normale quand on travaille sur `/test`.
 - `test/bg.jpg` = fond net, `test/blur.jpg` = même fond flouté à l'avance (verre dépoli sans calcul, calé par `alignGlass()`).
-- Écran Projets : bouton icône « Missions du jour » (à gauche de « + Projet ») qui ouvre la page Claude « Aujourd'hui » (https://claude.ai/artifact/Ff3ZbqjcB6FYCZBsdPyeoW), mise à jour 2×/jour par la routine Suivi. Ne pas supprimer. (Aussi présent dans la carte « Prochaine tâche » de l'accueil /test.)
+- Écran Projets : bouton icône « Missions du jour » (à gauche de « + Projet ») qui ouvre la page Claude « Aujourd'hui » (https://claude.ai/artifact/Ff3ZbqjcB6FYCZBsdPyeoW), mise à jour 2×/jour par la routine Suivi. Ne pas supprimer.
+- Accueil /test : en-tête (Bonjour/Bonsoir Noam, date, heure, engrenage) + 3 gros widgets, juste nom + icône : Chrono (anneau + temps), Devis, Projets. Pas d'infos en plus (pas d'argent, pas d'URSSAF). Le widget Projets (= tâches) ouvre directement la page « Aujourd'hui » ci-dessus ; l'écran Projets interne n'est plus relié à l'accueil pour l'instant.
+- /test : un seul mode (pas de mode nuit), pas d'effet « bounce » au toucher, le fond ne doit jamais bouger (touchmove bloqué hors des listes).
+- Les mises en page doivent tenir aussi dans Safari avec barre d'adresse (~1024×690), pas seulement en plein écran (1024×768).
 - `DESIGN.md` (style Mobbin) = ancienne piste, remplacée par `accueil-bento.html`.
 
 ## Contraintes Safari 12 / iPad Air 1

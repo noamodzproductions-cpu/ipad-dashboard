@@ -16,8 +16,8 @@
 input,textarea{-webkit-user-select:text;user-select:text}
 html,body{height:100%;width:100%;overflow:hidden}
 body{position:fixed;top:0;left:0;right:0;bottom:0;background:#0b0b0d url(bg.jpg) 0 0/1024px 768px no-repeat;color:#fff;font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
-button{font-family:inherit;color:#fff;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.14);border-radius:9999px;min-height:70px;min-width:70px;font-size:26px;font-weight:600;padding:0 26px;-webkit-appearance:none;cursor:pointer;line-height:1.15;transition:transform .15s,opacity .15s}
-button:active{transform:scale(.96);opacity:.8}
+button{font-family:inherit;color:#fff;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.14);border-radius:9999px;min-height:70px;min-width:70px;font-size:26px;font-weight:600;padding:0 26px;-webkit-appearance:none;cursor:pointer;line-height:1.15}
+button:active{opacity:.7}
 button.white{background:#fff;color:#111;border-color:#fff}
 button.vio{color:#cbb8ff}
 [data-act]{cursor:pointer}
@@ -38,8 +38,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .glass{position:relative;border-radius:28px;border:1px solid rgba(255,255,255,.24);background-color:rgba(255,255,255,.08);background-image:linear-gradient(rgba(255,255,255,.10),rgba(255,255,255,.10)),url(blur.jpg);background-repeat:no-repeat;background-size:100% 100%,1024px 768px;overflow:hidden}
 .glass.light{color:#111;border-color:#E9E9EC;background-color:#E9E9EC;background-image:linear-gradient(rgba(240,240,243,.80),rgba(240,240,243,.80)),url(blur.jpg)}
 .card{padding:24px}
-.tap{transition:transform .15s,opacity .15s}
-.tap:active{transform:scale(.97);opacity:.9}
+.tap:active{opacity:.8}
 .flash{background:#fff !important;color:#111 !important}
 .flash .label,.flash .hc-sub,.flash .cc-sub{color:#111 !important}
 .label{font-size:17px;font-weight:600;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
@@ -62,35 +61,19 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .foot button{flex:1;height:86px;font-size:30px}
 .empty{font-size:26px;color:rgba(255,255,255,.6);text-align:center;padding:30px 0}
 
-/* Accueil (bento) */
+/* Accueil : 3 widgets */
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
-.bento{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;grid-template-rows:360px 248px;grid-gap:18px;height:626px}
-.c-task{grid-column:1 / 3;grid-row:1}
-.c-proj{grid-column:3 / 5;grid-row:1}
-.c-devis{grid-column:1 / 3;grid-row:2}
-.c-chr{grid-column:3;grid-row:2;padding:20px}
-.c-urs{grid-column:4;grid-row:2;padding:20px}
-.soon{position:absolute;top:20px;right:22px;height:34px;line-height:34px;padding:0 14px;border-radius:17px;background:rgba(255,255,255,.16);font-size:15px;font-weight:600;color:rgba(255,255,255,.75)}
-.task-ph{font-size:32px;font-weight:600;line-height:1.2;margin-top:34px;color:rgba(255,255,255,.55);padding-right:40px}
-.c-task .white{position:absolute;left:24px;bottom:24px;height:76px;font-size:24px}
-.chev{position:absolute;top:18px;right:18px;width:48px;height:48px;border-radius:24px;background:rgba(255,255,255,.18)}
-.chev svg{display:block;width:22px;height:22px;margin:13px auto}
-.big-val{font-size:60px;font-weight:700;letter-spacing:-1.5px;margin-top:14px;line-height:1.05;white-space:nowrap}
-.money{margin-top:10px;font-size:19px;color:rgba(255,255,255,.8);white-space:nowrap}
-.sep{display:inline-block;width:22px}
-.plist{position:absolute;left:24px;right:24px;bottom:12px}
-.prow{position:relative;height:50px;line-height:50px;border-top:1px solid rgba(255,255,255,.16);font-size:20px;white-space:nowrap}
-.pname{display:inline-block;width:40%;font-weight:600;overflow:hidden;text-overflow:ellipsis;vertical-align:top}
-.pstat{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.18);font-size:15px;font-weight:600;vertical-align:middle}
-.pstat.done{background:rgba(74,222,128,.25);color:#4ade80}
-.pamt{position:absolute;right:28px;top:0}
-.pdot{position:absolute;right:0;top:18px;width:14px;height:14px;border-radius:7px}
-.c-devis .big-val{font-size:66px;margin-top:16px}
-.bpill-in{position:absolute;right:24px;bottom:24px;height:70px;line-height:70px;padding:0 30px;border-radius:35px;background:#111;color:#fff;font-size:22px;font-weight:700}
-.hc-time{font-size:58px;font-weight:300;letter-spacing:-1.5px;margin-top:10px;line-height:1}
-.hc-sub{font-size:16px;color:rgba(255,255,255,.75);margin-top:6px;white-space:nowrap}
-.mid-val{font-size:50px;font-weight:700;letter-spacing:-1px;margin-top:28px;white-space:nowrap}
-.c-urs .small{font-size:17px;line-height:1.35}
+.widgets{flex:1;min-height:0;display:flex}
+.widget{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.widget:first-child{margin-left:0}
+.widget:active{opacity:.8}
+.wtop{height:230px;display:flex;align-items:center;justify-content:center}
+.wtile{width:140px;height:140px;border-radius:30%;background:#fff;color:#111;padding:34px}
+.wtile svg{display:block;width:72px;height:72px}
+.wname{font-size:40px;font-weight:600;margin-top:24px}
+.wring{position:relative;width:230px;height:230px}
+.wring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
+.hc-time{font-size:56px;font-weight:300;letter-spacing:-1.5px}
 
 /* Interrupteurs iOS */
 .tgl{position:relative;display:inline-block;width:64px;height:38px;border-radius:19px;background:rgba(255,255,255,.22)}
@@ -103,41 +86,27 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tgl-hit{position:absolute;top:6px;right:6px;width:90px;height:70px;text-align:center;padding-top:16px}
 .tgl-hit.big{position:static;width:120px;height:80px;padding-top:12px}
 
-/* Règle graduée du chrono */
-.ruler{position:absolute}
-.ruler .nums{position:absolute;left:0;right:0;top:0}
-.rnum{position:absolute;top:0;text-align:center;color:rgba(255,255,255,.45);font-weight:500}
-.rnum.on{color:#fff;font-weight:700}
-.ticks{position:absolute;left:0;right:0}
-.tick{position:absolute;width:2px;margin-left:-1px;border-radius:1px;background:rgba(255,255,255,.28)}
-.tick.major{background:rgba(255,255,255,.55)}
-.handle{position:absolute;left:0;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.45);transition:transform .3s}
-.glow{position:absolute;left:50%;border-radius:3px;background:#4ade80}
-.ruler.mini{left:16px;right:16px;bottom:14px;height:72px}
-.mini .nums{height:22px}
-.mini .rnum{width:30px;margin-left:-15px;height:22px;line-height:22px;font-size:14px}
-.mini .ticks{top:30px;height:34px}
-.mini .tick{bottom:6px;height:12px}
-.mini .tick.major{height:20px}
-.mini .handle{top:22px;width:24px;height:48px;border-radius:8px}
-.mini .glow{top:8px;bottom:8px;width:3px;margin-left:-1.5px}
-.ruler.big{left:40px;right:40px;bottom:24px;height:180px}
-.big .nums{height:70px}
-.big .rnum{width:110px;min-width:0;margin-left:-55px;height:70px;padding:0;font-size:32px;background:transparent;border:0;border-radius:35px}
-.big .ticks{top:90px;height:80px}
-.big .tick{bottom:14px;height:28px}
-.big .tick.major{height:48px}
-.big .handle{top:78px;width:56px;height:98px;border-radius:16px}
-.big .glow{top:16px;bottom:16px;width:6px;margin-left:-3px}
+/* Anneau du chrono (SVG, seul stroke-dashoffset change) */
+.ring{display:block;width:100%;height:100%}
+.ring circle{fill:none;stroke-width:5}
+.ring .track{stroke:rgba(255,255,255,.16)}
+.ring .bar{stroke-linecap:round}
+.flash .ring .track{stroke:rgba(0,0,0,.12)}
 
 /* Chrono */
 .sess{font-size:22px;color:rgba(255,255,255,.7);white-space:nowrap}
 .sess b{font-size:44px;color:#fff;margin-left:8px;vertical-align:-6px}
-.c-big{flex:1;min-height:0;padding:20px 24px}
-.ctop{height:80px}
+.c-big{flex:1;min-height:0;display:flex;flex-direction:column;padding:20px 24px}
+.ctop{height:80px;flex-shrink:0}
 .mode{height:48px;line-height:48px;padding:0 20px;border-radius:24px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);font-size:22px;font-weight:600;white-space:nowrap}
-.cc-time{font-size:210px;font-weight:200;letter-spacing:-6px;line-height:1;text-align:center;margin-top:4px}
-.cc-sub{font-size:28px;color:rgba(255,255,255,.75);text-align:center;margin-top:10px}
+.cring{flex:1;min-height:0;position:relative;margin:0 0 16px}
+.cring .ring{position:absolute;top:0;left:0}
+.cring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cc-time{font-size:120px;font-weight:200;letter-spacing:-4px;line-height:1}
+.cc-sub{font-size:26px;color:rgba(255,255,255,.75);margin-top:8px}
+.presets{flex-shrink:0}
+.pre{flex:1;min-width:0;height:76px;font-size:24px;padding:0 8px}
+.pre.on{background:#fff;color:#111;border-color:#fff}
 
 /* Devis */
 .dots{font-size:0;white-space:nowrap}
@@ -220,9 +189,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .cbox2{background:#1c1c1e;border:1px solid rgba(255,255,255,.24);border-radius:28px;max-width:680px;margin:200px auto 0;padding:36px}
 .cbox2 .cmsg{font-size:34px;font-weight:600;margin-bottom:30px;text-align:center}
 
-/* Nuit (21 h - 7 h) : voile noir, seule l'opacité change */
-.veil{position:fixed;top:0;left:0;right:0;bottom:0;background:#000;opacity:0;pointer-events:none;z-index:100;transition:opacity .4s}
-body.night .veil{opacity:.5}
 </style>
 </head>
 <body>
@@ -233,7 +199,7 @@ body.night .veil{opacity:.5}
     <div class="hclock num" id="clock">00:00</div>
     <button class="rbtn" data-act="go" data-arg="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
-  <div class="bento" id="bento"></div>
+  <div class="widgets" id="widgets"></div>
 </section>
 <section id="s-chrono" class="screen"></section>
 <section id="s-devis" class="screen"></section>
@@ -250,7 +216,6 @@ body.night .veil{opacity:.5}
     </div>
   </div>
 </div>
-<div class="veil"></div>
 
 <script>
 (function(){
@@ -383,7 +348,7 @@ var IDLE_MS = 120000;
 var STOPS = [5, 10, 25, 50, 90], POS = [10, 30, 50, 70, 90];
 var IC = {
   back:'<path d="M15 18l-6-6 6-6"/>', prev:'<path d="M15 18l-6-6 6-6"/>', next:'<path d="M9 18l6-6-6-6"/>',
-  arrow:'<path d="M7 17L17 7M9 7h8v8"/>',
+  arrow:'<path d="M7 17L17 7M9 7h8v8"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
   check:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/>'
 };
 function ico(p, cls){ return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>'; }
@@ -528,52 +493,37 @@ function glowColor(s){
   var f = s.dur ? s.left / s.dur : 1;
   return f > 0.5 ? '#4ade80' : (f > 0.2 ? '#A78BFA' : '#ffffff');
 }
-function minToPos(m){
-  if (m <= STOPS[0]) return POS[0] * m / STOPS[0];
-  for (var i = 1; i < STOPS.length; i++){
-    if (m <= STOPS[i]) return POS[i-1] + (POS[i] - POS[i-1]) * (m - STOPS[i-1]) / (STOPS[i] - STOPS[i-1]);
-  }
-  return POS[POS.length - 1];
+var RING_C = 2 * Math.PI * 45;
+var PRESETS = [[25,'Travail 25'], [50,'Travail 50'], [90,'Travail 90'], [5,'Pause 5'], [10,'Pause 10']];
+function ringSvg(id){
+  return '<svg class="ring" viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/>' +
+    '<circle class="bar" id="' + id + '" cx="50" cy="50" r="45" stroke="#4ade80" stroke-dasharray="' + RING_C.toFixed(2) + '" stroke-dashoffset="0" transform="rotate(-90 50 50)"/></svg>';
 }
-function buildRuler(el, big){
-  var h = '<div class="nums">', i;
-  for (i = 0; i < STOPS.length; i++){
-    h += big ? '<button class="rnum" data-act="csel" data-arg="' + STOPS[i] + '" data-m="' + STOPS[i] + '" style="left:' + POS[i] + '%">' + STOPS[i] + '</button>'
-             : '<span class="rnum" data-m="' + STOPS[i] + '" style="left:' + POS[i] + '%">' + STOPS[i] + '</span>';
-  }
-  h += '</div><div class="ticks">';
-  for (i = 0; i <= 40; i++) h += '<span class="tick' + (i % 8 === 4 ? ' major' : '') + '" style="left:' + (i * 2.5) + '%"></span>';
-  h += '</div><div class="handle"><span class="glow"></span></div>';
-  el.innerHTML = h;
-  return {el:el, w:0, hw:0, x:null, col:null, sel:null, handle:el.querySelector('.handle'), glow:el.querySelector('.glow'), nums:el.querySelectorAll('.rnum')};
+function placeRing(id, s){
+  var e = $(id);
+  if (!e) return;
+  var f = s.dur ? s.left / s.dur : 1, off = (RING_C * (1 - f)).toFixed(1), col = glowColor(s);
+  if (e.getAttribute('stroke-dashoffset') !== off) e.setAttribute('stroke-dashoffset', off);
+  if (e.getAttribute('stroke') !== col) e.setAttribute('stroke', col);
 }
-function placeRuler(R, s){
-  if (!R) return;
-  if (!R.w){ R.w = R.el.offsetWidth; R.hw = R.handle.offsetWidth; if (!R.w) return; }
-  var x = Math.round(minToPos(s.left / 60000) / 100 * R.w - R.hw / 2);
-  if (x !== R.x){ R.x = x; var t = 'translateX(' + x + 'px)'; R.handle.style.webkitTransform = t; R.handle.style.transform = t; }
-  var col = glowColor(s);
-  if (col !== R.col){ R.col = col; R.glow.style.backgroundColor = col; }
-  if (s.min !== R.sel){
-    R.sel = s.min;
-    for (var i = 0; i < R.nums.length; i++) R.nums[i].className = 'rnum' + (+R.nums[i].getAttribute('data-m') === s.min ? ' on' : '');
-  }
-}
-var homeRuler = null, bigRuler = null;
+var preSel = null;
 function updateChrono(){
   var s = chronoState(), time = fmtTime(s.left), sub = chronoSub(s);
   var on = !!(s.c && s.c.running), fl = !!(s.c && s.c.done && flashOn);
   if (current === 'home'){
-    setText('hc-time', time); setText('hc-sub', sub);
-    setCls('hc-tgl', 'on', on); setCls('hc-card', 'flash', fl);
-    placeRuler(homeRuler, s);
+    setText('hc-time', time); setCls('hc-card', 'flash', fl); placeRing('hc-bar', s);
   } else if (current === 'chrono'){
     setText('cc-time', time); setText('cc-sub', sub);
     setText('cc-mode', s.kind === 'work' ? 'Travail' : 'Pause');
     setCls('cc-tgl', 'on', on); setCls('cc-card', 'flash', fl);
     setCls('cc-stop', 'hidden', !s.c);
     setText('sess', String(todayCount()));
-    placeRuler(bigRuler, s);
+    placeRing('cc-bar', s);
+    if (s.min !== preSel){
+      preSel = s.min;
+      var b = document.querySelectorAll('#s-chrono .pre');
+      for (var i = 0; i < b.length; i++) b[i].className = 'pre' + (+b[i].getAttribute('data-arg') === s.min ? ' on' : '');
+    }
   }
 }
 
@@ -589,8 +539,6 @@ function tick(){
   if (ds !== lastDate){ $('date').textContent = ds; lastDate = ds; }
   var gr = (hr >= 5 && hr < 18) ? 'Bonjour Noam' : 'Bonsoir Noam';
   if (gr !== lastGreet){ $('greet').textContent = gr; lastGreet = gr; }
-  var night = (hr >= 21 || hr < 7);
-  if (document.body.classList.contains('night') !== night) document.body.classList.toggle('night', night);
   checkChronoEnd(false);
   updateChrono();
   if (Date.now() - lastActivity > IDLE_MS){
@@ -615,30 +563,11 @@ function monthProjects(mk){
   return r;
 }
 function renderHome(){
-  var st = data.settings, now = new Date(), mp = monthProjects(monthKey(now)), dv = calcDevis(data.devis, st), i;
-  var h = '<div class="glass card c-task"><div class="label">Prochaine tâche</div><div class="soon">bientôt · Trello</div>' +
-    '<div class="task-ph">Ta prochaine tâche Trello s’affichera ici.</div>' +
-    '<button class="white" data-act="link" data-arg="' + MISSIONS + '">Missions du jour' + ico(IC.arrow, 'inl') + '</button></div>';
-  h += '<div class="glass card c-proj tap" data-act="go" data-arg="projets"><div class="label">Projets · ' + cap(MOIS[now.getMonth()]) + (mp.list.length ? ' (' + mp.list.length + ')' : '') + '</div>' +
-    '<div class="chev">' + ico(IC.arrow) + '</div><div class="big-val num">' + eur(mp.brut) + '</div>' +
-    '<div class="money"><span class="dot g"></span>Encaissé ' + eur(mp.paid) + '<span class="sep"></span><span class="dot v"></span>À encaisser ' + eur(mp.brut - mp.paid) + '</div><div class="plist">';
-  if (!mp.list.length) h += '<div class="prow muted">Aucun projet ce mois-ci</div>';
-  for (i = 0; i < mp.list.length && i < 3; i++){
-    var p = mp.list[i];
-    h += '<div class="prow"><span class="pname">' + esc(p.client || 'Sans nom') + '</span><span class="pstat' + (p.status === 4 ? ' done' : '') + '">' + STATUTS[p.status] + '</span>' +
-      '<span class="pamt num">' + eur(p.amount) + '</span><span class="pdot ' + (p.paid ? 'g' : 'v') + '"></span></div>';
-  }
-  h += '</div></div>';
-  h += '<div class="glass light card c-devis tap" data-act="go" data-arg="devis"><div class="label">Devis en cours</div>' +
-    '<div class="big-val num">' + eur(dv.brut) + '</div><div class="small">Tu touches ' + eur(dv.net) + ' net</div>' +
-    '<div class="bpill-in">Ouvrir' + ico(IC.arrow, 'inl') + '</div></div>';
-  h += '<div class="glass card c-chr tap" id="hc-card" data-act="go" data-arg="chrono"><div class="label">Chrono</div>' +
-    '<div class="tgl-hit" data-act="ctoggle"><span class="tgl" id="hc-tgl"><span class="knob"></span></span></div>' +
-    '<div class="hc-time num" id="hc-time"></div><div class="hc-sub" id="hc-sub"></div><div class="ruler mini" id="hc-ruler"></div></div>';
-  h += '<div class="glass card c-urs tap" data-act="go" data-arg="projets"><div class="label">URSSAF</div>' +
-    '<div class="mid-val num">' + eur(mp.paid * num(st.urssaf) / 100) + '</div><div class="small">à mettre de côté<br>sur l’encaissé du mois</div></div>';
-  $('bento').innerHTML = h;
-  homeRuler = buildRuler($('hc-ruler'), false);
+  var h = '<div class="glass widget" id="hc-card" data-act="go" data-arg="chrono"><div class="wtop"><div class="wring">' + ringSvg('hc-bar') +
+    '<div class="wring-c"><div class="hc-time num" id="hc-time"></div></div></div></div><div class="wname">Chrono</div></div>';
+  h += '<div class="glass widget" data-act="go" data-arg="devis"><div class="wtop"><div class="wtile">' + ico(IC.euro) + '</div></div><div class="wname">Devis</div></div>';
+  h += '<div class="glass widget" data-act="link" data-arg="' + MISSIONS + '"><div class="wtop"><div class="wtile">' + ico(IC.check) + '</div></div><div class="wname">Projets</div></div>';
+  $('widgets').innerHTML = h;
   alignGlass($('s-home'));
   updateChrono();
 }
@@ -649,9 +578,15 @@ function renderChrono(){
   h += '<div class="glass c-big" id="cc-card"><div class="row ctop"><div class="mode" id="cc-mode"></div><div class="grow"></div>' +
     '<button id="cc-stop" data-act="cstop">Stop</button>' +
     '<div class="tgl-hit big" data-act="ctoggle"><span class="tgl big" id="cc-tgl"><span class="knob"></span></span></div></div>' +
-    '<div class="cc-time num" id="cc-time"></div><div class="cc-sub" id="cc-sub"></div><div class="ruler big" id="cc-ruler"></div></div>';
+    '<div class="cring" id="cc-ring">' + ringSvg('cc-bar') + '<div class="cring-c"><div class="cc-time num" id="cc-time"></div><div class="cc-sub" id="cc-sub"></div></div></div>' +
+    '<div class="presets row">';
+  for (var i = 0; i < PRESETS.length; i++) h += '<button class="pre" data-act="csel" data-arg="' + PRESETS[i][0] + '">' + PRESETS[i][1] + '</button>';
+  h += '</div></div>';
   $('s-chrono').innerHTML = h;
-  bigRuler = buildRuler($('cc-ruler'), true);
+  preSel = null;
+  /* taille du temps adaptée à la hauteur réelle de l'anneau (calculée une fois) */
+  var rh = $('cc-ring').offsetHeight;
+  if (rh) $('cc-time').style.fontSize = Math.max(60, Math.min(120, Math.floor(rh * 0.27))) + 'px';
   alignGlass($('s-chrono'));
   updateChrono();
 }
@@ -977,6 +912,16 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
+document.addEventListener('touchmove', function(e){
+  var el = e.target;
+  while (el && el.nodeType === 1){
+    if (el.tagName === 'TEXTAREA') return;
+    var c = el.className;
+    if (typeof c === 'string' && /(^| )(content|res-r|overlay)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
+    el = el.parentNode;
+  }
+  e.preventDefault();
+}, {passive:false});
 
 document.addEventListener('click', function(e){
   markActivity();
