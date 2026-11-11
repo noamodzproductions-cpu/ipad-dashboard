@@ -97,7 +97,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-sub{font-size:24px;color:rgba(255,255,255,.7);margin-top:8px;white-space:nowrap}
 .fw-sub b{color:#cbb8ff}
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
-.ftots{margin:0 0 16px}
+.ftots{margin:0 0 8px}
 .fcard{display:flex;align-items:center;min-height:120px;padding:18px 22px;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fcard.late{border-left-color:#A78BFA}
 .fc-n{font-size:30px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -108,10 +108,13 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fcard.paid .grow,.fcard.paid .fc-v{opacity:.45}
 .fcard.paid .fc-v{text-decoration:line-through}
 .fchk{display:flex;flex-shrink:0;margin-left:18px;padding-left:18px;border-left:1px solid rgba(255,255,255,.16)}
-.fbox{position:relative;width:160px;height:84px;padding:0 0 0 62px;border-radius:20px;text-align:left;font-size:22px;line-height:1.15;background:transparent;border:2px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8)}
-.fbox + .fbox{margin-left:12px}
-.fbox i{position:absolute;left:14px;top:21px;width:38px;height:38px;line-height:34px;border-radius:12px;border:3px solid rgba(255,255,255,.4);font-style:normal;font-size:24px;font-weight:800;text-align:center;color:#111}
-.fbox small{display:block;font-size:16px;font-weight:600;opacity:.8}
+.fbox{position:relative;width:76px;height:76px;min-width:76px;padding:0;border-radius:20px;background:transparent;border:2px solid rgba(255,255,255,.18)}
+.fbox + .fbox,.fbox-x + .fbox{margin-left:12px}
+.fbox-x{display:block;width:76px;height:76px}
+.fbox i{position:absolute;left:17px;top:17px;width:38px;height:38px;line-height:32px;border-radius:12px;border:3px solid rgba(255,255,255,.4);font-style:normal;font-size:24px;font-weight:800;text-align:center;color:#111}
+.fhead{flex-shrink:0;height:24px;text-align:right;font-size:15px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.fhead span{display:inline-block;width:76px;text-align:center}
+.fhead span + span{margin-left:12px;margin-right:24px}
 .fbox.on.r{background:rgba(167,139,250,.22);border-color:#A78BFA;color:#d6c8ff}
 .fbox.on.r i{background:#A78BFA;border-color:#A78BFA}
 .fbox.on.p{background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80}
@@ -456,6 +459,7 @@ function normalize(d){
   if (!d.facEtat || typeof d.facEtat !== 'object') d.facEtat = {relances:{}, payes:{}};
   if (!d.facEtat.relances) d.facEtat.relances = {};
   if (!d.facEtat.payes) d.facEtat.payes = {};
+  if (!d.facEtat.encaisses) d.facEtat.encaisses = {};
   if (d.relances){ for (var rk in d.relances) if (d.relances.hasOwnProperty(rk) && !d.facEtat.relances[rk]) d.facEtat.relances[rk] = [num(d.relances[rk])]; delete d.relances; }
   return d;
 }
@@ -574,6 +578,7 @@ function loadFactures(){
       try {
         var j = JSON.parse(x.responseText);
         if (!j || !(j.factures instanceof Array)) return;
+        facSortis(data.facCache, j);
         data.facCache = j;
         facPurge(); save(); renderFactures();
       } catch(e){}
@@ -581,6 +586,24 @@ function loadFactures(){
     x.send();
   } catch(e){}
   facPull();
+}
+/* une carte sortie de « Solde en attente » (passée dans Payé & Archivé) compte comme encaissée ce jour-là */
+function facSortis(oldC, newC){
+  if (!oldC || !oldC.factures) return;
+  var ids = {}, i, f, E = data.facEtat, ch = false;
+  for (i = 0; i < newC.factures.length; i++) ids[newC.factures[i].id] = 1;
+  for (i = 0; i < oldC.factures.length; i++){
+    f = oldC.factures[i];
+    if (!ids[f.id] && !E.encaisses[f.id]){ E.encaisses[f.id] = {v:num(f.reste), m:Date.now(), p:f.projet}; ch = true; }
+  }
+  var lim = Date.now() - 70 * 86400000, k;
+  for (k in E.encaisses) if (E.encaisses.hasOwnProperty(k) && num(E.encaisses[k].m) < lim){ delete E.encaisses[k]; ch = true; }
+  if (ch) facSchedule();
+}
+function facEncaisseMois(){
+  var t = 0, now = new Date(), k, e, d, E = data.facEtat.encaisses;
+  for (k in E) if (E.hasOwnProperty(k)){ e = E[k]; d = new Date(num(e.m)); if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) t += num(e.v); }
+  return t;
 }
 /* oublie relances / payés des cartes sorties de la liste (ex. déplacées dans Payé & Archivé) */
 function facPurge(){
@@ -599,7 +622,7 @@ function facPull(){
     if (!ok || !j || !j.content || data.facDirty) return;
     try {
       var e = JSON.parse(b64dec(j.content));
-      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}};
+      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}};
       facPurge(); save(); renderFactures();
     } catch(er){}
   });
@@ -667,7 +690,8 @@ function facUnrelance(id){
 }
 function facPaye(id, on){
   var r = facRow(id); if (!r) return;
-  if (on){ data.facEtat.payes[id] = Date.now(); facTickTask(r); } else delete data.facEtat.payes[id];
+  if (on){ data.facEtat.payes[id] = Date.now(); data.facEtat.encaisses[id] = {v:r.reste, m:Date.now(), p:r.projet}; facTickTask(r); }
+  else { delete data.facEtat.payes[id]; delete data.facEtat.encaisses[id]; }
   facSchedule(); renderFactures();
   if (on) showToast(r.projet + ' · payé', function(){ facPaye(id, false); });
 }
@@ -697,20 +721,23 @@ function renderFactures(){
   if (current !== 'factures') return;
   var old = document.querySelector('#s-factures .content'), scroll = old ? old.scrollTop : 0;
   var upd = data.facCache && data.facCache.updated ? 'Trello · ' + esc(data.facCache.updated) : '';
-  var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('À toucher', t.tot) + tot('URSSAF 23,2 %', t.urs) + tot('Net', t.net) + '</div><div class="content">';
+  var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('À toucher', t.tot) + tot('URSSAF 23,2 %', t.urs) + tot('Net', t.net) + tot('Encaissé ' + MOIS_C[new Date().getMonth()], facEncaisseMois()) + '</div>' +
+    (rows.length ? '<div class="fhead"><span>Relancé</span><span>Payé</span></div>' : '') + '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   for (i = 0; i < rows.length; i++){
     var r = rows[i], late = !r.paye && r.left <= 0, relOn = !!r.last && r.left > 0, info;
-    if (r.paye) info = 'Payé · passera dans Trello';
-    else if (late) info = r.last ? 'À relancer de nouveau' : 'À relancer · ' + r.days + ' j';
-    else if (relOn) info = 'Prochaine relance dans ' + r.left + ' j';
-    else info = 'À relancer dans ' + r.left + ' j';
+    if (r.paye) info = 'Payé le ' + dCourt(data.facEtat.payes[r.id]);
+    else if (r.last){
+      var ago = Math.max(0, Math.round((dayStart(new Date()) - dayStart(new Date(r.last))) / 86400000));
+      info = (ago ? 'Relancé il y a ' + ago + ' j' : 'Relancé aujourd’hui') + ' · ' + (late ? 'à relancer de nouveau' : 'prochaine relance dans ' + r.left + ' j');
+    }
+    else info = 'En attente depuis ' + r.days + ' j · ' + (late ? 'à relancer' : 'relance dans ' + r.left + ' j');
     h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '"><div class="grow" data-act="fopen" data-arg="' + esc(r.id) + '"><div class="fc-n">' + esc(r.projet) + '</div>' +
       '<div class="fc-d num">' + info + '</div></div>' +
       '<div class="fc-v num" data-act="fopen" data-arg="' + esc(r.id) + '">' + eur(r.reste) + '</div>' +
       '<div class="fchk">' +
-      (r.paye ? '' : '<button class="fbox r' + (relOn ? ' on' : '') + '" data-act="frel" data-arg="' + esc(r.id) + '"><i>' + (relOn ? '✓' : '') + '</i>Relancé' + (relOn ? '<small>' + dCourt(r.last) + '</small>' : '') + '</button>') +
-      '<button class="fbox p' + (r.paye ? ' on' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '"><i>' + (r.paye ? '✓' : '') + '</i>Payé' + (r.paye ? '<small>' + dCourt(data.facEtat.payes[r.id]) + '</small>' : '') + '</button>' +
+      (r.paye ? '<span class="fbox-x"></span>' : '<button class="fbox r' + (relOn ? ' on' : '') + '" data-act="frel" data-arg="' + esc(r.id) + '"><i>' + (relOn ? '✓' : '') + '</i></button>') +
+      '<button class="fbox p' + (r.paye ? ' on' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '"><i>' + (r.paye ? '✓' : '') + '</i></button>' +
       '</div></div>';
   }
   h += '</div>';
