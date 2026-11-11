@@ -18,12 +18,6 @@
      "done": true
     },
     {
-     "id": "mer11-photos-30oct-drive",
-     "client": "Michalak",
-     "text": "URGENT · Michalak : toutes les photos du shooting 30 oct. → Drive",
-     "done": true
-    },
-    {
      "id": "mer11-the-fondu",
      "client": "Ladurée",
      "text": "URGENT · Ladurée CM : vidéo thé, fondu sur le logo à la fin",
@@ -117,6 +111,7 @@
  ],
  "supprimes": [
   "astotel-lorette-ssd",
-  "mich-videos-sujets"
+  "mich-videos-sujets",
+  "mer11-photos-30oct-drive"
  ]
 }
