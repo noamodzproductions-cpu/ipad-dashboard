@@ -12,12 +12,6 @@
      "done": false
     },
     {
-     "id": "cmc-call-ajustements",
-     "client": "Marie Claire",
-     "text": "11h · Café Marie Claire : call ajustements avant livraison des vidéos",
-     "done": true
-    },
-    {
      "id": "mer11-point-zac-noelie",
      "client": "Michalak",
      "text": "Michalak : point rushs du matin, reels ou IA ?",
@@ -92,6 +86,7 @@
   "mc-sanex-v2",
   "mer11-the-fondu",
   "mer11-macaron-pain-perdu",
-  "mer11-travel-mug"
+  "mer11-travel-mug",
+  "cmc-call-ajustements"
  ]
 }
