@@ -1,26 +1,54 @@
 {
- "updated": "mardi 10 nov. à 20h10",
+ "updated": "mercredi 11 nov. à 2h40",
  "days": [
-  {
-   "date": "2026-11-10",
-   "jour": "Mardi 10 novembre",
-   "tasks": [
-    {"id": "mich-story-ouverture", "client": "Michalak", "text": "URGENT · Story « Ouverture demain » : plan sur une porte, autre musique, virer le tél → Noélie (9:16)", "done": true},
-    {"id": "theia-montage", "client": "Cercle de l'Espoir", "text": "URGENT · V1 interview Marie-Thérèse (sans le discours) → Xuan-nam", "done": false},
-    {"id": "kurv-retouche-photos", "client": "KURV", "text": "URGENT · Retoucher ~10 photos Studio Curve → Nathalie", "done": true},
-    {"id": "mc-sanex-v2", "client": "Marie Claire", "text": "Corriger la vidéo Sanex → Frame", "done": false},
-    {"id": "astotel-lorette-ssd", "client": "Astotel", "text": "Rushs + photos Lorette → SSD", "done": false}
-   ]
-  },
   {
    "date": "2026-11-11",
    "jour": "Mercredi 11 novembre",
    "tasks": [
-    {"id": "mer11-the-fondu", "client": "", "text": "Vidéo thé : fondu sur le logo à la fin", "done": false},
-    {"id": "mer11-macaron-pain-perdu", "client": "", "text": "Retoucher photos macaron + pain perdu", "done": false},
-    {"id": "mer11-travel-mug", "client": "", "text": "Recentrer la photo travel mug", "done": false},
-    {"id": "mer11-photos-30oct-drive", "client": "", "text": "Toutes les photos du 30 oct. → Drive, prévenir Noélie", "done": false},
-    {"id": "mer11-point-zac-noelie", "client": "", "text": "Point Zac + Noélie : rushs du matin, reels ou IA ?", "done": false}
+    {"id": "theia-montage", "client": "Cercle de l'Espoir", "text": "URGENT · Le Cercle de Théia : faire la V1 (interview, sans le discours)", "done": false},
+    {"id": "mc-sanex-v2", "client": "Marie Claire", "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Sanex, jingle, logo) → Frame", "done": false},
+    {"id": "astotel-lorette-ssd", "client": "Astotel", "text": "URGENT · Astotel - Lorette : rushs + photos → SSD", "done": false},
+    {"id": "mich-videos-sujets", "client": "Michalak", "text": "URGENT · Michalak : monter les vidéos des sujets tournés", "done": false},
+    {"id": "mer11-photos-30oct-drive", "client": "Michalak", "text": "URGENT · Michalak : toutes les photos du shooting 30 oct. → Drive", "done": false},
+    {"id": "mer11-the-fondu", "client": "Ladurée", "text": "URGENT · Ladurée CM : vidéo thé, fondu sur le logo à la fin", "done": false},
+    {"id": "mer11-macaron-pain-perdu", "client": "Ladurée", "text": "URGENT · Ladurée CM : retoucher photos macaron + pain perdu", "done": false},
+    {"id": "mer11-travel-mug", "client": "Ladurée", "text": "URGENT · Ladurée CM : recentrer la photo travel mug", "done": false},
+    {"id": "cmc-call-ajustements", "client": "Marie Claire", "text": "11h · Café Marie Claire : call ajustements avant livraison des vidéos", "done": false},
+    {"id": "mer11-point-zac-noelie", "client": "Michalak", "text": "Michalak : point rushs du matin, reels ou IA ?", "done": false}
+   ]
+  },
+  {
+   "date": "2026-11-12",
+   "jour": "Jeudi 12 novembre",
+   "tasks": [
+    {"id": "mich-call-prepa-19", "client": "Michalak", "text": "16h30 · Michalak : call prépa tournage masterclass du 19", "done": false}
+   ]
+  },
+  {
+   "date": "2026-11-13",
+   "jour": "Vendredi 13 novembre",
+   "tasks": [
+    {"id": "cmc-evasion-photos", "client": "Marie Claire", "text": "Café Marie Claire Evasion, Food & Expérience : envoyer les photos", "done": false}
+   ]
+  },
+  {
+   "date": "2026-11-14",
+   "jour": "Week-end 14-15 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-16",
+   "jour": "Lundi 16 novembre",
+   "tasks": [
+    {"id": "cmc-evasion-v1", "client": "Marie Claire", "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 (récap + interviews)", "done": false}
+   ]
+  },
+  {
+   "date": "2026-11-17",
+   "jour": "Mardi 17 novembre",
+   "tasks": [
+    {"id": "nuance-tournage", "client": "Zack", "text": "Nuance Audio : tournage Sophie Davant", "done": false},
+    {"id": "nuance-tournage-ssd", "client": "Zack", "text": "Nuance Audio : rushs + photos → SSD", "done": false}
    ]
   }
  ]
