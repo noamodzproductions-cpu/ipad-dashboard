@@ -154,6 +154,17 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .pp .swrow{width:440px;font-size:26px}
 .pp-t{font-size:58px;font-weight:700;margin-top:20px}
 .res{display:flex;height:100%}
+.res.withn{height:calc(100% - 86px)}
+.nrow{height:72px;margin-bottom:14px}
+.nrow button{height:72px;font-size:24px;padding:0 22px}
+.nrow button.on{background:rgba(167,139,250,.25);border-color:#A78BFA;color:#d6c8ff}
+.nrow .sv{min-width:110px;font-size:34px}
+.nrow .sb{width:72px;height:72px}
+.nl{font-size:20px;font-weight:600;color:rgba(255,255,255,.7);white-space:nowrap}
+.warn{margin-top:14px;padding:12px 16px;border-radius:16px;background:#A78BFA;color:#111;font-size:22px;font-weight:700;line-height:1.25}
+.bv.sm{font-size:68px;letter-spacing:-2px;margin-bottom:2px}
+.mid.sm{font-size:22px}
+.ok-n{margin-top:14px;font-size:20px;color:rgba(0,0,0,.6);font-weight:600}
 .res-l{width:480px;flex-shrink:0;margin-right:18px;padding:28px;display:flex;flex-direction:column;justify-content:center}
 .res-r{flex:1;min-width:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px}
 .big-l{font-size:19px;font-weight:600;color:rgba(0,0,0,.55);text-transform:uppercase;letter-spacing:1px}
@@ -259,7 +270,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 'use strict';
 
 /*CALC-START*/
-var DEFAULTS = {demi:300, jour:500, horaire:80, horaireSup:50, taux:60, retours:25, nuit:25, weekend:30, urgence:30, uber:30, marge:32, photo:'', urssaf:24};
+var DEFAULTS = {demi:300, jour:500, horaire:80, horaireSup:50, taux:60, retours:25, nuit:25, weekend:30, urgence:30, uber:30, marge:32, photo:'', urssaf:24, remiseMax:15};
 
 function num(v){
   if (v === null || v === undefined) return 0;
@@ -362,6 +373,21 @@ function calcDevis(dv, st){
   return {lines:lines, tournage:tournage, frais:frais, montage:mo.total, brut:brut, urssaf:urssaf, reels:reels, net:brut - urssaf - reels};
 }
 
+/* Négociation (page Résultat) : arrondi à la cinquantaine supérieure, marge de négo +5 %, remise en %.
+   Plancher = prix normal − « Remise max acceptée » ; en dessous, le devis n'est pas rentable. */
+function negoCalc(r, dv, st){
+  var base = r.brut, ann = base;
+  if (dv.nego) ann = Math.round(ann * 105) / 100;
+  ann = dv.arrondi ? Math.ceil(Math.round(ann) / 50) * 50 : Math.round(ann);
+  var pct = num(dv.remise), client = Math.round(ann * (100 - pct) / 100);
+  if (dv.arrondi && pct) client = Math.floor(client / 10) * 10;
+  var rem = ann - client;
+  var urs = client * num(st.urssaf) / 100, net = client - urs - r.reels;
+  var plancher = Math.round(base * (1 - num(st.remiseMax) / 100));
+  return {actif:!!(dv.nego || dv.arrondi || pct), base:base, annonce:ann, pct:pct, remise:rem, client:client, urssaf:urs, net:net,
+    diffNet:net - r.net, plancher:plancher, sous:client < plancher, totalPct:base ? Math.round((1 - client / base) * 100) : 0};
+}
+
 function dayDesc(day, c){
   var p = [];
   if (day.heures !== undefined){ var hh = num(day.heures); if (hh) p.push(hh + ' h' + (hoursTier(hh) ? ', ' + hoursTier(hh) : '')); }
@@ -385,7 +411,7 @@ var PAGES = ['Tournage','Frais de prod','Post-prod','Résultat'];
 var SET_DEFS = [
   ['demi','Demi-journée','€'], ['jour','Journée','€'], ['taux','Taux montage','€/h'], ['retours','Retours / export','%'],
   ['nuit','Majoration nuit','%'], ['weekend','Jour férié','%'], ['urgence','Urgence < 48h','%'], ['uber','Uber aller-retour','€'],
-  ['marge','Marge frais','%'], ['horaire','Tournage 1-3 h','€/h'], ['horaireSup','Tournage heure en plus','€/h'], ['urssaf','Taux URSSAF','%']
+  ['marge','Marge frais','%'], ['remiseMax','Remise max acceptée','%'], ['horaire','Tournage 1-3 h','€/h'], ['horaireSup','Tournage heure en plus','€/h'], ['urssaf','Taux URSSAF','%']
 ];
 var FRAIS_TYPES = {
   matos:{title:'Loc matos', lab:'Libellé', def:'Location matos', chips:[]},
@@ -440,7 +466,7 @@ function setText(id, v){ var e = $(id); if (e && e.textContent !== v) e.textCont
 function setCls(id, cls, on){ var e = $(id); if (e && e.classList.contains(cls) !== on) e.classList.toggle(cls, on); }
 
 function newDay(){ return {date:isoDate(new Date()), nuit:false, heures:0, photo:false}; }
-function newDevis(){ return {page:0, days:[newDay()], frais:[], trajets:0, heures:0, urgence:false}; }
+function newDevis(){ return {page:0, days:[newDay()], frais:[], trajets:0, heures:0, urgence:false, arrondi:false, nego:false, remise:0}; }
 
 var data;
 function normalize(d){
@@ -731,9 +757,9 @@ function renderFactures(){
       info = (ago ? 'Relancé il y a ' + ago + ' j' : 'Relancé aujourd’hui') + ' · ' + (late ? 'à relancer de nouveau' : 'prochaine relance dans ' + r.left + ' j');
     }
     else info = 'En attente depuis ' + r.days + ' j · ' + (late ? 'à relancer' : 'relance dans ' + r.left + ' j');
-    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '"><div class="grow" data-act="fopen" data-arg="' + esc(r.id) + '"><div class="fc-n">' + esc(r.projet) + '</div>' +
+    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n">' + esc(r.projet) + '</div>' +
       '<div class="fc-d num">' + info + '</div></div>' +
-      '<div class="fc-v num" data-act="fopen" data-arg="' + esc(r.id) + '">' + eur(r.reste) + '</div>' +
+      '<div class="fc-v num" data-act="facopen" data-arg="' + esc(r.id) + '">' + eur(r.reste) + '</div>' +
       '<div class="fchk">' +
       (r.paye ? '<span class="fbox-x"></span>' : '<button class="fbox r' + (relOn ? ' on' : '') + '" data-act="frel" data-arg="' + esc(r.id) + '"><i>' + (relOn ? '✓' : '') + '</i></button>') +
       '<button class="fbox p' + (r.paye ? ' on' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '"><i>' + (r.paye ? '✓' : '') + '</i></button>' +
@@ -817,12 +843,26 @@ function devisPage(p, dv, st, r){
       stepper('', num(dv.heures) + ' h', 'hstep', 'h') +
       '<div style="height:34px"></div>' + sw('Urgence', dv.urgence, 'urg') + '</div>';
   } else {
-    h += '<div class="res"><div class="glass light res-l">' +
-      '<div class="big-l">À facturer (brut)</div><div class="bv num">' + eur(r.brut) + '</div>' +
-      '<div class="mid num">URSSAF ' + num(st.urssaf) + ' % : − ' + eur(r.urssaf) + '</div>' +
-      '<div class="mid num">Frais réels : − ' + eur(r.reels) + '</div>' +
-      '<div class="big-l" style="margin-top:22px"><span class="dot g"></span>Net</div><div class="bv num">' + eur(r.net) + '</div>' +
-      '</div><div class="glass res-r">';
+    var n = negoCalc(r, dv, st);
+    h += '<div class="row nrow"><button class="' + (dv.arrondi ? 'on' : '') + '" data-act="ntog" data-arg="arrondi">Arrondi 50 ↑</button>' +
+      '<button class="' + (dv.nego ? 'on' : '') + '" data-act="ntog" data-arg="nego">Négo +5 %</button><div class="grow"></div>' +
+      '<div class="nl">Remise</div><button class="sb" data-act="nrem" data-arg="-5">–</button><div class="sv num">' + n.pct + ' %</div><button class="sb" data-act="nrem" data-arg="5">+</button></div>';
+    h += '<div class="res withn"><div class="glass light res-l">';
+    if (!n.actif){
+      h += '<div class="big-l">À facturer (brut)</div><div class="bv num">' + eur(r.brut) + '</div>' +
+        '<div class="mid num">URSSAF ' + num(st.urssaf) + ' % : − ' + eur(r.urssaf) + '</div>' +
+        '<div class="mid num">Frais réels : − ' + eur(r.reels) + '</div>' +
+        '<div class="big-l" style="margin-top:22px"><span class="dot g"></span>Net</div><div class="bv num">' + eur(r.net) + '</div>';
+    } else {
+      var dn = Math.round(n.diffNet);
+      h += '<div class="big-l">Prix client</div><div class="bv sm num">' + eur(n.client) + '</div>' +
+        '<div class="mid sm num">' + (n.remise ? 'Annoncé ' + eur(n.annonce) + ' − ' + eur(n.remise) + ' (' + n.pct + ' %)' : 'Prix normal ' + eur(n.base)) + '</div>' +
+        '<div class="big-l" style="margin-top:14px"><span class="dot g"></span>Toi net</div><div class="bv sm num">' + eur(n.net) + '</div>' +
+        '<div class="mid sm num">' + (dn === 0 ? 'Comme le prix normal' : (dn > 0 ? '+ ' : '− ') + eur(Math.abs(dn)) + ' vs prix normal') + '</div>' +
+        (n.sous ? '<div class="warn">Pas rentable : sous ton minimum de ' + eur(n.plancher) + '</div>'
+                : '<div class="ok-n num">Minimum accepté : ' + eur(n.plancher) + '</div>');
+    }
+    h += '</div><div class="glass res-r">';
     var groups = [['Tournage', r.tournage], ['Frais', r.frais], ['Montage', r.montage]];
     for (var g = 0; g < groups.length; g++){
       h += '<div class="dh row"><div class="grow">' + groups[g][0] + '</div><div class="num">' + eur(groups[g][1]) + '</div></div>';
@@ -839,9 +879,9 @@ function devisPage(p, dv, st, r){
 }
 /* Export texte pour facture.net : une ligne par prestation, montants arrondis à l'euro */
 function devisExport(){
-  var dv = data.devis, st = data.settings, L = [], i, tot = 0;
+  var dv = data.devis, st = data.settings, L = [], A = [], i, tot = 0;
   function pr(x){ return Math.round(x) + ',00 €'; }
-  function line(lbl, amt){ if (amt > 0.5){ L.push(lbl + ' · 1 · ' + pr(amt)); tot += Math.round(amt); } }
+  function line(lbl, amt){ if (amt > 0.5){ A.push({l:lbl, v:Math.round(amt)}); tot += Math.round(amt); } }
   for (i = 0; i < dv.days.length; i++){
     var d = dv.days[i], c = dayCalc(d, st), hh = dayHours(d), m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d.date || '');
     var opt = [hh + ' h' + (hoursTier(hh) ? ', ' + hoursTier(hh) : '')];
@@ -854,6 +894,15 @@ function devisExport(){
   var mo = montageCalc(dv, st);
   line('Montage vidéo (' + mo.heures + ' h, retours et export inclus)', mo.base);
   line('Livraison express', mo.urgence);
+  /* négo / arrondi : les lignes sont ajustées au prorata pour tomber sur le prix annoncé, puis la remise est ajoutée */
+  var n = negoCalc(calcDevis(dv, st), dv, st);
+  if (A.length && n.annonce !== tot){
+    var f = n.annonce / tot, s2 = 0, big = 0;
+    for (i = 0; i < A.length; i++){ A[i].v = Math.round(A[i].v * f); s2 += A[i].v; if (A[i].v > A[big].v) big = i; }
+    A[big].v += n.annonce - s2; tot = n.annonce;
+  }
+  for (i = 0; i < A.length; i++) L.push(A[i].l + ' · 1 · ' + pr(A[i].v));
+  if (n.remise){ L.push('Remise commerciale (' + n.pct + ' %) · 1 · −' + pr(n.remise)); tot -= n.remise; }
   return 'Désignation · Quantité · Prix unitaire\n\n' + L.join('\n') + '\n\nTotal : ' + Math.round(tot) + ' €\nTVA non applicable, art. 293 B du CGI';
 }
 function updateDevisLive(){
@@ -1338,8 +1387,10 @@ function handle(act, arg){
       facRelance(arg); return;
     case 'funrel': closeModal(); facUnrelance(arg); return;
     case 'fpaye': closeModal(); var fp = facRow(arg); facPaye(arg, !(fp && fp.paye)); return;
-    case 'fopen': facOpen(arg); return;
+    case 'facopen': facOpen(arg); return;
 
+    case 'ntog': dv[arg] = !dv[arg]; save(); renderDevis(); return;
+    case 'nrem': dv.remise = Math.max(0, Math.min(50, num(dv.remise) + num(arg))); save(); renderDevis(); return;
     case 'dvnext': dv.page = Math.min(3, dv.page + 1); save(); renderDevis(); return;
     case 'dvprev': if (dv.page === 0){ go('home'); return; } dv.page--; save(); renderDevis(); return;
     case 'dvnew':
