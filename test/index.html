@@ -452,7 +452,7 @@ function go(name){
   if (name === 'devis') renderDevis();
   if (name === 'projets') renderProjets();
   if (name === 'reglages') renderReglages();
-  if (name === 'taches'){ renderTaches(); loadTasks(function(){ if (current === 'taches') renderTaches(); }); }
+  if (name === 'taches'){ tView = isoDate(new Date()); renderTaches(); loadTasks(function(){ if (current === 'taches') renderTaches(); }); }
   tick();
 }
 
@@ -567,6 +567,7 @@ function tick(){
   if (gr !== lastGreet){ $('greet').textContent = gr; lastGreet = gr; }
   checkChronoEnd(false);
   updateChrono();
+  if (current === 'taches' && Date.now() - tasksLoadedAt > 300000) loadTasks(function(){ if (current === 'taches') renderTaches(); });
   if (Date.now() - lastActivity > IDLE_MS){
     lastActivity = Date.now();
     if (current !== 'home' || modalOpen() || confirmOpen()){
@@ -810,42 +811,65 @@ function renderProjets(){
 }
 function findProject(id){ for (var i = 0; i < data.projects.length; i++) if (data.projects[i].id === id) return i; return -1; }
 
-/* ---------- Projets (tâches du jour) ----------
-   Source : ../taches.json (même format que le bloc #today de la page Claude « Aujourd'hui »).
-   Lu par XMLHttpRequest, gardé en cache pour le hors-ligne. Les coches restent sur cet iPad. */
-var TASKS_URL = '../taches.json';
+/* ---------- Projets (planning de la semaine) ----------
+   Source unique : ../semaine.json, écrit par le Claude du planning de la semaine.
+   Format : {updated, days:[{date:'AAAA-MM-JJ', jour:'Mercredi 11 novembre', tasks:[{id, client, text, done}]}]}
+   Lu en XMLHttpRequest (à l'ouverture puis toutes les 5 min), gardé en cache hors ligne.
+   Les coches restent sur l'iPad (par id). Journée finie -> les tâches des jours suivants remontent en « En avance ». */
+var TASKS_URL = '../semaine.json', tasksLoadedAt = 0, tView = null;
 function loadTasks(cb){
+  tasksLoadedAt = Date.now();
   try {
     var x = new XMLHttpRequest();
     x.open('GET', TASKS_URL + '?t=' + Date.now(), true);
     x.onload = function(){
       if (x.status !== 200) return;
-      try { var j = JSON.parse(x.responseText); if (j && j.tasks){ if (!data.tasksCache || data.tasksCache.date !== j.date) data.tasksDone = {}; data.tasksCache = j; save(); if (cb) cb(); } } catch(e){}
+      try { var j = JSON.parse(x.responseText); if (j && j.days){ data.tasksCache = j; save(); if (cb) cb(); } } catch(e){}
     };
     x.send();
   } catch(e){}
 }
+function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.id) ? !!m[k.id] : !!k.done; }
+function taskCard(tk){
+  var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
+  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="tdone" data-arg="' + esc(tk.id) + '">' +
+    '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '') +
+    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
+}
 function renderTaches(){
-  var t = data.tasksCache, mine = data.tasksDone || {}, h, i, todo = [], fait = [];
-  if (t && t.tasks) for (i = 0; i < t.tasks.length; i++){
-    var k = t.tasks[i], isDone = mine.hasOwnProperty(k.id) ? mine[k.id] : !!k.done;
-    (isDone ? fait : todo).push(k);
-  }
-  h = hdr('Projets', t ? esc(t.jour || '') : '', t ? '<div class="bpill num">' + todo.length + '<small> / ' + (todo.length + fait.length) + '</small></div>' : '');
-  h += '<div class="content">';
-  if (!t) h += '<div class="empty">Pas encore de tâches.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
+  var W = data.tasksCache, days = (W && W.days) ? W.days : [], today = isoDate(new Date()), i, j, idx = -1;
+  if (!tView) tView = today;
+  for (i = 0; i < days.length; i++) if (days[i].date === tView) idx = i;
+  var day = idx >= 0 ? days[idx] : null, isToday = tView === today, todo = [], fait = [];
+  if (day) for (i = 0; i < day.tasks.length; i++) (isDoneTask(day.tasks[i]) ? fait : todo).push(day.tasks[i]);
+  var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
+  var h = '<div class="hdr row"><button class="rbtn" data-act="go" data-arg="home" aria-label="Accueil">' + ico(IC.back) + '</button>' +
+    '<div class="grow"><div class="h1">Projets</div><div class="sub">' + (isToday ? 'Aujourd’hui · ' : '') + esc(title) + '</div></div>' +
+    '<button class="rbtn" data-act="tday" data-arg="-1" aria-label="Jour précédent">' + ico(IC.prev) + '</button>' +
+    '<button class="rbtn" data-act="tday" data-arg="1" aria-label="Jour suivant">' + ico(IC.next) + '</button>' +
+    (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
+  if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
-    if (!todo.length) h += '<div class="glass tall">Tout est fait ✓</div>';
-    var all = todo.concat(fait);
-    for (i = 0; i < all.length; i++){
-      var tk = all[i], on = i >= todo.length, urg = /^URGENT/.test(tk.text || '');
-      h += '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="tdone" data-arg="' + esc(tk.id) + '">' +
-        '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow"><div class="ttag">' + esc(tk.client || '') + '</div>' +
-        '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
+    if (!day) h += '<div class="empty">Rien de prévu ce jour.</div>';
+    else {
+      if (!todo.length) h += '<div class="glass tall">Journée terminée ✓</div>';
+      for (i = 0; i < todo.length; i++) h += taskCard(todo[i]);
+      /* journée finie : on remonte les tâches pas faites des jours suivants */
+      if (isToday && !todo.length){
+        for (j = idx + 1; j < days.length; j++){
+          var next = [], nd = days[j];
+          for (i = 0; i < nd.tasks.length; i++) next.push(nd.tasks[i]);
+          var left = 0; for (i = 0; i < next.length; i++) if (!isDoneTask(next[i])) left++;
+          if (!next.length) continue;
+          h += '<div class="dh">En avance · ' + esc(nd.jour) + '</div>';
+          for (i = 0; i < next.length; i++) if (!isDoneTask(next[i])) h += taskCard(next[i]);
+          for (i = 0; i < next.length; i++) if (isDoneTask(next[i])) h += taskCard(next[i]);
+          if (left) break;
+        }
+      }
+      for (i = 0; i < fait.length; i++) h += taskCard(fait[i]);
     }
-    if (t.demain && t.demain.items && t.demain.items.length)
-      h += '<div class="glass tdem"><div class="label">' + esc(t.demain.jour || 'Demain') + '</div><div class="tdem-l">' + t.demain.items.map(esc).join('<br>') + '</div></div>';
-    if (t.updated) h += '<div class="muted tupd">Mis à jour ' + esc(t.updated) + '</div>';
+    if (W.updated) h += '<div class="muted tupd">Planning mis à jour ' + esc(W.updated) + '</div>';
   }
   h += '</div>';
   var old = document.querySelector('#s-taches .content'), scroll = old ? old.scrollTop : 0;
@@ -853,6 +877,11 @@ function renderTaches(){
   var nc = document.querySelector('#s-taches .content');
   if (nc && old) nc.scrollTop = scroll;
   alignGlass($('s-taches'));
+}
+function findTask(id){
+  var d = (data.tasksCache && data.tasksCache.days) || [];
+  for (var i = 0; i < d.length; i++) for (var k = 0; k < d[i].tasks.length; k++) if (d[i].tasks[k].id === id) return d[i].tasks[k];
+  return null;
 }
 
 /* ---------- Réglages ---------- */
@@ -919,13 +948,19 @@ function handle(act, arg){
       save(); closeModal(); renderDevis(); return;
 
     case 'tdone':
-      if (!data.tasksCache) return;
-      var tl = data.tasksCache.tasks || [], cur = null;
-      for (i = 0; i < tl.length; i++) if (tl[i].id === arg) cur = tl[i];
+      var cur = findTask(arg);
       if (!cur) return;
       if (!data.tasksDone) data.tasksDone = {};
-      var was = data.tasksDone.hasOwnProperty(arg) ? data.tasksDone[arg] : !!cur.done;
-      data.tasksDone[arg] = !was; save(); renderTaches(); return;
+      data.tasksDone[arg] = !isDoneTask(cur); save(); renderTaches(); return;
+    case 'tday':
+      /* jour précédent / suivant parmi les jours du planning (fonctionne même si le jour affiché n'y est pas) */
+      var dd = (data.tasksCache && data.tasksCache.days) || [], cv = tView || isoDate(new Date()), pick = null;
+      for (i = 0; i < dd.length; i++){
+        if (+arg > 0 && dd[i].date > cv && (!pick || dd[i].date < pick)) pick = dd[i].date;
+        if (+arg < 0 && dd[i].date < cv && (!pick || dd[i].date > pick)) pick = dd[i].date;
+      }
+      if (!pick) return;
+      tView = pick; renderTaches(); var cc = document.querySelector('#s-taches .content'); if (cc) cc.scrollTop = 0; return;
     case 'pmonth': viewMonth = shiftMonth(viewMonth, +arg); renderProjets(); return;
     case 'padd': openProject(null); return;
     case 'pstat': i = findProject(arg); if (i < 0) return; p = data.projects[i]; p.status = (p.status + 1) % STATUTS.length; save(); renderProjets(); return;

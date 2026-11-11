@@ -1,0 +1,27 @@
+{
+ "updated": "mardi 10 nov. à 20h10",
+ "days": [
+  {
+   "date": "2026-11-10",
+   "jour": "Mardi 10 novembre",
+   "tasks": [
+    {"id": "mich-story-ouverture", "client": "Michalak", "text": "URGENT · Story « Ouverture demain » : plan sur une porte, autre musique, virer le tél → Noélie (9:16)", "done": true},
+    {"id": "theia-montage", "client": "Cercle de l'Espoir", "text": "URGENT · V1 interview Marie-Thérèse (sans le discours) → Xuan-nam", "done": false},
+    {"id": "kurv-retouche-photos", "client": "KURV", "text": "URGENT · Retoucher ~10 photos Studio Curve → Nathalie", "done": true},
+    {"id": "mc-sanex-v2", "client": "Marie Claire", "text": "Corriger la vidéo Sanex → Frame", "done": false},
+    {"id": "astotel-lorette-ssd", "client": "Astotel", "text": "Rushs + photos Lorette → SSD", "done": false}
+   ]
+  },
+  {
+   "date": "2026-11-11",
+   "jour": "Mercredi 11 novembre",
+   "tasks": [
+    {"id": "mer11-the-fondu", "client": "", "text": "Vidéo thé : fondu sur le logo à la fin", "done": false},
+    {"id": "mer11-macaron-pain-perdu", "client": "", "text": "Retoucher photos macaron + pain perdu", "done": false},
+    {"id": "mer11-travel-mug", "client": "", "text": "Recentrer la photo travel mug", "done": false},
+    {"id": "mer11-photos-30oct-drive", "client": "", "text": "Toutes les photos du 30 oct. → Drive, prévenir Noélie", "done": false},
+    {"id": "mer11-point-zac-noelie", "client": "", "text": "Point Zac + Noélie : rushs du matin, reels ou IA ?", "done": false}
+   ]
+  }
+ ]
+}
