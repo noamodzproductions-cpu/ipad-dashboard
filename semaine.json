@@ -12,12 +12,6 @@
      "done": false
     },
     {
-     "id": "mer11-travel-mug",
-     "client": "Ladurée",
-     "text": "URGENT · Ladurée CM : recentrer la photo travel mug",
-     "done": true
-    },
-    {
      "id": "cmc-call-ajustements",
      "client": "Marie Claire",
      "text": "11h · Café Marie Claire : call ajustements avant livraison des vidéos",
@@ -97,6 +91,7 @@
   "mer11-photos-30oct-drive",
   "mc-sanex-v2",
   "mer11-the-fondu",
-  "mer11-macaron-pain-perdu"
+  "mer11-macaron-pain-perdu",
+  "mer11-travel-mug"
  ]
 }
