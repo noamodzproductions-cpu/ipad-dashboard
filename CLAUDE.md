@@ -15,7 +15,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 
 ## Suivi des factures (`data/factures.json`)
 - Écrit par la routine planning-semaine-ipad (lecture Trello 1×/jour) : cartes ouvertes de la liste « 🧾 Solde en attente ». Format : `{updated, factures:[{id, projet, brut, reste, entree:"AAAA-MM-JJ"}]}`.
-- Tuile : total à toucher (brut, URSSAF 23,2 %, net), une ligne par carte (plus ancienne d'abord) avec « J-X » ; à 15 jours ou plus, ligne violette « Relancer » + bouton « Relancé » (date du clic dans `data.relances` de `noamdash-test`, purgée quand la carte quitte la liste).
+- Tuile accueil : icône + total à toucher + « N à relancer » (violet) ; elle ouvre l'écran `factures` : cases À toucher / URSSAF 23,2 % / Net, puis une grande carte par facture (plus ancienne d'abord) avec « J-X » ; à 15 jours ou plus, ligne violette « Relancer » + bouton « Relancé » (date du clic dans `data.relances` de `noamdash-test`, purgée quand la carte quitte la liste).
 - Vérif : Clip Ogynae Onlyfan 400 €, Mika Maison de la Santé 450 €, Le Barranco 150 € → 1 000 € / URSSAF 232 € / net 768 €.
 
 ## Projets = planning de la semaine (`semaine.json` à la racine du repo)
