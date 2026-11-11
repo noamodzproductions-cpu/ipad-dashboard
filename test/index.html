@@ -316,7 +316,7 @@ function dayCalc(day, st){
   var base = day.heures === undefined ? num(day.demi) * num(st.demi) + num(day.jour) * num(st.jour) : hoursPrice(num(day.heures), st);
   var info = dayInfo(day.date);
   var maj = 0;
-  if (info.ferie || info.weekend) maj += num(st.weekend) / 100;
+  if (info.ferie) maj += num(st.weekend) / 100; /* week-end = prix normal ; seul le férié est majoré (réglage « weekend ») */
   if (day.nuit) maj += num(st.nuit) / 100;
   var prix = base * (1 + maj);
   var photo = day.photo ? num(st.photo) : 0;
@@ -371,7 +371,6 @@ function dayDesc(day, c){
   }
   var s = p.length ? ' — ' + p.join(' + ') : '';
   if (c.info.ferie) s += ', férié';
-  else if (c.info.weekend) s += ', week-end';
   if (day.nuit) s += ', nuit';
   return s;
 }
@@ -385,7 +384,7 @@ var STATUTS = ['Tournage','Montage','V1','Retours','Livré'];
 var PAGES = ['Tournage','Frais de prod','Post-prod','Résultat'];
 var SET_DEFS = [
   ['demi','Demi-journée','€'], ['jour','Journée','€'], ['taux','Taux montage','€/h'], ['retours','Retours / export','%'],
-  ['nuit','Majoration nuit','%'], ['weekend','Week-end / férié','%'], ['urgence','Urgence < 48h','%'], ['uber','Uber aller-retour','€'],
+  ['nuit','Majoration nuit','%'], ['weekend','Jour férié','%'], ['urgence','Urgence < 48h','%'], ['uber','Uber aller-retour','€'],
   ['marge','Marge frais','%'], ['horaire','Tournage 1-3 h','€/h'], ['horaireSup','Tournage heure en plus','€/h'], ['urssaf','Taux URSSAF','%']
 ];
 var FRAIS_TYPES = {
@@ -760,7 +759,6 @@ function sw(label, on, act, arg){
 }
 function badgeText(info, st){
   if (info.ferie) return 'Férié';
-  if (info.weekend) return 'Week-end';
   return '';
 }
 function renderDevis(){
@@ -847,7 +845,7 @@ function devisExport(){
   for (i = 0; i < dv.days.length; i++){
     var d = dv.days[i], c = dayCalc(d, st), hh = dayHours(d), m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d.date || '');
     var opt = [hh + ' h' + (hoursTier(hh) ? ', ' + hoursTier(hh) : '')];
-    if (c.info.ferie) opt.push('jour férié'); else if (c.info.weekend) opt.push('week-end');
+    if (c.info.ferie) opt.push('jour férié');
     if (d.nuit) opt.push('de nuit');
     line('Tournage' + (m ? ' du ' + m[3] + '/' + m[2] + '/' + m[1] : '') + ' (' + opt.join(', ') + ')', c.prix);
   }
