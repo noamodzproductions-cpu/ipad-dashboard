@@ -1,8 +1,27 @@
 {
  "updated": "mercredi 11 nov. à 15h45",
+ "trello_complet": "2026-11-11",
  "factures": [
-  {"id": "6aa7e25a40bb3b1f54c98267", "projet": "Clip Ogynae Onlyfan", "brut": 700, "reste": 400, "entree": "2026-10-22"},
-  {"id": "6ac78823857392850fdcb663", "projet": "Mika Maison de la Santé", "brut": 450, "reste": 450, "entree": "2026-10-26"},
-  {"id": "6ae63eabc40141f215491dfe", "projet": "Le Barranco", "brut": 300, "reste": 150, "entree": "2026-11-05"}
+  {
+   "id": "6aa7e25a40bb3b1f54c98267",
+   "projet": "Clip Ogynae Onlyfan",
+   "brut": 700,
+   "reste": 400,
+   "entree": "2026-10-22"
+  },
+  {
+   "id": "6ac78823857392850fdcb663",
+   "projet": "Mika Maison de la Santé",
+   "brut": 450,
+   "reste": 450,
+   "entree": "2026-10-26"
+  },
+  {
+   "id": "6ae63eabc40141f215491dfe",
+   "projet": "Le Barranco",
+   "brut": 300,
+   "reste": 150,
+   "entree": "2026-11-05"
+  }
  ]
 }
