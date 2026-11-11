@@ -39,8 +39,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .glass.light{color:#111;border-color:#E9E9EC;background:#E9E9EC}
 .card{padding:24px}
 .tap:active{opacity:.8}
-.flash{background:#fff !important;color:#111 !important}
-.flash .label,.flash .hc-sub,.flash .cc-sub{color:#111 !important}
 .label{font-size:17px;font-weight:600;color:rgba(255,255,255,.72);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
 .light .label{color:rgba(0,0,0,.55)}
 .small{font-size:19px;color:rgba(255,255,255,.7);margin-top:6px}
@@ -62,7 +60,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .empty{font-size:26px;color:rgba(255,255,255,.6);text-align:center;padding:30px 0}
 
 /* Accueil : disposition de accueil-bento_1.html
-   gauche = Chrono (grande carte) ; droite haut = Devis + Projets ; droite bas = Musique */
+   gauche = Suivi des factures (grande carte) ; droite haut = Devis + Projets ; droite bas = Musique */
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
 .widgets{flex:1;min-height:0;display:flex}
 .bl{flex:1;min-width:0;display:flex}
@@ -72,11 +70,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widget{flex:1;min-width:0;padding:24px}
 .br-top .widget + .widget{margin-left:18px}
 .widget:active{opacity:.8}
-.hc-hit{position:absolute;top:10px;right:10px;width:120px;height:80px;text-align:center;padding-top:12px}
-.hring{position:absolute;top:96px;left:24px;right:24px;bottom:30px}
-.hring .ring{position:absolute;top:0;left:0}
-.wring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center}
-.hc-time{font-size:96px;font-weight:200;letter-spacing:-3px}
 .wtile{width:100px;height:100px;border-radius:30%;background:#fff;color:#111;padding:24px}
 .wtile svg{display:block;width:52px;height:52px}
 .light .wtile{background:#111;color:#fff}
@@ -98,27 +91,23 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tgl-hit{position:absolute;top:6px;right:6px;width:90px;height:70px;text-align:center;padding-top:16px}
 .tgl-hit.big{position:static;width:120px;height:80px;padding-top:12px}
 
-/* Anneau du chrono (SVG, seul stroke-dashoffset change) */
-.ring{display:block;width:100%;height:100%}
-.ring circle{fill:none;stroke-width:5}
-.ring .track{stroke:rgba(255,255,255,.16)}
-.ring .bar{stroke-linecap:round}
-.flash .ring .track{stroke:rgba(0,0,0,.12)}
-
-/* Chrono */
-.sess{font-size:22px;color:rgba(255,255,255,.7);white-space:nowrap}
-.sess b{font-size:44px;color:#fff;margin-left:8px;vertical-align:-6px}
-.c-big{flex:1;min-height:0;display:flex;flex-direction:column;padding:20px 24px}
-.ctop{height:80px;flex-shrink:0}
-.mode{height:48px;line-height:48px;padding:0 20px;border-radius:24px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);font-size:22px;font-weight:600;white-space:nowrap}
-.cring{flex:1;min-height:0;position:relative;margin:0 0 16px}
-.cring .ring{position:absolute;top:0;left:0}
-.cring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cc-time{font-size:120px;font-weight:200;letter-spacing:-4px;line-height:1}
-.cc-sub{font-size:26px;color:rgba(255,255,255,.75);margin-top:8px}
-.presets{flex-shrink:0}
-.pre{flex:1;min-width:0;height:76px;font-size:24px;padding:0 8px}
-.pre.on{background:#fff;color:#111;border-color:#fff}
+/* Suivi des factures (data/factures.json, rempli par la routine du planning) */
+.fac{display:flex;flex-direction:column}
+.fac-tot{flex-shrink:0;margin:10px 0 14px}
+.fac-big{font-size:58px;font-weight:700;letter-spacing:-1.5px;line-height:1.05;white-space:nowrap}
+.fac-sub{font-size:21px;color:rgba(255,255,255,.7);margin-top:4px;white-space:nowrap}
+.fac-list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.frow{display:flex;align-items:center;min-height:92px;padding:10px 0 10px 16px;border-top:1px solid rgba(255,255,255,.14);border-left:6px solid transparent}
+.frow.late{border-left-color:#A78BFA}
+.fr-n{font-size:25px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-d{font-size:20px;color:rgba(255,255,255,.65);margin-top:3px;white-space:nowrap}
+.late .fr-d{color:#cbb8ff;font-weight:600}
+.late .fr-d b{color:#fff;font-size:24px}
+.fr-r{flex-shrink:0;margin-left:12px;text-align:right}
+.fr-v{font-size:28px;font-weight:700;white-space:nowrap}
+.fr-j{font-size:19px;color:rgba(255,255,255,.6);margin-top:3px;white-space:nowrap}
+.frel{flex-shrink:0;margin-left:12px;font-size:22px;padding:0 20px}
+.fac-empty{font-size:24px;color:rgba(255,255,255,.6);padding:24px 0}
 
 /* Devis */
 .dots{font-size:0;white-space:nowrap}
@@ -234,7 +223,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
   </div>
   <div class="widgets" id="widgets"></div>
 </section>
-<section id="s-chrono" class="screen"></section>
 <section id="s-devis" class="screen"></section>
 <section id="s-projets" class="screen"></section>
 <section id="s-reglages" class="screen"></section>
@@ -392,7 +380,6 @@ var FRAIS_TYPES = {
   autre:{title:'Autre', lab:'Libellé', def:'Autre', chips:['Train','Hôtel','Repas','Autre']}
 };
 var IDLE_MS = 120000;
-var STOPS = [5, 10, 25, 50, 90], POS = [10, 30, 50, 70, 90];
 var IC = {
   back:'<path d="M15 18l-6-6 6-6"/>', prev:'<path d="M15 18l-6-6 6-6"/>', next:'<path d="M9 18l6-6-6-6"/>',
   arrow:'<path d="M7 17L17 7M9 7h8v8"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
@@ -453,8 +440,8 @@ function normalize(d){
   d.devis.page = Math.max(0, Math.min(3, num(d.devis.page)));
   if (!(d.projects instanceof Array)) d.projects = [];
   if (!d.sessions || typeof d.sessions !== 'object') d.sessions = {};
-  if (d.chrono === undefined) d.chrono = null;
-  if (STOPS.indexOf(num(d.chronoSel)) < 0) d.chronoSel = 25;
+  delete d.chrono; delete d.chronoSel;
+  if (!d.relances || typeof d.relances !== 'object') d.relances = {};
   return d;
 }
 function load(){
@@ -491,10 +478,9 @@ function hdr(title, sub, right){
 function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
   current = name;
-  var ids = ['home','chrono','devis','projets','reglages','taches'];
+  var ids = ['home','devis','projets','reglages','taches'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
   if (name === 'home') renderHome();
-  if (name === 'chrono') renderChrono();
   if (name === 'devis') renderDevis();
   if (name === 'projets') renderProjets();
   if (name === 'reglages') renderReglages();
@@ -502,108 +488,10 @@ function go(name){
   tick();
 }
 
-/* ---------- Audio ---------- */
-var AC = window.AudioContext || window.webkitAudioContext;
-var actx = null;
-function unlockAudio(){
-  if (!AC) return;
-  try {
-    if (!actx) actx = new AC();
-    if (actx.state === 'suspended' && actx.resume) actx.resume();
-    var b = actx.createBuffer(1, 1, 22050), src = actx.createBufferSource();
-    src.buffer = b; src.connect(actx.destination); src.start(0);
-  } catch(e){}
-}
-function beep(){
-  if (!actx) return;
-  try {
-    if (actx.state === 'suspended' && actx.resume) actx.resume();
-    var t0 = actx.currentTime + 0.05;
-    for (var i = 0; i < 8; i++){
-      var t = t0 + i * 0.45, o = actx.createOscillator(), g = actx.createGain();
-      o.type = 'square'; o.frequency.value = (i % 2) ? 1175 : 880;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.35, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
-      o.connect(g); g.connect(actx.destination);
-      o.start(t); o.stop(t + 0.32);
-    }
-  } catch(e){}
-}
-
-/* ---------- Chrono ---------- */
-function remaining(c){
-  if (!c || c.done) return 0;
-  if (c.running) return Math.max(0, c.endAt - Date.now());
-  return c.rem;
-}
-function fmtTime(ms){ var s = Math.ceil(ms / 1000), m = Math.floor(s / 60); return pad(m) + ':' + pad(s % 60); }
-function todayCount(){ return data.sessions[isoDate(new Date())] || 0; }
-function checkChronoEnd(silent){
-  var c = data.chrono;
-  if (c && c.running && !c.done && Date.now() >= c.endAt){
-    c.done = true; c.running = false; c.rem = 0;
-    if (c.kind === 'work'){ var k = isoDate(new Date(c.endAt)); data.sessions[k] = (data.sessions[k] || 0) + 1; }
-    save();
-    if (!silent) beep();
-  }
-}
-function chronoState(){
-  var c = data.chrono;
-  if (c) return {c:c, left:remaining(c), dur:c.dur, kind:c.kind, min:c.min};
-  var m = num(data.chronoSel) || 25;
-  return {c:null, left:m * 60000, dur:m * 60000, kind:m <= 10 ? 'pause' : 'work', min:m};
-}
-function chronoSub(s){
-  var c = s.c;
-  if (c && c.done) return c.kind === 'work' ? 'Travail terminé !' : 'Pause terminée !';
-  if (c && c.running){ var e = new Date(c.endAt); return 'Fin à ' + pad(e.getHours()) + ':' + pad(e.getMinutes()); }
-  if (c) return 'En pause';
-  return (s.kind === 'work' ? 'Travail' : 'Pause') + ' · ' + s.min + ' min';
-}
-function glowColor(s){
-  var f = s.dur ? s.left / s.dur : 1;
-  return f > 0.5 ? '#4ade80' : (f > 0.2 ? '#A78BFA' : '#ffffff');
-}
-var RING_C = 2 * Math.PI * 45;
-var PRESETS = [[25,'Travail 25'], [50,'Travail 50'], [90,'Travail 90'], [5,'Pause 5'], [10,'Pause 10']];
-function ringSvg(id){
-  return '<svg class="ring" viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="45"/>' +
-    '<circle class="bar" id="' + id + '" cx="50" cy="50" r="45" stroke="#4ade80" stroke-dasharray="' + RING_C.toFixed(2) + '" stroke-dashoffset="0" transform="rotate(-90 50 50)"/></svg>';
-}
-function placeRing(id, s){
-  var e = $(id);
-  if (!e) return;
-  var f = s.dur ? s.left / s.dur : 1, off = (RING_C * (1 - f)).toFixed(1), col = glowColor(s);
-  if (e.getAttribute('stroke-dashoffset') !== off) e.setAttribute('stroke-dashoffset', off);
-  if (e.getAttribute('stroke') !== col) e.setAttribute('stroke', col);
-}
-var preSel = null;
-function updateChrono(){
-  var s = chronoState(), time = fmtTime(s.left), sub = chronoSub(s);
-  var on = !!(s.c && s.c.running), fl = !!(s.c && s.c.done && flashOn);
-  if (current === 'home'){
-    setText('hc-time', time); setCls('hc-tgl', 'on', on); setCls('hc-card', 'flash', fl); placeRing('hc-bar', s);
-  } else if (current === 'chrono'){
-    setText('cc-time', time); setText('cc-sub', sub);
-    setText('cc-mode', s.kind === 'work' ? 'Travail' : 'Pause');
-    setCls('cc-tgl', 'on', on); setCls('cc-card', 'flash', fl);
-    setCls('cc-stop', 'hidden', !s.c);
-    setText('sess', String(todayCount()));
-    placeRing('cc-bar', s);
-    if (s.min !== preSel){
-      preSel = s.min;
-      var b = document.querySelectorAll('#s-chrono .pre');
-      for (var i = 0; i < b.length; i++) b[i].className = 'pre' + (+b[i].getAttribute('data-arg') === s.min ? ' on' : '');
-    }
-  }
-}
-
 /* ---------- Tick : seuls les textes, la poignée et les états changent ---------- */
-var lastActivity = Date.now(), flashOn = false;
+var lastActivity = Date.now();
 var lastHM = '', lastDate = '', lastGreet = '';
 function tick(){
-  flashOn = !flashOn;
   var now = new Date(), hr = now.getHours();
   var hm = pad(hr) + ':' + pad(now.getMinutes());
   if (hm !== lastHM){ $('clock').textContent = hm; lastHM = hm; }
@@ -611,8 +499,7 @@ function tick(){
   if (ds !== lastDate){ $('date').textContent = ds; lastDate = ds; }
   var gr = (hr >= 5 && hr < 18) ? 'Bonjour Noam' : 'Bonsoir Noam';
   if (gr !== lastGreet){ $('greet').textContent = gr; lastGreet = gr; }
-  checkChronoEnd(false);
-  updateChrono();
+  if (Date.now() - facLoadedAt > 300000) loadFactures();
   if (current === 'taches' && Date.now() - tasksLoadedAt > (ghToken() ? 60000 : 300000)) loadTasks(function(){ if (current === 'taches') renderTaches(); });
   if (Date.now() - lastActivity > IDLE_MS){
     lastActivity = Date.now();
@@ -637,38 +524,79 @@ function monthProjects(mk){
 }
 function renderHome(){
   var chev = '<div class="chev">' + ico(IC.arrow) + '</div>';
-  var h = '<div class="bl"><div class="glass widget" id="hc-card" data-act="go" data-arg="chrono"><div class="label">Chrono</div>' +
-      '<div class="hc-hit" data-act="ctoggle"><span class="tgl big" id="hc-tgl"><span class="knob"></span></span></div>' +
-      '<div class="hring" id="hc-ring">' + ringSvg('hc-bar') + '<div class="wring-c"><div class="hc-time num" id="hc-time"></div></div></div></div></div>' +
+  var h = '<div class="bl"><div class="glass widget fac" id="fac-card"><div class="label">Suivi des factures</div><div id="fac-body" class="fac" style="flex:1;min-height:0"></div></div></div>' +
     '<div class="br"><div class="br-top">' +
       '<div class="glass light widget" data-act="go" data-arg="devis"><div class="wtile">' + ico(IC.euro) + '</div>' + chev + '<div class="wname">Devis</div></div>' +
       '<div class="glass widget" data-act="go" data-arg="taches"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
     '</div><div class="br-bot"><div class="glass widget" id="hm-card" data-act="music"><div class="wtile" id="hm-tile">' + ico(IC.music) + '</div><div class="wname">Musique</div></div></div></div>';
   $('widgets').innerHTML = h;
-  /* taille du temps adaptée à l'anneau (calculée une fois) */
-  var rh = Math.min($('hc-ring').offsetHeight, $('hc-ring').offsetWidth);
-  if (rh) $('hc-time').style.fontSize = Math.max(56, Math.min(110, Math.floor(rh * 0.26))) + 'px';
   alignGlass($('s-home'));
-  updateChrono();
+  renderFactures();
 }
 
-/* ---------- Chrono (écran) ---------- */
-function renderChrono(){
-  var h = hdr('Chrono', '', '<div class="sess">Sessions aujourd’hui<b class="num" id="sess">0</b></div>');
-  h += '<div class="glass c-big" id="cc-card"><div class="row ctop"><div class="mode" id="cc-mode"></div><div class="grow"></div>' +
-    '<button id="cc-stop" data-act="cstop">Stop</button>' +
-    '<div class="tgl-hit big" data-act="ctoggle"><span class="tgl big" id="cc-tgl"><span class="knob"></span></span></div></div>' +
-    '<div class="cring" id="cc-ring">' + ringSvg('cc-bar') + '<div class="cring-c"><div class="cc-time num" id="cc-time"></div><div class="cc-sub" id="cc-sub"></div></div></div>' +
-    '<div class="presets row">';
-  for (var i = 0; i < PRESETS.length; i++) h += '<button class="pre" data-act="csel" data-arg="' + PRESETS[i][0] + '">' + PRESETS[i][1] + '</button>';
-  h += '</div></div>';
-  $('s-chrono').innerHTML = h;
-  preSel = null;
-  /* taille du temps adaptée à la hauteur réelle de l'anneau (calculée une fois) */
-  var rh = $('cc-ring').offsetHeight;
-  if (rh) $('cc-time').style.fontSize = Math.max(60, Math.min(120, Math.floor(rh * 0.27))) + 'px';
-  alignGlass($('s-chrono'));
-  updateChrono();
+/* ---------- Suivi des factures ----------
+   Source : ../data/factures.json, écrit par la routine du planning (liste Trello « 🧾 Solde en attente »).
+   Format : {updated, factures:[{id, projet, brut, reste, entree:'AAAA-MM-JJ'}]}
+   Relance à 15 jours après l'entrée dans la liste ; « Relancé » remet le compteur à 0 (date gardée sur l'iPad). */
+var FAC_URL = '../data/factures.json', facLoadedAt = 0, RELANCE_J = 15;
+function dayStart(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+function parseIso(s){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+function loadFactures(){
+  facLoadedAt = Date.now();
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', FAC_URL + '?t=' + Date.now(), true);
+    x.onload = function(){
+      if (x.status !== 200) return;
+      try {
+        var j = JSON.parse(x.responseText);
+        if (!j || !(j.factures instanceof Array)) return;
+        data.facCache = j;
+        /* purge des relances des cartes sorties de la liste */
+        var ids = {}, k;
+        for (var i = 0; i < j.factures.length; i++) ids[j.factures[i].id] = 1;
+        for (k in data.relances) if (data.relances.hasOwnProperty(k) && !ids[k]) delete data.relances[k];
+        save();
+        if (current === 'home') renderFactures();
+      } catch(e){}
+    };
+    x.send();
+  } catch(e){}
+}
+function facRows(){
+  var list = (data.facCache && data.facCache.factures) || [], out = [], today = dayStart(new Date());
+  for (var i = 0; i < list.length; i++){
+    var f = list[i], d = parseIso(f.entree);
+    if (!d) continue;
+    var start = d.getTime(), rel = num(data.relances[f.id]);
+    if (rel && dayStart(new Date(rel)) > start) start = dayStart(new Date(rel));
+    var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
+    var since = Math.max(0, Math.round((today - start) / 86400000));
+    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:RELANCE_J - since, relance:!!rel});
+  }
+  out.sort(function(a, b){ return a.entree - b.entree; });
+  return out;
+}
+function renderFactures(){
+  var box = $('fac-body');
+  if (!box) return;
+  var rows = facRows(), tot = 0, i;
+  for (i = 0; i < rows.length; i++) tot += rows[i].reste;
+  var urs = Math.round(tot * 0.232);
+  var h = '<div class="fac-tot"><div class="fac-big num">' + eur(tot) + '</div>' +
+    '<div class="fac-sub num">à toucher · URSSAF ' + eur(urs) + ' · net ' + eur(tot - urs) + '</div></div><div class="fac-list">';
+  if (!rows.length) h += '<div class="fac-empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
+  for (i = 0; i < rows.length; i++){
+    var r = rows[i], late = r.left <= 0;
+    var age = r.days + ' j' + (r.relance ? ' · relancé' : '');
+    h += '<div class="frow' + (late ? ' late' : '') + '"><div class="grow"><div class="fr-n">' + esc(r.projet) + '</div>' +
+      '<div class="fr-d num">' + (late ? '<b>' + eur(r.reste) + '</b> · Relancer · ' + age : age) + '</div></div>' +
+      (late ? '<button class="frel ko" data-act="frel" data-arg="' + esc(r.id) + '">Relancé</button>'
+            : '<div class="fr-r"><div class="fr-v num">' + eur(r.reste) + '</div><div class="fr-j num">J-' + r.left + '</div></div>') +
+      '</div>';
+  }
+  h += '</div>';
+  box.innerHTML = h;
 }
 
 /* ---------- Devis ---------- */
@@ -1256,19 +1184,7 @@ function handle(act, arg){
       var did = modal.id;
       closeModal(); delTask(did); return;
     case 'tundo': var ucb = toastCb; hideToast(); if (ucb) ucb(); return;
-    case 'csel':
-      if (data.chrono && data.chrono.running) return;
-      data.chrono = null; data.chronoSel = +arg; save(); break;
-    case 'ctoggle':
-      c = data.chrono;
-      if (!c || c.done){
-        unlockAudio();
-        var m = num(data.chronoSel) || 25, ms = m * 60000;
-        data.chrono = {kind:m <= 10 ? 'pause' : 'work', min:m, dur:ms, endAt:Date.now() + ms, rem:ms, running:true, done:false};
-      } else if (c.running){ c.rem = Math.max(0, c.endAt - Date.now()); c.running = false; }
-      else { unlockAudio(); c.endAt = Date.now() + c.rem; c.running = true; }
-      save(); break;
-    case 'cstop': data.chrono = null; save(); break;
+    case 'frel': data.relances[arg] = Date.now(); save(); renderFactures(); return;
 
     case 'dvnext': dv.page = Math.min(3, dv.page + 1); save(); renderDevis(); return;
     case 'dvprev': if (dv.page === 0){ go('home'); return; } dv.page--; save(); renderDevis(); return;
@@ -1403,7 +1319,7 @@ document.addEventListener('touchmove', function(e){
   while (el && el.nodeType === 1){
     if (el.tagName === 'TEXTAREA') return;
     var c = el.className;
-    if (typeof c === 'string' && /(^| )(content|res-r|overlay)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
+    if (typeof c === 'string' && /(^| )(content|res-r|overlay|fac-list)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
     el = el.parentNode;
   }
   e.preventDefault();
@@ -1439,9 +1355,9 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 
 /* ---------- Démarrage ---------- */
 load();
-checkChronoEnd(true);
 go('home');
 loadTasks(null);
+loadFactures();
 setInterval(tick, 500);
 if ('serviceWorker' in navigator && location.protocol === 'https:'){
   try { navigator.serviceWorker.register('sw.js'); } catch(e){}

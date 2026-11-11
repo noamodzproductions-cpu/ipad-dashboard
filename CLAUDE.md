@@ -8,10 +8,15 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - Ne jamais modifier la version normale quand on travaille sur `/test`.
 - /test : PAS de fond d'écran (fond noir uni #000), cartes pleines gris foncé #1c1c1e (Devis : carte claire #E9E9EC). `bg.jpg`/`blur.jpg` ne sont plus utilisés.
 - Écran Projets : bouton icône « Missions du jour » (à gauche de « + Projet ») qui ouvre la page Claude « Aujourd'hui » (https://claude.ai/artifact/Ff3ZbqjcB6FYCZBsdPyeoW), mise à jour 2×/jour par la routine Suivi. Ne pas supprimer.
-- Accueil /test : en-tête (Bonjour/Bonsoir Noam, date, heure, engrenage) + disposition de accueil-bento.html : à gauche Chrono en grande carte (anneau + temps + interrupteur), à droite en haut Devis (carte claire) et Projets, à droite en bas la carte « Musique » (lance le live Lofi Girl sur le Mac via `mac/musique.py`, port 8765, LaunchAgent `com.noam.musique` ; si le Mac ne répond pas, propose d'ouvrir le live sur l'iPad). Juste nom + icône. Pas d'infos en plus (pas d'argent, pas d'URSSAF). Le widget Projets ouvre la page interne « Projets » (écran `taches`, planning de la semaine), pas Safari : claude.ai interdit l'affichage intégré (frame-ancestors 'self') et ne s'affiche pas sur iOS 12. L'ancien écran Projets avec les montants n'est plus relié à l'accueil.
+- Accueil /test : en-tête (Bonjour/Bonsoir Noam, date, heure, engrenage) + disposition de accueil-bento.html : à gauche « Suivi des factures » en grande carte (remplace le Chrono, supprimé), à droite en haut Devis (carte claire) et Projets, à droite en bas la carte « Musique » (lance le live Lofi Girl sur le Mac via `mac/musique.py`, port 8765, LaunchAgent `com.noam.musique` ; si le Mac ne répond pas, propose d'ouvrir le live sur l'iPad). Juste nom + icône (sauf la tuile Factures). Le widget Projets ouvre la page interne « Projets » (écran `taches`, planning de la semaine), pas Safari : claude.ai interdit l'affichage intégré (frame-ancestors 'self') et ne s'affiche pas sur iOS 12. L'ancien écran Projets avec les montants n'est plus relié à l'accueil.
 - /test : un seul mode (pas de mode nuit), pas d'effet « bounce » au toucher, le fond ne doit jamais bouger (touchmove bloqué hors des listes).
 - Les mises en page doivent tenir aussi dans Safari avec barre d'adresse (~1024×690), pas seulement en plein écran (1024×768).
 - `DESIGN.md` (style Mobbin) = ancienne piste, remplacée par `accueil-bento.html`.
+
+## Suivi des factures (`data/factures.json`)
+- Écrit par la routine planning-semaine-ipad (lecture Trello 1×/jour) : cartes ouvertes de la liste « 🧾 Solde en attente ». Format : `{updated, factures:[{id, projet, brut, reste, entree:"AAAA-MM-JJ"}]}`.
+- Tuile : total à toucher (brut, URSSAF 23,2 %, net), une ligne par carte (plus ancienne d'abord) avec « J-X » ; à 15 jours ou plus, ligne violette « Relancer » + bouton « Relancé » (date du clic dans `data.relances` de `noamdash-test`, purgée quand la carte quitte la liste).
+- Vérif : Clip Ogynae Onlyfan 400 €, Mika Maison de la Santé 450 €, Le Barranco 150 € → 1 000 € / URSSAF 232 € / net 768 €.
 
 ## Projets = planning de la semaine (`semaine.json` à la racine du repo)
 - Source UNIQUE : écrit par le Claude du planning de la semaine (conversation sur le téléphone) à chaque mise à jour. Pas de copie intermédiaire.
