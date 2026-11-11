@@ -12,12 +12,6 @@
      "done": false
     },
     {
-     "id": "mc-sanex-v2",
-     "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Sanex, jingle, logo) → Frame",
-     "done": true
-    },
-    {
      "id": "mer11-the-fondu",
      "client": "Ladurée",
      "text": "URGENT · Ladurée CM : vidéo thé, fondu sur le logo à la fin",
@@ -112,6 +106,7 @@
  "supprimes": [
   "astotel-lorette-ssd",
   "mich-videos-sujets",
-  "mer11-photos-30oct-drive"
+  "mer11-photos-30oct-drive",
+  "mc-sanex-v2"
  ]
 }
