@@ -12,12 +12,6 @@
      "done": false
     },
     {
-     "id": "mer11-macaron-pain-perdu",
-     "client": "Ladurée",
-     "text": "URGENT · Ladurée CM : retoucher photos macaron + pain perdu",
-     "done": true
-    },
-    {
      "id": "mer11-travel-mug",
      "client": "Ladurée",
      "text": "URGENT · Ladurée CM : recentrer la photo travel mug",
@@ -102,6 +96,7 @@
   "mich-videos-sujets",
   "mer11-photos-30oct-drive",
   "mc-sanex-v2",
-  "mer11-the-fondu"
+  "mer11-the-fondu",
+  "mer11-macaron-pain-perdu"
  ]
 }
