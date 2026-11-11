@@ -12,12 +12,6 @@
      "done": false
     },
     {
-     "id": "mer11-the-fondu",
-     "client": "Ladurée",
-     "text": "URGENT · Ladurée CM : vidéo thé, fondu sur le logo à la fin",
-     "done": true
-    },
-    {
      "id": "mer11-macaron-pain-perdu",
      "client": "Ladurée",
      "text": "URGENT · Ladurée CM : retoucher photos macaron + pain perdu",
@@ -107,6 +101,7 @@
   "astotel-lorette-ssd",
   "mich-videos-sujets",
   "mer11-photos-30oct-drive",
-  "mc-sanex-v2"
+  "mc-sanex-v2",
+  "mer11-the-fondu"
  ]
 }
