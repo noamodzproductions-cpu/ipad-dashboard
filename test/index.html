@@ -248,7 +248,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 'use strict';
 
 /*CALC-START*/
-var DEFAULTS = {demi:300, jour:500, horaire:80, taux:60, retours:25, nuit:25, weekend:30, urgence:30, uber:30, marge:32, photo:'', urssaf:24};
+var DEFAULTS = {demi:300, jour:500, horaire:80, horaireSup:50, taux:60, retours:25, nuit:25, weekend:30, urgence:30, uber:30, marge:32, photo:'', urssaf:24};
 
 function num(v){
   if (v === null || v === undefined) return 0;
@@ -292,15 +292,13 @@ function dayInfo(dateStr){
   return r;
 }
 
-/* Tournage à l'heure : 1-3 h au tarif horaire, 4-6 h = demi-journée, 7-10 h = journée, au-delà journée + heures sup */
+/* Tournage à l'heure : 1-3 h au tarif horaire (80 €), 4 h = demi-journée (300 €), puis +50 € par heure (8 h = 500 €) */
 function hoursPrice(h, st){
   if (h <= 0) return 0;
   if (h < 4) return h * num(st.horaire);
-  if (h < 7) return num(st.demi);
-  if (h <= 10) return num(st.jour);
-  return num(st.jour) + (h - 10) * num(st.horaire);
+  return num(st.demi) + (h - 4) * num(st.horaireSup);
 }
-function hoursTier(h){ return h >= 7 && h <= 10 ? 'journée' : (h >= 4 && h < 7 ? 'demi-journée' : ''); }
+function hoursTier(h){ return h === 8 ? 'journée' : (h === 4 ? 'demi-journée' : ''); }
 function dayHours(day){ return day.heures !== undefined ? num(day.heures) : num(day.jour) * 8 + num(day.demi) * 4; }
 
 function dayCalc(day, st){
@@ -377,7 +375,7 @@ var PAGES = ['Tournage','Frais de prod','Post-prod','Résultat'];
 var SET_DEFS = [
   ['demi','Demi-journée','€'], ['jour','Journée','€'], ['taux','Taux montage','€/h'], ['retours','Retours / export','%'],
   ['nuit','Majoration nuit','%'], ['weekend','Week-end / férié','%'], ['urgence','Urgence < 48h','%'], ['uber','Uber aller-retour','€'],
-  ['marge','Marge frais','%'], ['horaire','Tarif horaire tournage','€/h'], ['urssaf','Taux URSSAF','%']
+  ['marge','Marge frais','%'], ['horaire','Tournage 1-3 h','€/h'], ['horaireSup','Tournage heure en plus','€/h'], ['urssaf','Taux URSSAF','%']
 ];
 var FRAIS_TYPES = {
   matos:{title:'Loc matos', lab:'Libellé', def:'Location matos', chips:[]},
@@ -708,7 +706,7 @@ function devisPage(p, dv, st, r){
     }
   } else if (p === 2){
     var mo = montageCalc(dv, st), coef = String(1 + num(st.retours) / 100).replace('.', ',');
-    h += '<div class="glass pp"><div class="pp-l">Montage</div>' +
+    h += '<div class="glass pp"><div class="pp-l">Montage (' + eur(num(st.taux) * (1 + num(st.retours) / 100)) + '/h)</div>' +
       stepper('', num(dv.heures) + ' h', 'hstep', 'h') +
       '<div style="height:34px"></div>' + sw('Urgence', dv.urgence, 'urg') + '</div>';
   } else {

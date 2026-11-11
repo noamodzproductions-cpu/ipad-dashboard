@@ -30,5 +30,5 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 
 ## Vérification
 - Devis : 1 journée + 6 h de montage + 1 trajet → brut 990 €, URSSAF 238 €, frais 30 €, net 722 €.
-- /test : tournage saisi en HEURES par jour (1-3 h = h × tarif horaire 80 €, 4-6 h = demi-journée 300 €, 7-10 h = journée 500 €, > 10 h = journée + heures sup au tarif horaire). Exemple /test : 8 h + 6 h de montage + 1 trajet → 990 / 238 / 30 / 722.
+- /test : tournage saisi en HEURES par jour (1-3 h = h × 80 €, 4 h = demi-journée 300 €, puis +50 € par heure : 8 h = journée 500 €). Montage affiché avec son prix à l'heure (taux × (1 + retours)). Exemple /test : 8 h + 6 h de montage + 1 trajet → 990 / 238 / 30 / 722.
 - Devis /test : pages épurées (pas de % ni de prix sous les boutons), bouton Exporter = texte ligne par ligne pour facture.net (désignation · 1 · prix, mention TVA 293 B).
