@@ -196,6 +196,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .sitem-l{font-size:17px;font-weight:600;color:rgba(255,255,255,.7);height:30px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sitem input{width:140px;font-size:32px;text-align:right}
 .u{font-size:24px;color:rgba(255,255,255,.65)}
+.ghrow{padding:14px 18px;margin-bottom:14px;border-radius:24px}
 
 /* Fenêtres : fond flouté pré-calculé, sans backdrop-filter */
 .overlay{position:fixed;top:0;left:0;right:0;bottom:0;display:none;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000}
@@ -567,7 +568,7 @@ function tick(){
   if (gr !== lastGreet){ $('greet').textContent = gr; lastGreet = gr; }
   checkChronoEnd(false);
   updateChrono();
-  if (current === 'taches' && Date.now() - tasksLoadedAt > 300000) loadTasks(function(){ if (current === 'taches') renderTaches(); });
+  if (current === 'taches' && Date.now() - tasksLoadedAt > (ghToken() ? 60000 : 300000)) loadTasks(function(){ if (current === 'taches') renderTaches(); });
   if (Date.now() - lastActivity > IDLE_MS){
     lastActivity = Date.now();
     if (current !== 'home' || modalOpen() || confirmOpen()){
@@ -817,17 +818,68 @@ function findProject(id){ for (var i = 0; i < data.projects.length; i++) if (dat
    Lu en XMLHttpRequest (à l'ouverture puis toutes les 5 min), gardé en cache hors ligne.
    Les coches restent sur l'iPad (par id). Journée finie -> les tâches des jours suivants remontent en « En avance ». */
 var TASKS_URL = '../semaine.json', tasksLoadedAt = 0, tView = null;
-function loadTasks(cb){
-  tasksLoadedAt = Date.now();
+/* Synchro des coches : avec une clé GitHub (Réglages), la page lit et écrit semaine.json via l'API GitHub.
+   Sans clé : lecture via GitHub Pages, coches locales. La clé n'est jamais exportée (clé localStorage séparée). */
+var GH = {owner:'noamodzproductions-cpu', repo:'ipad-dashboard', path:'semaine.json'}, GH_KEY = 'noamdash-gh', ghBusy = false, ghErr = '';
+function ghToken(){ try { return window.localStorage.getItem(GH_KEY) || ''; } catch(e){ return ''; } }
+function b64dec(s){ return decodeURIComponent(escape(atob(String(s).replace(/\s/g, '')))); }
+function b64enc(s){ return btoa(unescape(encodeURIComponent(s))); }
+function ghReq(method, body, cb){
+  try {
+    var x = new XMLHttpRequest();
+    x.open(method, 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + GH.path + (method === 'GET' ? '?ref=main&t=' + Date.now() : ''), true);
+    x.setRequestHeader('Authorization', 'token ' + ghToken());
+    x.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+    if (body) x.setRequestHeader('Content-Type', 'application/json');
+    x.onload = function(){ var j = null; try { j = JSON.parse(x.responseText); } catch(e){} cb(x.status >= 200 && x.status < 300, j, x.status); };
+    x.onerror = function(){ cb(false, null, 0); };
+    x.send(body ? JSON.stringify(body) : null);
+  } catch(e){ cb(false, null, 0); }
+}
+function gotWeek(w, cb){ data.tasksCache = w; save(); if (cb) cb(); pushPending(); }
+function loadPages(cb){
   try {
     var x = new XMLHttpRequest();
     x.open('GET', TASKS_URL + '?t=' + Date.now(), true);
     x.onload = function(){
       if (x.status !== 200) return;
-      try { var j = JSON.parse(x.responseText); if (j && j.days){ data.tasksCache = j; save(); if (cb) cb(); } } catch(e){}
+      try { var j = JSON.parse(x.responseText); if (j && j.days) gotWeek(j, cb); } catch(e){}
     };
     x.send();
   } catch(e){}
+}
+function loadTasks(cb){
+  tasksLoadedAt = Date.now();
+  if (!ghToken()){ loadPages(cb); return; }
+  ghReq('GET', null, function(ok, j, st){
+    if (!ok || !j || !j.content){ ghErr = st === 401 ? 'Clé GitHub refusée' : 'GitHub injoignable'; loadPages(cb); return; }
+    try { ghErr = ''; gotWeek(JSON.parse(b64dec(j.content)), cb); } catch(e){ loadPages(cb); }
+  });
+}
+/* envoie les coches en attente (data.tasksDone) une par une dans semaine.json */
+function pushPending(){
+  if (ghBusy || !ghToken() || !data.tasksDone) return;
+  var id = null;
+  for (var k in data.tasksDone) if (data.tasksDone.hasOwnProperty(k)){ id = k; break; }
+  if (id === null) return;
+  var val = !!data.tasksDone[id];
+  ghBusy = true;
+  ghReq('GET', null, function(ok, j){
+    if (!ok || !j || !j.content){ ghBusy = false; return; }
+    var w;
+    try { w = JSON.parse(b64dec(j.content)); } catch(e){ ghBusy = false; return; }
+    var found = false, changed = false;
+    for (var d = 0; d < (w.days || []).length; d++) for (var t = 0; t < w.days[d].tasks.length; t++){
+      var tk = w.days[d].tasks[t];
+      if (tk.id === id){ found = true; if (!!tk.done !== val){ tk.done = val; changed = true; } }
+    }
+    function next(){ delete data.tasksDone[id]; data.tasksCache = w; save(); ghBusy = false; if (current === 'taches') renderTaches(); pushPending(); }
+    if (!found || !changed){ next(); return; }
+    ghReq('PUT', {message:(val ? 'Fait : ' : 'À refaire : ') + id, content:b64enc(JSON.stringify(w, null, 1) + '\n'), sha:j.sha, branch:'main'}, function(ok2, j2, st2){
+      if (ok2){ ghErr = ''; next(); }
+      else { ghBusy = false; ghErr = st2 === 409 ? '' : 'Coche pas encore envoyée'; if (st2 === 409) setTimeout(pushPending, 1500); }
+    });
+  });
 }
 function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.id) ? !!m[k.id] : !!k.done; }
 function taskCard(tk){
@@ -845,8 +897,6 @@ function renderTaches(){
   var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
   var h = '<div class="hdr row"><button class="rbtn" data-act="go" data-arg="home" aria-label="Accueil">' + ico(IC.back) + '</button>' +
     '<div class="grow"><div class="h1">Projets</div><div class="sub">' + (isToday ? 'Aujourd’hui · ' : '') + esc(title) + '</div></div>' +
-    '<button class="rbtn" data-act="tday" data-arg="-1" aria-label="Jour précédent">' + ico(IC.prev) + '</button>' +
-    '<button class="rbtn" data-act="tday" data-arg="1" aria-label="Jour suivant">' + ico(IC.next) + '</button>' +
     (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
@@ -869,7 +919,7 @@ function renderTaches(){
       }
       for (i = 0; i < fait.length; i++) h += taskCard(fait[i]);
     }
-    if (W.updated) h += '<div class="muted tupd">Planning mis à jour ' + esc(W.updated) + '</div>';
+    if (W.updated) h += '<div class="muted tupd">Planning mis à jour ' + esc(W.updated) + ' · ' + (ghToken() ? (ghErr ? esc(ghErr) : 'coches synchronisées ✓') : 'coches sur cet iPad') + '</div>';
   }
   h += '</div>';
   var old = document.querySelector('#s-taches .content'), scroll = old ? old.scrollTop : 0;
@@ -893,7 +943,11 @@ function renderReglages(){
       '<input type="number" inputmode="decimal" data-set="' + d[0] + '" value="' + esc(data.settings[d[0]]) + '"' + (d[0] === 'photo' ? ' placeholder="—"' : '') + '>' +
       '<span class="u">' + d[2] + '</span></div></div>';
   }
-  h += '</div><div class="row" style="margin-top:4px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
+  h += '</div><div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
+    (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
+    '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
+    '<button class="white" data-act="ghsave">OK</button>' + (ghToken() ? '<button data-act="ghclear">Retirer</button>' : '') + '</div>';
+  h += '<div class="row" style="margin-top:4px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
     '<div class="muted" style="font-size:20px;margin-top:14px">Les données restent sur cet iPad. Exporte de temps en temps et colle le texte dans Notes.</div></div>';
   $('s-reglages').innerHTML = h;
   alignGlass($('s-reglages'));
@@ -951,7 +1005,7 @@ function handle(act, arg){
       var cur = findTask(arg);
       if (!cur) return;
       if (!data.tasksDone) data.tasksDone = {};
-      data.tasksDone[arg] = !isDoneTask(cur); save(); renderTaches(); return;
+      data.tasksDone[arg] = !isDoneTask(cur); save(); renderTaches(); pushPending(); return;
     case 'tday':
       /* jour précédent / suivant parmi les jours du planning (fonctionne même si le jour affiché n'y est pas) */
       var dd = (data.tasksCache && data.tasksCache.days) || [], cv = tView || isoDate(new Date()), pick = null;
@@ -961,6 +1015,14 @@ function handle(act, arg){
       }
       if (!pick) return;
       tView = pick; renderTaches(); var cc = document.querySelector('#s-taches .content'); if (cc) cc.scrollTop = 0; return;
+    case 'ghsave':
+      var tk = ($('gh-in').value || '').replace(/^\s+|\s+$/g, '');
+      if (!tk) return;
+      try { window.localStorage.setItem(GH_KEY, tk); } catch(e){}
+      renderReglages(); loadTasks(null); return;
+    case 'ghclear':
+      try { window.localStorage.removeItem(GH_KEY); } catch(e){}
+      renderReglages(); return;
     case 'pmonth': viewMonth = shiftMonth(viewMonth, +arg); renderProjets(); return;
     case 'padd': openProject(null); return;
     case 'pstat': i = findProject(arg); if (i < 0) return; p = data.projects[i]; p.status = (p.status + 1) % STATUTS.length; save(); renderProjets(); return;
