@@ -17,6 +17,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - Source UNIQUE : écrit par le Claude du planning de la semaine (conversation sur le téléphone) à chaque mise à jour. Pas de copie intermédiaire.
 - Format : `{updated, days:[{date:"AAAA-MM-JJ", jour:"Mercredi 11 novembre", tasks:[{id, client, text, done}]}]}`. `id` stable d'un jour à l'autre (sert aux coches). Texte commençant par « URGENT · » = tâche urgente.
 - /test le lit en XMLHttpRequest (`../semaine.json`) à l'ouverture puis toutes les 5 min, cache hors ligne. Affiche UNIQUEMENT la journée (pas de flèches). Vue semaine = planning Claude de Noam sur iPhone (pas de page semaine ici).
+- Gestes sur l'écran Projets : 1 appui = cocher, double appui = modifier (renommer, jour suivant, supprimer), glisser à gauche = supprimer (bandeau « Annuler » 5 s), appui long = déplacer plus haut/bas. Gardé sur l'iPad (`tEdits`) et, avec la clé GitHub, écrit dans semaine.json : `"supprimes":[ids]`, `"perso":true` (texte/jour fixés par Noam), ordre du jour. La routine planning-semaine-ipad les respecte.
 - Coches locales à l'iPad, ou partagées dans semaine.json si une clé GitHub est collée dans Réglages (clé stockée à part, jamais exportée). Journée finie → « Journée terminée ✓ » et les tâches pas faites du/des jour(s) suivant(s) remontent en « En avance ».
 - Le fichier est PUBLIC (GitHub Pages) : noms de clients visibles. Chiffrement possible plus tard.
 

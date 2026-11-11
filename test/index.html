@@ -180,6 +180,12 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 /* Projets = tâches du jour (taches.json, rempli par la routine Suivi) */
 .task{display:flex;align-items:center;padding:16px 22px;margin-bottom:12px}
 .task.urg{border-left:6px solid #A78BFA}
+.task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.task.lift{z-index:5;border-color:#A78BFA}
+.toast{position:fixed;left:50%;bottom:30px;width:620px;margin-left:-310px;display:flex;align-items:center;padding:10px 10px 10px 32px;border-radius:9999px;background:#fff;color:#111;font-size:26px;font-weight:600;z-index:60;opacity:0;transform:translateY(30px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:none;pointer-events:auto}
+.toast span{flex:1}
+.toast button{background:#111;border-color:#111;color:#A78BFA}
 .tchk{flex-shrink:0;width:64px;height:64px;line-height:58px;text-align:center;border-radius:20px;border:3px solid rgba(255,255,255,.4);margin-right:22px;font-size:34px;font-weight:700;color:#111}
 .task.on{opacity:.45}
 .task.on .tchk{background:#4ade80;border-color:#4ade80}
@@ -235,6 +241,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-taches" class="screen"></section>
 
 <div id="modal" class="overlay"></div>
+<div id="toast" class="toast"><span id="toast-t"></span><button data-act="tundo">Annuler</button></div>
 <div id="confirm" class="overlay">
   <div class="cbox2">
     <div id="cf-msg" class="cmsg"></div>
@@ -887,7 +894,7 @@ function ghReq(method, body, cb){
     x.send(body ? JSON.stringify(body) : null);
   } catch(e){ cb(false, null, 0); }
 }
-function gotWeek(w, cb){ data.tasksCache = w; save(); if (cb) cb(); pushPending(); }
+function gotWeek(w, cb){ data.tasksCache = applyEdits(w); save(); if (cb) cb(); pushPending(); }
 function loadPages(cb){
   try {
     var x = new XMLHttpRequest();
@@ -912,7 +919,7 @@ function pushPending(){
   if (ghBusy || !ghToken() || !data.tasksDone) return;
   var id = null;
   for (var k in data.tasksDone) if (data.tasksDone.hasOwnProperty(k)){ id = k; break; }
-  if (id === null) return;
+  if (id === null){ pushEdits(); return; }
   var val = !!data.tasksDone[id];
   ghBusy = true;
   ghReq('GET', null, function(ok, j){
@@ -924,7 +931,7 @@ function pushPending(){
       var tk = w.days[d].tasks[t];
       if (tk.id === id){ found = true; if (!!tk.done !== val){ tk.done = val; changed = true; } }
     }
-    function next(){ delete data.tasksDone[id]; data.tasksCache = w; save(); ghBusy = false; if (current === 'taches') renderTaches(); pushPending(); }
+    function next(){ delete data.tasksDone[id]; data.tasksCache = applyEdits(w); save(); ghBusy = false; if (current === 'taches') renderTaches(); pushPending(); }
     if (!found || !changed){ next(); return; }
     ghReq('PUT', {message:(val ? 'Fait : ' : 'À refaire : ') + id, content:b64enc(JSON.stringify(w, null, 1) + '\n'), sha:j.sha, branch:'main'}, function(ok2, j2, st2){
       if (ok2){ ghErr = ''; next(); }
@@ -933,13 +940,14 @@ function pushPending(){
   });
 }
 function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.id) ? !!m[k.id] : !!k.done; }
-function taskCard(tk){
+function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
-  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="tdone" data-arg="' + esc(tk.id) + '">' +
+  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
     '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '') +
     '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
 }
 function renderTaches(){
+  if (tGesture) return; /* pas de rafraîchissement pendant un glisser */
   var W = data.tasksCache, days = (W && W.days) ? W.days : [], today = isoDate(new Date()), i, j, idx = -1;
   if (!tView) tView = today;
   for (i = 0; i < days.length; i++) if (days[i].date === tView) idx = i;
@@ -954,7 +962,7 @@ function renderTaches(){
     if (!day) h += '<div class="empty">Rien de prévu ce jour.</div>';
     else {
       if (!todo.length) h += '<div class="glass tall">Journée terminée ✓</div>';
-      for (i = 0; i < todo.length; i++) h += taskCard(todo[i]);
+      for (i = 0; i < todo.length; i++) h += taskCard(todo[i], day.date);
       /* journée finie : on remonte les tâches pas faites des jours suivants */
       if (isToday && !todo.length){
         for (j = idx + 1; j < days.length; j++){
@@ -963,12 +971,12 @@ function renderTaches(){
           var left = 0; for (i = 0; i < next.length; i++) if (!isDoneTask(next[i])) left++;
           if (!next.length) continue;
           h += '<div class="dh">En avance · ' + esc(nd.jour) + '</div>';
-          for (i = 0; i < next.length; i++) if (!isDoneTask(next[i])) h += taskCard(next[i]);
-          for (i = 0; i < next.length; i++) if (isDoneTask(next[i])) h += taskCard(next[i]);
+          for (i = 0; i < next.length; i++) if (!isDoneTask(next[i])) h += taskCard(next[i], nd.date);
+          for (i = 0; i < next.length; i++) if (isDoneTask(next[i])) h += taskCard(next[i], nd.date);
           if (left) break;
         }
       }
-      for (i = 0; i < fait.length; i++) h += taskCard(fait[i]);
+      for (i = 0; i < fait.length; i++) h += taskCard(fait[i], day.date);
     }
     if (W.updated) h += '<div class="muted tupd">Planning mis à jour ' + esc(W.updated) + ' · ' + (ghToken() ? (ghErr ? esc(ghErr) : 'coches synchronisées ✓') : 'coches sur cet iPad') + '</div>';
   }
@@ -984,6 +992,218 @@ function findTask(id){
   for (var i = 0; i < d.length; i++) for (var k = 0; k < d[i].tasks.length; k++) if (d[i].tasks[k].id === id) return d[i].tasks[k];
   return null;
 }
+
+/* ---------- Modifs de Noam sur le planning ----------
+   Glisser à gauche = supprimer (Annuler 5 s), double appui = renommer / jour suivant / supprimer,
+   appui long = déplacer plus haut ou plus bas. Gardé sur l'iPad (data.tEdits, réappliqué à chaque
+   chargement) et, avec la clé GitHub, écrit dans semaine.json : "supprimes":[ids], "perso":true
+   sur une tâche renommée ou déplacée, ordre des tâches du jour. La routine Claude les respecte. */
+var URG_RE = /^URGENT\s*·\s*/, tGesture = false, tapTimer = null, tapId = null, toastTimer = null, toastCb = null;
+function tEd(){
+  var e = data.tEdits || (data.tEdits = {}), k, n, lim = Date.now() - 14 * 86400000;
+  for (n in {del:1, ren:1, mov:1, ord:1}){
+    if (!e[n] || typeof e[n] !== 'object') e[n] = {};
+    for (k in e[n]) if (e[n].hasOwnProperty(k) && !(e[n][k] && e[n][k].at > lim)) delete e[n][k];
+  }
+  if (!(data.tQ instanceof Array)) data.tQ = [];
+  return e;
+}
+function setTaskText(tk, v){ tk.text = (URG_RE.test(tk.text || '') ? 'URGENT · ' : '') + v; tk.perso = true; }
+function findDay(w, date){ for (var i = 0; i < w.days.length; i++) if (w.days[i].date === date) return w.days[i]; return null; }
+function pullTask(w, id){
+  for (var i = 0; i < w.days.length; i++) for (var t = 0; t < w.days[i].tasks.length; t++)
+    if (w.days[i].tasks[t].id === id) return w.days[i].tasks.splice(t, 1)[0];
+  return null;
+}
+function orderDay(day, ids){
+  if (!day) return;
+  var pos = {}, i;
+  for (i = 0; i < ids.length; i++) pos[ids[i]] = i;
+  var l = day.tasks.slice();
+  for (i = 0; i < l.length; i++) l[i]._o = pos.hasOwnProperty(l[i].id) ? pos[l[i].id] : 1000 + i;
+  l.sort(function(a, b){ return a._o - b._o; });
+  for (i = 0; i < l.length; i++) delete l[i]._o;
+  day.tasks = l;
+}
+/* une modif appliquée à une semaine (copie locale ou fichier GitHub) */
+function applyOp(w, op){
+  var tk;
+  if (op.op === 'del'){
+    while (pullTask(w, op.id)) {}
+    if (!(w.supprimes instanceof Array)) w.supprimes = [];
+    if (w.supprimes.indexOf(op.id) < 0) w.supprimes.push(op.id);
+  } else if (op.op === 'ren'){
+    tk = null;
+    for (var i = 0; i < w.days.length && !tk; i++) for (var t = 0; t < w.days[i].tasks.length; t++) if (w.days[i].tasks[t].id === op.id) tk = w.days[i].tasks[t];
+    if (tk) setTaskText(tk, op.v);
+  } else if (op.op === 'mov'){
+    var to = findDay(w, op.v);
+    if (!to) return;
+    tk = pullTask(w, op.id);
+    if (tk){ tk.perso = true; to.tasks.push(tk); }
+  } else if (op.op === 'ord') orderDay(findDay(w, op.day), op.ids);
+}
+function applyEdits(w){
+  if (!w || !(w.days instanceof Array)) return w;
+  var e = tEd(), k;
+  for (k in e.del) if (e.del.hasOwnProperty(k)) while (pullTask(w, k)) {}
+  if (w.supprimes instanceof Array) for (var i = 0; i < w.supprimes.length; i++) while (pullTask(w, w.supprimes[i])) {}
+  for (k in e.ren) if (e.ren.hasOwnProperty(k)) applyOp(w, {op:'ren', id:k, v:e.ren[k].v});
+  for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v});
+  for (k in e.ord) if (e.ord.hasOwnProperty(k)) applyOp(w, {op:'ord', day:k, ids:e.ord[k].v});
+  return w;
+}
+function queueEdit(op, delay){
+  tEd(); op.at = Date.now() + (delay || 0); data.tQ.push(op); save();
+  setTimeout(pushEdits, (delay || 0) + 100);
+}
+/* envoie les modifs en attente une par une dans semaine.json (après les coches) */
+function pushEdits(){
+  tEd();
+  if (ghBusy || !ghToken() || !data.tQ.length) return;
+  var op = data.tQ[0], wait = op.at - Date.now();
+  if (wait > 0){ setTimeout(pushEdits, wait + 100); return; }
+  ghBusy = true;
+  ghReq('GET', null, function(ok, j){
+    if (!ok || !j || !j.content){ ghBusy = false; return; }
+    var w;
+    try { w = JSON.parse(b64dec(j.content)); } catch(e){ ghBusy = false; return; }
+    if (!(w.days instanceof Array)){ ghBusy = false; return; }
+    applyOp(w, op);
+    var lab = {del:'Supprimé : ', ren:'Renommé : ', mov:'Déplacé : ', ord:'Rangé : '}[op.op] + (op.id || op.day);
+    ghReq('PUT', {message:'iPad · ' + lab, content:b64enc(JSON.stringify(w, null, 1) + '\n'), sha:j.sha, branch:'main'}, function(ok2, j2, st2){
+      if (ok2){
+        ghErr = ''; data.tQ.shift(); data.tasksCache = applyEdits(w); save(); ghBusy = false;
+        if (current === 'taches') renderTaches();
+        pushPending();
+      } else { ghBusy = false; ghErr = st2 === 409 ? '' : 'Modif pas encore envoyée'; if (st2 === 409) setTimeout(pushEdits, 1500); }
+    });
+  });
+}
+function refreshTasks(){ data.tasksCache = applyEdits(data.tasksCache); save(); renderTaches(); }
+function nextDayOf(date){
+  var d = (data.tasksCache && data.tasksCache.days) || [], best = null;
+  for (var i = 0; i < d.length; i++) if (d[i].date > date && (!best || d[i].date < best.date)) best = d[i];
+  return best;
+}
+function dayOfTask(id){
+  var d = (data.tasksCache && data.tasksCache.days) || [];
+  for (var i = 0; i < d.length; i++) for (var k = 0; k < d[i].tasks.length; k++) if (d[i].tasks[k].id === id) return d[i];
+  return null;
+}
+function delTask(id){
+  var e = tEd(), day = dayOfTask(id), pos = -1, copy = null, i;
+  if (day) for (i = 0; i < day.tasks.length; i++) if (day.tasks[i].id === id){ pos = i; copy = JSON.parse(JSON.stringify(day.tasks[i])); }
+  e.del[id] = {at:Date.now()};
+  queueEdit({op:'del', id:id}, 5000);
+  refreshTasks();
+  showToast('Tâche supprimée', function(){
+    var e2 = tEd(), j;
+    delete e2.del[id];
+    for (j = data.tQ.length - 1; j >= 0; j--) if (data.tQ[j].op === 'del' && data.tQ[j].id === id) data.tQ.splice(j, 1);
+    var d2 = day ? findDay(data.tasksCache, day.date) : null;
+    if (d2 && copy && !findTask(id)) d2.tasks.splice(Math.min(pos, d2.tasks.length), 0, copy);
+    refreshTasks();
+  });
+}
+function showToast(msg, cb){
+  toastCb = cb; $('toast-t').textContent = msg; $('toast').className = 'toast show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 5000);
+}
+function hideToast(){ clearTimeout(toastTimer); toastCb = null; $('toast').className = 'toast'; }
+function openTaskEdit(id){
+  var tk = findTask(id), day = dayOfTask(id);
+  if (!tk) return;
+  var nx = day ? nextDayOf(day.date) : null, base = (tk.text || '').replace(URG_RE, '');
+  openModal({kind:'tedit', id:id, text:base, base:base, to:nx ? nx.date : ''},
+    '<div class="mtitle">Modifier la tâche</div>' +
+    '<input type="text" id="m-ttxt" data-bind="text" value="' + esc(base) + '" style="width:100%">' +
+    '<div class="row mbtns" style="margin-top:30px"><button class="vio" data-act="tedel">Supprimer</button>' +
+    (nx ? '<button data-act="temov">→ ' + esc(nx.jour.split(' ')[0]) + '</button>' : '') + '</div>' +
+    '<div class="row mbtns" style="margin-top:18px"><button data-act="mclose">Annuler</button><button class="white" data-act="tesave">Enregistrer</button></div>');
+}
+
+/* gestes sur les tâches : glisser à gauche (supprimer) et appui long (ranger) */
+var tg = null;
+function tSib(el, dir){
+  var s = dir < 0 ? el.previousElementSibling : el.nextElementSibling;
+  return (s && s.getAttribute('data-tid') && s.getAttribute('data-day') === el.getAttribute('data-day') && !/(^| )on( |$)/.test(s.className)) ? s : null;
+}
+function tgStart(target, x, y){
+  if (current !== 'taches' || modal) return;
+  var el = closestAttr(target, 'data-tid');
+  if (!el) return;
+  var g = tg = {el:el, x0:x, y0:y, dx:0, mode:null};
+  g.timer = setTimeout(function(){
+    if (tg !== g || g.mode || /(^| )on( |$)/.test(el.className)) return;
+    g.mode = 'drag'; tGesture = true; g.base = g.y0; el.className += ' lift';
+    el.style.transform = 'scale(1.03)';
+  }, 450);
+}
+function tgMove(x, y, e){
+  var g = tg;
+  if (!g) return;
+  var dx = x - g.x0, dy = y - g.y0;
+  if (!g.mode){
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
+    clearTimeout(g.timer);
+    if (dx < 0 && Math.abs(dx) > Math.abs(dy)){ g.mode = 'swipe'; tGesture = true; g.el.style.transition = 'none'; }
+    else { tg = null; return; }
+  }
+  if (e.cancelable) e.preventDefault();
+  if (g.mode === 'swipe'){ g.dx = Math.min(0, dx); g.el.style.transform = 'translateX(' + g.dx + 'px)'; return; }
+  /* drag : on échange avec la voisine quand on dépasse sa moitié */
+  var el = g.el, box = document.querySelector('#s-taches .content'), off = y - g.base, s, h;
+  if (box){
+    var r = box.getBoundingClientRect(), sc = 0;
+    if (y < r.top + 70) sc = -14; else if (y > r.bottom - 70) sc = 14;
+    if (sc){ var b4 = box.scrollTop; box.scrollTop += sc; g.base -= box.scrollTop - b4; off = y - g.base; }
+  }
+  s = tSib(el, -1);
+  if (s && off < -(s.offsetHeight + 12) / 2){ h = s.offsetHeight + 12; el.parentNode.insertBefore(el, s); g.base -= h; g.moved = true; }
+  else { s = tSib(el, 1); if (s && off > (s.offsetHeight + 12) / 2){ h = s.offsetHeight + 12; el.parentNode.insertBefore(el, s.nextSibling); g.base += h; g.moved = true; } }
+  off = y - g.base;
+  el.style.transform = 'translateY(' + off + 'px) scale(1.03)';
+}
+function tgEnd(){
+  var g = tg;
+  tg = null;
+  if (!g) return;
+  clearTimeout(g.timer);
+  if (!g.mode) return;
+  lpSwallowUntil = Date.now() + 450;
+  var el = g.el, id = el.getAttribute('data-tid');
+  if (g.mode === 'swipe'){
+    el.style.transition = 'transform .2s';
+    if (g.dx < -140){
+      el.style.transform = 'translateX(-110%)';
+      setTimeout(function(){ tGesture = false; delTask(id); }, 200);
+    } else {
+      el.style.transform = '';
+      setTimeout(function(){ el.style.transition = ''; tGesture = false; }, 220);
+    }
+    return;
+  }
+  /* fin du rangement : nouvel ordre du jour */
+  tGesture = false;
+  el.className = el.className.replace(/ lift/g, ''); el.style.transform = '';
+  if (!g.moved) return;
+  var date = el.getAttribute('data-day'), ids = [], cards = el.parentNode.childNodes, i;
+  for (i = 0; i < cards.length; i++) if (cards[i].nodeType === 1 && cards[i].getAttribute('data-day') === date) ids.push(cards[i].getAttribute('data-tid'));
+  var day = findDay(data.tasksCache, date);
+  if (day) for (i = 0; i < day.tasks.length; i++) if (ids.indexOf(day.tasks[i].id) < 0) ids.push(day.tasks[i].id);
+  tEd().ord[date] = {v:ids, at:Date.now()};
+  queueEdit({op:'ord', day:date, ids:ids});
+  refreshTasks();
+}
+document.addEventListener('touchstart', function(e){ var t = e.touches[0]; if (e.touches.length === 1) tgStart(e.target, t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchmove', function(e){ var t = e.touches[0]; tgMove(t.clientX, t.clientY, e); }, {passive:false});
+document.addEventListener('touchend', tgEnd, {passive:true});
+document.addEventListener('touchcancel', tgEnd, {passive:true});
+document.addEventListener('mousedown', function(e){ tgStart(e.target, e.clientX, e.clientY); });
+document.addEventListener('mousemove', function(e){ if (e.buttons) tgMove(e.clientX, e.clientY, e); });
+document.addEventListener('mouseup', tgEnd);
 
 /* ---------- Réglages ---------- */
 function renderReglages(){
@@ -1011,6 +1231,31 @@ function handle(act, arg){
     case 'go': closeModal(); go(arg); return;
     case 'link': closeModal(); window.open(arg, '_blank'); return;
     case 'music': playMusic(); return;
+    case 'ttap':
+      /* 1 appui = cocher (après un court délai), 2 appuis rapides = modifier */
+      if (tapTimer && tapId === arg){ clearTimeout(tapTimer); tapTimer = null; openTaskEdit(arg); return; }
+      clearTimeout(tapTimer); tapId = arg;
+      tapTimer = setTimeout(function(){ tapTimer = null; handle('tdone', tapId); }, 280);
+      return;
+    case 'tesave':
+      if (!modal) return;
+      var tv = (modal.text || '').replace(/^\s+|\s+$/g, '').replace(URG_RE, '');
+      if (!tv){ $('m-ttxt').style.borderColor = '#A78BFA'; return; }
+      var tid = modal.id, tb = modal.base;
+      closeModal();
+      if (tv !== tb){ tEd().ren[tid] = {v:tv, at:Date.now()}; queueEdit({op:'ren', id:tid, v:tv}); }
+      refreshTasks(); return;
+    case 'temov':
+      if (!modal || !modal.to) return;
+      var mid = modal.id, mto = modal.to;
+      closeModal();
+      tEd().mov[mid] = {v:mto, at:Date.now()}; queueEdit({op:'mov', id:mid, v:mto});
+      refreshTasks(); return;
+    case 'tedel':
+      if (!modal) return;
+      var did = modal.id;
+      closeModal(); delTask(did); return;
+    case 'tundo': var ucb = toastCb; hideToast(); if (ucb) ucb(); return;
     case 'csel':
       if (data.chrono && data.chrono.running) return;
       data.chrono = null; data.chronoSel = +arg; save(); break;
