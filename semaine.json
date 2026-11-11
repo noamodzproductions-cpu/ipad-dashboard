@@ -18,12 +18,6 @@
      "done": true
     },
     {
-     "id": "astotel-lorette-ssd",
-     "client": "Astotel",
-     "text": "URGENT · Astotel - Lorette : rushs + photos → SSD",
-     "done": true
-    },
-    {
      "id": "mich-videos-sujets",
      "client": "Michalak",
      "text": "URGENT · Michalak : monter les vidéos des sujets tournés",
@@ -126,5 +120,8 @@
     }
    ]
   }
+ ],
+ "supprimes": [
+  "astotel-lorette-ssd"
  ]
 }
