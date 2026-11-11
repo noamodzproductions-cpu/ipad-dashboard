@@ -10,12 +10,6 @@
      "client": "Cercle de l'Espoir",
      "text": "URGENT · Le Cercle de Théia : faire la V1 (interview, sans le discours)",
      "done": false
-    },
-    {
-     "id": "mer11-point-zac-noelie",
-     "client": "Michalak",
-     "text": "Michalak : point rushs du matin, reels ou IA ?",
-     "done": true
     }
    ]
   },
@@ -87,6 +81,7 @@
   "mer11-the-fondu",
   "mer11-macaron-pain-perdu",
   "mer11-travel-mug",
-  "cmc-call-ajustements"
+  "cmc-call-ajustements",
+  "mer11-point-zac-noelie"
  ]
 }
