@@ -101,12 +101,21 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fcard{display:flex;align-items:center;min-height:120px;padding:18px 22px;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fcard.late{border-left-color:#A78BFA}
 .fc-n{font-size:30px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fc-d{font-size:22px;color:rgba(255,255,255,.65);margin-top:6px;white-space:nowrap}
+.fc-d{font-size:21px;color:rgba(255,255,255,.65);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .late .fc-d{color:#cbb8ff;font-weight:600}
 .fc-v{flex-shrink:0;margin-left:16px;font-size:40px;font-weight:700;white-space:nowrap}
-.frel{flex-shrink:0;margin-left:14px;width:150px;padding:0;font-size:24px}
 .fcard .grow{min-height:84px;display:flex;flex-direction:column;justify-content:center}
-.fpaid{opacity:.6;min-height:96px}
+.fcard.paid .grow,.fcard.paid .fc-v{opacity:.45}
+.fcard.paid .fc-v{text-decoration:line-through}
+.fchk{display:flex;flex-shrink:0;margin-left:18px;padding-left:18px;border-left:1px solid rgba(255,255,255,.16)}
+.fbox{position:relative;width:160px;height:84px;padding:0 0 0 62px;border-radius:20px;text-align:left;font-size:22px;line-height:1.15;background:transparent;border:2px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8)}
+.fbox + .fbox{margin-left:12px}
+.fbox i{position:absolute;left:14px;top:21px;width:38px;height:38px;line-height:34px;border-radius:12px;border:3px solid rgba(255,255,255,.4);font-style:normal;font-size:24px;font-weight:800;text-align:center;color:#111}
+.fbox small{display:block;font-size:16px;font-weight:600;opacity:.8}
+.fbox.on.r{background:rgba(167,139,250,.22);border-color:#A78BFA;color:#d6c8ff}
+.fbox.on.r i{background:#A78BFA;border-color:#A78BFA}
+.fbox.on.p{background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80}
+.fbox.on.p i{background:#4ade80;border-color:#4ade80}
 .fm-l{font-size:26px;color:rgba(255,255,255,.75);margin-bottom:10px}
 .fm-l b{color:#fff}
 
@@ -625,7 +634,7 @@ function facRows(){
     out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:left, last:last, nrel:rels.length,
       paye:!!E.payes[f.id], taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
   }
-  out.sort(function(a, b){ return a.entree - b.entree; });
+  out.sort(function(a, b){ return (a.paye - b.paye) || (a.entree - b.entree); });
   return out;
 }
 function facRow(id){ var r = facRows(); for (var i = 0; i < r.length; i++) if (r[i].id === id) return r[i]; return null; }
@@ -690,22 +699,20 @@ function renderFactures(){
   var upd = data.facCache && data.facCache.updated ? 'Trello · ' + esc(data.facCache.updated) : '';
   var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('À toucher', t.tot) + tot('URSSAF 23,2 %', t.urs) + tot('Net', t.net) + '</div><div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
-  var paid = '';
   for (i = 0; i < rows.length; i++){
-    var r = rows[i], late = r.left <= 0;
-    if (r.paye){
-      paid += '<div class="glass fcard fpaid"><div class="grow"><div class="fc-n">' + esc(r.projet) + '</div><div class="fc-d num">' + eur(r.reste) + ' · payé le ' + dCourt(data.facEtat.payes[r.id]) + '</div></div>' +
-        '<button class="frel" data-act="fremet" data-arg="' + esc(r.id) + '">Remettre</button></div>';
-      continue;
-    }
-    var info = (late ? 'Relancer · ' : 'J-' + r.left + ' · ') + (r.nrel ? 'relancé le ' + dCourt(r.last) : 'depuis le ' + dCourt(r.entree)) + ' · ' + r.days + ' j';
-    h += '<div class="glass fcard' + (late ? ' late' : '') + '"><div class="grow" data-act="fopen" data-arg="' + esc(r.id) + '"><div class="fc-n">' + esc(r.projet) + '</div>' +
+    var r = rows[i], late = !r.paye && r.left <= 0, relOn = !!r.last && r.left > 0, info;
+    if (r.paye) info = 'Payé · passera dans Trello';
+    else if (late) info = r.last ? 'À relancer de nouveau' : 'À relancer · ' + r.days + ' j';
+    else if (relOn) info = 'Prochaine relance dans ' + r.left + ' j';
+    else info = 'À relancer dans ' + r.left + ' j';
+    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '"><div class="grow" data-act="fopen" data-arg="' + esc(r.id) + '"><div class="fc-n">' + esc(r.projet) + '</div>' +
       '<div class="fc-d num">' + info + '</div></div>' +
       '<div class="fc-v num" data-act="fopen" data-arg="' + esc(r.id) + '">' + eur(r.reste) + '</div>' +
-      '<button class="frel' + (late ? ' ko' : '') + '" data-act="frel" data-arg="' + esc(r.id) + '">Relancé</button>' +
-      '<button class="frel ok" data-act="fpaye" data-arg="' + esc(r.id) + '">Payé</button></div>';
+      '<div class="fchk">' +
+      (r.paye ? '' : '<button class="fbox r' + (relOn ? ' on' : '') + '" data-act="frel" data-arg="' + esc(r.id) + '"><i>' + (relOn ? '✓' : '') + '</i>Relancé' + (relOn ? '<small>' + dCourt(r.last) + '</small>' : '') + '</button>') +
+      '<button class="fbox p' + (r.paye ? ' on' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '"><i>' + (r.paye ? '✓' : '') + '</i>Payé' + (r.paye ? '<small>' + dCourt(data.facEtat.payes[r.id]) + '</small>' : '') + '</button>' +
+      '</div></div>';
   }
-  if (paid) h += '<div class="dh">Payées · la carte Trello sera déplacée au prochain passage</div><div style="margin-top:10px">' + paid + '</div>';
   h += '</div>';
   $('s-factures').innerHTML = h;
   var nc = document.querySelector('#s-factures .content');
@@ -1299,10 +1306,13 @@ function handle(act, arg){
       var did = modal.id;
       closeModal(); delTask(did); return;
     case 'tundo': var ucb = toastCb; hideToast(); if (ucb) ucb(); return;
-    case 'frel': closeModal(); facRelance(arg); return;
+    case 'frel':
+      closeModal();
+      var fr = facRow(arg);
+      if (fr && fr.last && fr.left > 0){ askConfirm('Retirer la relance du ' + dCourt(fr.last) + ' ?', 'Retirer', function(){ facUnrelance(arg); }); return; }
+      facRelance(arg); return;
     case 'funrel': closeModal(); facUnrelance(arg); return;
-    case 'fpaye': closeModal(); facPaye(arg, true); return;
-    case 'fremet': facPaye(arg, false); return;
+    case 'fpaye': closeModal(); var fp = facRow(arg); facPaye(arg, !(fp && fp.paye)); return;
     case 'fopen': facOpen(arg); return;
 
     case 'dvnext': dv.page = Math.min(3, dv.page + 1); save(); renderDevis(); return;
