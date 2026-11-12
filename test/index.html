@@ -67,7 +67,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widgets{flex:1;min-height:0;display:flex}
 /* Accueil sur 2 pages : glisser à gauche / à droite */
 .hpager{flex:1;min-height:0;overflow:hidden;position:relative}
-.htrack{display:flex;width:200%;height:100%;transition:transform .25s ease-out;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+.htrack{display:flex;width:200%;height:100%;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;transition:transform .5s cubic-bezier(.2,1.22,.36,1);-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
 .htrack.p1{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
 .hpage{width:50%;height:100%;display:flex}
 .hdots{flex-shrink:0;height:26px;padding-top:14px;text-align:center;white-space:nowrap;font-size:0}
@@ -111,11 +111,12 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-sub b{color:#cbb8ff}
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
 .ftots{margin:0 0 8px}
-.fcard{display:block;padding:18px 22px;margin-bottom:14px;border-left:8px solid #1c1c1e}
+.fcard{display:block;padding:0;margin-bottom:14px;border-left:8px solid #1c1c1e}
+.fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;will-change:transform;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
+.fcard.open .fc-in{-webkit-transform:translate3d(-340px,0,0);transform:translate3d(-340px,0,0)}
 /* glisser une facture à gauche : Annuler / Délai */
-.fc-act{position:absolute;top:0;right:0;bottom:0;display:none;align-items:center;padding:0 18px;background:#2a2a2e;border-left:1px solid rgba(255,255,255,.16)}
-.fcard.open .fc-act{display:flex}
-.fc-act button{height:76px;font-size:24px}
+.fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:340px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
+.fc-act button{height:76px;font-size:21px;padding:0 16px;white-space:nowrap}
 .fc-act button + button{margin-left:12px}
 /* Matériel */
 .mcard{min-height:170px}
@@ -244,7 +245,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 
 /* Projets = tâches du jour (taches.json, rempli par la routine Suivi) */
 .task{display:flex;align-items:center;padding:16px 22px;margin-bottom:12px}
-.task.urg{border-left:6px solid #A78BFA}
+.utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
 .task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .task.lift{z-index:5;border-color:#A78BFA}
 .toast{position:fixed;left:50%;bottom:30px;width:620px;margin-left:-310px;display:flex;align-items:center;padding:10px 10px 10px 32px;border-radius:9999px;background:#fff;color:#111;font-size:26px;font-weight:600;z-index:60;opacity:0;transform:translateY(30px);transition:opacity .2s,transform .2s;pointer-events:none}
@@ -277,7 +278,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .pday-c{margin-left:auto;font-size:20px;color:rgba(255,255,255,.6);white-space:nowrap}
 .plist{min-height:20px}
 .ptask{display:flex;align-items:center;min-height:76px;padding:12px 18px;margin-bottom:10px;border-radius:18px;background:#2a2a2e;border:1px solid rgba(255,255,255,.1);border-left-width:6px;border-left-color:#2a2a2e}
-.ptask.urg{border-left-color:#A78BFA}
+
 .ptask .grow > .ttag{margin-bottom:4px}
 .ptxt{font-size:24px;font-weight:500;line-height:1.25}
 .ptask.on{opacity:.4}
@@ -576,6 +577,7 @@ function normalize(d){
   if (!d.facEtat.payes) d.facEtat.payes = {};
   if (!d.facEtat.encaisses) d.facEtat.encaisses = {};
   if (!d.facEtat.delais) d.facEtat.delais = {};
+  if (!d.facEtat.prochaine) d.facEtat.prochaine = {};
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
     {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
@@ -758,7 +760,7 @@ function facPull(){
     if (!ok || !j || !j.content || data.facDirty) return;
     try {
       var e = JSON.parse(b64dec(j.content));
-      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}};
+      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}, prochaine:e.prochaine || {}};
       facPurge(); save(); renderFactures();
     } catch(er){}
   });
@@ -789,6 +791,9 @@ function facRows(){
     if (last && dayStart(new Date(last)) > start) start = dayStart(new Date(last));
     var dl = num((E.delais || {})[f.id]) || RELANCE_J;
     var due = new Date(start); due.setDate(due.getDate() + dl);
+    /* relance choisie à la main (« Relancer le… ») : elle remplace la date calculée */
+    var pr = parseIso((E.prochaine || {})[f.id]);
+    if (pr){ due = pr; dl = Math.max(1, Math.round((dayStart(pr) - start) / 86400000)); }
     var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
     var left = Math.round((due.getTime() - today) / 86400000);
     out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
@@ -816,6 +821,7 @@ function facRelance(id){
   var E = data.facEtat;
   if (!E.relances[id]) E.relances[id] = [];
   E.relances[id].push(Date.now());
+  if (E.prochaine) delete E.prochaine[id]; /* après une relance, le rythme normal reprend */
   facSchedule(); renderFactures();
   showToast(r.projet + ' · relancé', function(){ facUnrelance(id); });
 }
@@ -866,14 +872,14 @@ function renderFactures(){
     var r = rows[i], late = !r.paye && r.left <= 0;
     var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((r.dl - r.left) / r.dl * 100)));
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + (r.dl !== RELANCE_J ? ' · tous les ' + r.dl + ' j' : '');
-    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '">' +
+    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
+    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
-      '</div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Délai</button></div></div>';
+      '</div></div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Relancer le…</button></div></div>';
   }
   h += '</div>';
   $('s-factures').innerHTML = h;
@@ -891,11 +897,13 @@ function facUndo(id){
 }
 function facDelai(id, v){
   var r = facRow(id); if (!r) return;
-  var cur = v !== undefined ? v : r.dl;
-  openModal({kind:'fdelai', id:id, v:cur}, '<div class="mtitle">Relancer tous les…</div><div class="fm-l">' + esc(r.projet) + '</div>' +
-    '<div class="row" style="margin:26px 0">' + stepper('', cur + ' j', 'fdl', 'x') + '</div>' +
-    '<div class="row mbtns"><button data-act="fdlset" data-arg="7">7 j</button><button data-act="fdlset" data-arg="10">10 j</button><button data-act="fdlset" data-arg="15">15 j</button><button data-act="fdlset" data-arg="30">30 j</button></div>' +
-    '<div class="row mbtns" style="margin-top:22px"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
+  var cur = v !== undefined ? v : Math.max(1, r.left), t = new Date(); t.setDate(t.getDate() + cur);
+  var Q = [[1,'Demain'],[2,'Après-demain'],[7,'Dans 1 semaine'],[14,'Dans 2 semaines'],[30,'Dans 1 mois'],[60,'Dans 2 mois']], qb = '', k;
+  for (k = 0; k < Q.length; k++) qb += '<button class="' + (Q[k][0] === cur ? 'white' : '') + '" data-act="fdlset" data-arg="' + Q[k][0] + '" style="margin:0 10px 10px 0">' + Q[k][1] + '</button>';
+  openModal({kind:'fdelai', id:id, v:cur}, '<div class="mtitle">Relancer le…</div><div class="fm-l">' + esc(r.projet) + '</div>' +
+    '<div style="margin:18px 0 8px">' + qb + '</div>' +
+    '<div class="row" style="margin:10px 0 6px">' + stepper('', 'dans ' + cur + ' j', 'fdl', 'x') + '<div class="grow fm-l" style="margin:0 0 0 18px">' + cap(JOURS[t.getDay()]) + ' ' + dCourt(t.getTime()) + '</div></div>' +
+    '<div class="row mbtns" style="margin-top:22px"><button data-act="fdlreset">Rythme normal (15 j)</button><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
 }
 
 /* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
@@ -1254,7 +1262,7 @@ function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
   return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
-    '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '') +
+    '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
     '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
 }
 function renderTaches(){
@@ -1544,6 +1552,10 @@ function planLabel(day, today){
   if (day.date === isoDate(tm)) return {n:'Demain', d:day.jour};
   return {n:parts[0], d:parts.slice(1).join(' ')};
 }
+function tagsHtml(tk, urg){
+  var s = (urg ? '<span class="utag">URGENT</span>' : '') + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '');
+  return s ? '<div>' + s + '</div>' : '';
+}
 function renderPlanning(){
   var W = data.tasksCache, days = (W && W.days) || [], today = isoDate(new Date()), h, i, k, n = 0;
   for (i = 0; i < days.length; i++) if (days[i].date >= today) for (k = 0; k < days[i].tasks.length; k++) if (!isDoneTask(days[i].tasks[k])) n++;
@@ -1561,7 +1573,7 @@ function renderPlanning(){
     for (k = 0; k < d.tasks.length; k++){
       var tk = d.tasks[k], on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
       h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
-        '<div class="grow">' + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '') + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>';
+        '<div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>';
     }
     h += '</div></div>';
   }
@@ -1729,11 +1741,12 @@ function handle(act, arg){
     case 'facopen': facOpen(arg); return;
     case 'fundo': facUndo(arg); return;
     case 'fdelai': facDelai(arg); return;
-    case 'fdl': if (modal && modal.kind === 'fdelai') facDelai(modal.id, Math.max(1, Math.min(60, num(modal.v) + (+arg.split(':')[1])))); return;
+    case 'fdl': if (modal && modal.kind === 'fdelai') facDelai(modal.id, Math.max(1, Math.min(120, num(modal.v) + (+arg.split(':')[1])))); return;
+    case 'fdlreset': if (modal && modal.kind === 'fdelai'){ delete data.facEtat.prochaine[modal.id]; closeModal(); facSchedule(); renderFactures(); } return;
     case 'fdlset': if (modal && modal.kind === 'fdelai') facDelai(modal.id, +arg); return;
     case 'fdlok':
       if (!modal || modal.kind !== 'fdelai') return;
-      if (num(modal.v) === RELANCE_J) delete data.facEtat.delais[modal.id]; else data.facEtat.delais[modal.id] = num(modal.v);
+      var pd = new Date(); pd.setDate(pd.getDate() + num(modal.v)); data.facEtat.prochaine[modal.id] = isoDate(pd);
       closeModal(); facSchedule(); renderFactures(); return;
 
     case 'mopen': matOpen(arg); return;
@@ -1926,7 +1939,7 @@ var hd = null;
 document.addEventListener('touchstart', function(e){
   if (current !== 'home' || modalOpen() || confirmOpen()) { hd = null; return; }
   var t = e.touches[0];
-  hd = {x:t.clientX, y:t.clientY, w:$('hpager').offsetWidth, drag:false, dx:0};
+  hd = {x:t.clientX, y:t.clientY, w:$('hpager').offsetWidth, drag:false, dx:0, lx:t.clientX, lt:Date.now(), v:0};
 }, {passive:true});
 document.addEventListener('touchmove', function(e){
   if (!hd) return;
@@ -1936,13 +1949,19 @@ document.addEventListener('touchmove', function(e){
     hd.drag = true; $('htrack').style.transition = 'none'; clearTimeout(lpTimer);
   }
   hd.dx = dx;
-  var off = Math.max(-hd.w - 40, Math.min(40, (homePg ? -hd.w : 0) + dx)), tr = 'translate3d(' + off + 'px,0,0)';
+  var now = Date.now(), dt = now - hd.lt;
+  if (dt > 0){ hd.v = 0.6 * ((t.clientX - hd.lx) / dt) + 0.4 * hd.v; hd.lx = t.clientX; hd.lt = now; }
+  /* élastique au-delà de la première / dernière page */
+  var off = (homePg ? -hd.w : 0) + dx;
+  if (off > 0) off = off * 0.35; else if (off < -hd.w) off = -hd.w + (off + hd.w) * 0.35;
+  var tr = 'translate3d(' + off + 'px,0,0)';
   var s = $('htrack').style; s.webkitTransform = tr; s.transform = tr;
 }, {passive:true});
 document.addEventListener('touchend', function(){
   if (!hd || !hd.drag){ hd = null; return; }
   var n = homePg, s = $('htrack').style;
-  if (hd.dx < -hd.w * 0.2) n = 1; else if (hd.dx > hd.w * 0.2) n = 0;
+  if (Date.now() - hd.lt > 120) hd.v = 0; /* doigt arrêté avant de lâcher : pas de lancer */
+  if (hd.v < -0.4 || hd.dx < -hd.w * 0.2) n = 1; else if (hd.v > 0.4 || hd.dx > hd.w * 0.2) n = 0;
   s.transition = ''; s.webkitTransform = ''; s.transform = '';
   setHomePage(n); lpSwallowUntil = Date.now() + 400; hd = null;
 }, {passive:true});
