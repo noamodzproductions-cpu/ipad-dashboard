@@ -425,7 +425,7 @@ var FRAIS_TYPES = {
 var IDLE_MS = 120000;
 var IC = {
   back:'<path d="M15 18l-6-6 6-6"/>', prev:'<path d="M15 18l-6-6 6-6"/>', next:'<path d="M9 18l6-6-6-6"/>',
-  arrow:'<path d="M7 17L17 7M9 7h8v8"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
+  arrow:'<path d="M7 17L17 7M9 7h8v8"/>', reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
   check:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/>',
   fact:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
@@ -1088,6 +1088,7 @@ function renderTaches(){
   var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
   var h = '<div class="hdr row"><button class="rbtn" data-act="go" data-arg="home" aria-label="Accueil">' + ico(IC.back) + '</button>' +
     '<div class="grow"><div class="h1">Projets</div><div class="sub">' + (isToday ? 'Aujourd’hui · ' : '') + esc(title) + '</div></div>' +
+    '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
     (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
@@ -1378,6 +1379,9 @@ function handle(act, arg){
   var dv = data.devis, a, i, p, c;
   switch (act){
     case 'go': closeModal(); go(arg); return;
+    case 'reload':
+      try { window.localStorage.setItem('noamdash-reopen', 'taches'); } catch(e){}
+      location.replace(location.pathname + '?v=' + Date.now()); return;
     case 'link': closeModal(); window.open(arg, '_blank'); return;
     case 'music': playMusic(); return;
     case 'ttap':
@@ -1614,7 +1618,9 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 
 /* ---------- Démarrage ---------- */
 load();
-go('home');
+var reopen = null;
+try { reopen = window.localStorage.getItem('noamdash-reopen'); window.localStorage.removeItem('noamdash-reopen'); } catch(e){}
+go(reopen === 'taches' ? 'taches' : 'home');
 loadTasks(null);
 loadFactures();
 setInterval(tick, 500);
