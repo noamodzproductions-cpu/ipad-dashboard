@@ -1,0 +1,19 @@
+{
+ "lu_le": "2026-11-12",
+ "projets": [
+  {"carte_id": "6aedf942b19fe58afdb7b249", "projet": "Nuance Audio", "liste": "🎥 À tourner", "tournage": "2026-11-17", "deadline": "", "videos": [{"nom": "publi Sophie Davant", "etat": "à faire"}]},
+  {"carte_id": "6af4885301a3831f33aea6d8", "projet": "Astotel - Lorette", "liste": "🎬 En production", "tournage": "2026-11-10", "deadline": "", "videos": [{"nom": "photos", "etat": "à faire"}]},
+  {"carte_id": "6ac4e90addd9a4ba5ccb0d0d", "projet": "Café Marie Claire Beauté et bien-être", "liste": "🎬 En production", "tournage": "2026-10-06", "deadline": "", "videos": [{"nom": "récap", "etat": "V1 envoyée"}, {"nom": "interviews (Boumy Paris, Claire, Cloud Nineteen, Comptoir des Huiles, Inolab, KJ Locks, MiYé, Ojjon, Sanex)", "etat": "retours"}]},
+  {"carte_id": "6ae9e0634f253187fbde2950", "projet": "Café Marie Claire Evasion, Food & Expérience", "liste": "🎬 En production", "tournage": "2026-11-03", "deadline": "2026-11-18", "videos": [{"nom": "photos", "etat": "à faire"}, {"nom": "récap (vertical + horizontal)", "etat": "à faire"}, {"nom": "interviews", "etat": "à faire"}]},
+  {"carte_id": "6ac66322fe99f29a96919c99", "projet": "Ladurée Halloween", "liste": "🎬 En production", "tournage": "2026-10-23", "deadline": "", "videos": [{"nom": "stop motion club", "etat": "à faire"}, {"nom": "duplicat macarons", "etat": "à faire"}, {"nom": "carte mode", "etat": "à faire"}, {"nom": "Marie-Antoinette plan large", "etat": "à faire"}]},
+  {"carte_id": "6aedf6b52e3b3c02022d6d19", "projet": "Le Cercle de Théia", "liste": "🎬 En production", "tournage": "2026-11-06", "deadline": "", "videos": [{"nom": "interview Gala de l'Espoir", "etat": "retours"}]},
+  {"carte_id": "6ae533d46ad8850dc3233292", "projet": "Michalak", "liste": "🎬 En production", "tournage": "2026-10-30", "deadline": "", "videos": [{"nom": "photos + vidéos 30 oct → Drive", "etat": "à faire"}]},
+  {"carte_id": "6ade5ef2cb82481064a2c186", "projet": "Ensemble Solum", "liste": "🎬 En production", "tournage": "", "deadline": "2026-11-20", "videos": [{"nom": "vidéo", "etat": "à faire"}]},
+  {"carte_id": "6aa7e210f599ee727297a430", "projet": "Ensemble Kermes", "liste": "🎬 En production", "tournage": "2026-09-26", "deadline": "2026-11-16", "videos": [{"nom": "the last race", "etat": "à faire"}]},
+  {"carte_id": "6aa7db137b62aa26bfe5f9b5", "projet": "Ensemble Pop up Citadium", "liste": "🎬 En production", "tournage": "2026-06-18", "deadline": "2026-11-23", "videos": [{"nom": "vidéo", "etat": "à faire"}]},
+  {"carte_id": "6af61713d978ea9b8b120b89", "projet": "Ladurée Pavillon Gravelle", "liste": "🎬 En production", "tournage": "2026-11-12", "deadline": "", "videos": [{"nom": "Lieu 1", "etat": "à faire"}, {"nom": "Lieu 2", "etat": "à faire"}, {"nom": "Plats 1", "etat": "à faire"}, {"nom": "Plats 2", "etat": "à faire"}]},
+  {"carte_id": "6ace3ee61137e1dafd173449", "projet": "Café Marie Claire Lifestyle", "liste": "Attente Retour clients", "tournage": "2026-10-13", "deadline": "", "videos": [{"nom": "récap vertical", "etat": "V1 envoyée"}, {"nom": "récap horizontal", "etat": "à faire"}, {"nom": "interviews", "etat": "à faire"}]},
+  {"carte_id": "6aa7e1a3b25c099c00e38e07", "projet": "Café Marie Claire Déco & Design", "liste": "Attente Retour clients", "tournage": "2026-09-26", "deadline": "", "videos": [{"nom": "récap + 5 reels", "etat": "livrée"}, {"nom": "interviews V3", "etat": "V1 envoyée"}]},
+  {"carte_id": "6ac8e8a850802b8c01c54736", "projet": "Paris Select Astair", "liste": "Attente Retour clients", "tournage": "2026-10-08", "deadline": "", "videos": [{"nom": "vidéo", "etat": "à faire"}]}
+ ]
+}

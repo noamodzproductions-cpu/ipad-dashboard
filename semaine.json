@@ -1,5 +1,5 @@
 {
- "updated": "jeudi 12 nov. à 22h05",
+ "updated": "jeudi 12 nov. à 22h25",
  "days": [
   {
    "date": "2026-11-12",
@@ -52,6 +52,18 @@
      "client": "Marie Claire",
      "text": "Café Marie Claire Evasion, Food & Expérience : envoyer les photos",
      "done": false
+    },
+    {
+     "id": "cmc-evasion-v1",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
+     "done": false
+    },
+    {
+     "id": "laduree-halloween-v1-stopmotion",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween : faire la V1 stop motion club",
+     "done": false
     }
    ]
   },
@@ -65,15 +77,27 @@
    "jour": "Lundi 16 novembre",
    "tasks": [
     {
-     "id": "cmc-evasion-v1",
+     "id": "kermes-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Kermes : faire la V1",
+     "done": false
+    },
+    {
+     "id": "laduree-halloween-v1-macarons",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween : faire la V1 duplicat macarons",
+     "done": false
+    },
+    {
+     "id": "cmc-evasion-v1-interviews",
      "client": "Marie Claire",
-     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 (récap + interviews)",
+     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 interviews",
      "done": false
     },
     {
      "id": "laduree-gravelle-v1",
      "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : faire la V1",
+     "text": "Ladurée Pavillon Gravelle : faire la V1 Lieu 1",
      "done": false
     }
    ]
@@ -93,13 +117,44 @@
      "client": "Zack",
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false
+    },
+    {
+     "id": "laduree-halloween-v1-carte",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween : faire la V1 carte mode",
+     "done": false
+    },
+    {
+     "id": "laduree-gravelle-v1-lieu2",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle : faire la V1 Lieu 2",
+     "done": false
     }
    ]
   },
   {
    "date": "2026-11-18",
    "jour": "Mercredi 18 novembre",
-   "tasks": []
+   "tasks": [
+    {
+     "id": "laduree-halloween-v1-marie-antoinette",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween : faire la V1 Marie-Antoinette plan large",
+     "done": false
+    },
+    {
+     "id": "laduree-gravelle-v1-plats1",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle : faire la V1 Plats 1",
+     "done": false
+    },
+    {
+     "id": "laduree-gravelle-v1-plats2",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle : faire la V1 Plats 2",
+     "done": false
+    }
+   ]
   },
   {
    "date": "2026-11-19",
@@ -115,6 +170,24 @@
      "id": "mich-masterclass-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
+     "done": false
+    }
+   ]
+  },
+  {
+   "date": "2026-11-20",
+   "jour": "Vendredi 20 novembre",
+   "tasks": [
+    {
+     "id": "citadium-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Pop up Citadium : faire la V1",
+     "done": false
+    },
+    {
+     "id": "nuance-v1",
+     "client": "Zack",
+     "text": "Nuance Audio : faire la V1",
      "done": false
     }
    ]
