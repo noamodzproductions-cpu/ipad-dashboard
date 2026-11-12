@@ -63,6 +63,16 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
    gauche = Suivi des factures (grande carte) ; droite haut = Devis + Projets ; droite bas = Musique */
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
 .widgets{flex:1;min-height:0;display:flex}
+/* Accueil sur 2 pages : glisser à gauche / à droite */
+.hpager{flex:1;min-height:0;overflow:hidden;position:relative}
+.htrack{display:flex;width:200%;height:100%;transition:transform .3s}
+.htrack.p1{transform:translateX(-50%)}
+.hpage{width:50%;height:100%;display:flex}
+.hdots{margin-right:18px;white-space:nowrap;font-size:0}
+.hdots span{display:inline-block;width:12px;height:12px;border-radius:6px;background:rgba(255,255,255,.3);margin:0 6px}
+.hdots span.on{background:#fff}
+.widgets2{align-items:flex-start}
+.wsmall{flex:0 0 auto;width:300px;height:280px}
 .bl{flex:1;min-width:0;display:flex}
 .br{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column}
 .br-top{flex:1;min-height:0;display:flex}
@@ -99,6 +109,22 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
 .ftots{margin:0 0 8px}
 .fcard{display:block;padding:18px 22px;margin-bottom:14px;border-left:8px solid #1c1c1e}
+/* glisser une facture à gauche : Annuler / Délai */
+.fc-act{position:absolute;top:0;right:0;bottom:0;display:none;align-items:center;padding:0 18px;background:#2a2a2e;border-left:1px solid rgba(255,255,255,.16)}
+.fcard.open .fc-act{display:flex}
+.fc-act button{height:76px;font-size:24px}
+.fc-act button + button{margin-left:12px}
+/* Matériel */
+.mcard{min-height:170px}
+.mc-n{font-size:40px;font-weight:700;margin:8px 0}
+.mc-l{font-size:19px;color:rgba(255,255,255,.6);line-height:1.3}
+.mcard.done{border-color:#4ade80}
+.mcard.done .mc-n{color:#4ade80}
+.mchk{flex:1;min-width:0;display:block;text-align:left;height:84px;font-size:28px;padding:0 20px;border-radius:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mchk .tchk{display:inline-block;vertical-align:middle;width:52px;height:52px;line-height:46px;margin:0 18px 0 0;border-radius:14px;font-size:28px}
+.mchk.on{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5)}
+.mchk.on .tchk{background:#4ade80;border-color:#4ade80}
+.mrow2{margin-bottom:12px}
 .fc-top,.fc-bot{display:flex;align-items:center}
 .fc-bot button{height:70px;font-size:24px;margin-left:12px}
 .fbar{height:12px;border-radius:6px;background:rgba(255,255,255,.12);margin:14px 0 12px;overflow:hidden}
@@ -255,16 +281,21 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-home" class="screen active">
   <div class="hdr row">
     <div class="grow"><div class="h1" id="greet">Bonjour Noam</div><div class="sub" id="date"></div></div>
+    <div class="hdots" id="hdots"><span class="on"></span><span></span></div>
     <div class="hclock num" id="clock">00:00</div>
     <button class="rbtn" data-act="go" data-arg="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
-  <div class="widgets" id="widgets"></div>
+  <div class="hpager" id="hpager"><div class="htrack" id="htrack">
+    <div class="hpage"><div class="widgets" id="widgets"></div></div>
+    <div class="hpage"><div class="widgets widgets2" id="widgets2"></div></div>
+  </div></div>
 </section>
 <section id="s-devis" class="screen"></section>
 <section id="s-projets" class="screen"></section>
 <section id="s-reglages" class="screen"></section>
 <section id="s-taches" class="screen"></section>
 <section id="s-factures" class="screen"></section>
+<section id="s-materiel" class="screen"></section>
 
 <div id="modal" class="overlay"></div>
 <div id="toast" class="toast"><span id="toast-t"></span><button data-act="tundo">Annuler</button></div>
@@ -434,7 +465,7 @@ var FRAIS_TYPES = {
 var IDLE_MS = 120000;
 var IC = {
   back:'<path d="M15 18l-6-6 6-6"/>', prev:'<path d="M15 18l-6-6 6-6"/>', next:'<path d="M9 18l6-6-6-6"/>',
-  arrow:'<path d="M7 17L17 7M9 7h8v8"/>', reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
+  arrow:'<path d="M7 17L17 7M9 7h8v8"/>', cam:'<path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/>', reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
   check:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/>',
   fact:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
@@ -499,6 +530,13 @@ function normalize(d){
   if (!d.facEtat.relances) d.facEtat.relances = {};
   if (!d.facEtat.payes) d.facEtat.payes = {};
   if (!d.facEtat.encaisses) d.facEtat.encaisses = {};
+  if (!d.facEtat.delais) d.facEtat.delais = {};
+  if (!(d.materiel instanceof Array)) d.materiel = [
+    {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
+    {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
+    {id:'stab', nom:'Stabilisateur', items:[{id:'stab-poignees', nom:'Poignées'}]}
+  ];
+  if (!d.matCheck || typeof d.matCheck !== 'object') d.matCheck = {};
   if (d.relances){ for (var rk in d.relances) if (d.relances.hasOwnProperty(rk) && !d.facEtat.relances[rk]) d.facEtat.relances[rk] = [num(d.relances[rk])]; delete d.relances; }
   return d;
 }
@@ -536,11 +574,12 @@ function hdr(title, sub, right){
 function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
   current = name;
-  var ids = ['home','devis','projets','reglages','taches','factures'];
+  var ids = ['home','devis','projets','reglages','taches','factures','materiel'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
   if (name === 'home') renderHome();
   if (name === 'devis') renderDevis();
   if (name === 'factures'){ renderFactures(); loadFactures(); }
+  if (name === 'materiel') renderMateriel();
   if (name === 'projets') renderProjets();
   if (name === 'reglages') renderReglages();
   if (name === 'taches'){ tView = isoDate(new Date()); renderTaches(); loadTasks(function(){ if (current === 'taches') renderTaches(); }); }
@@ -565,6 +604,7 @@ function tick(){
     if (current !== 'home' || modalOpen() || confirmOpen()){
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       closeModal(); closeConfirm();
+      homePg = 0;
       go('home');
     }
   }
@@ -590,8 +630,17 @@ function renderHome(){
       '<div class="glass widget" data-act="go" data-arg="taches"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
     '</div><div class="br-bot"><div class="glass widget" id="hm-card" data-act="music"><div class="wtile" id="hm-tile">' + ico(IC.music) + '</div><div class="wname">Musique</div></div></div></div>';
   $('widgets').innerHTML = h;
+  $('widgets2').innerHTML = '<div class="glass widget wsmall" data-act="go" data-arg="materiel"><div class="wtile">' + ico(IC.cam) + '</div>' + chev + '<div class="wname">Matériel</div></div>';
+  setHomePage(homePg);
   alignGlass($('s-home'));
   renderFactures();
+}
+var homePg = 0;
+function setHomePage(n){
+  homePg = n ? 1 : 0;
+  $('htrack').className = 'htrack' + (homePg ? ' p1' : '');
+  var d = $('hdots').children;
+  for (var i = 0; i < d.length; i++) d[i].className = i === homePg ? 'on' : '';
 }
 
 /* ---------- Suivi des factures ----------
@@ -661,7 +710,7 @@ function facPull(){
     if (!ok || !j || !j.content || data.facDirty) return;
     try {
       var e = JSON.parse(b64dec(j.content));
-      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}};
+      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}};
       facPurge(); save(); renderFactures();
     } catch(er){}
   });
@@ -690,10 +739,11 @@ function facRows(){
     var rels = E.relances[f.id] || [], last = rels.length ? num(rels[rels.length - 1]) : 0;
     var start = dayStart(d);
     if (last && dayStart(new Date(last)) > start) start = dayStart(new Date(last));
-    var due = new Date(start); due.setDate(due.getDate() + RELANCE_J);
+    var dl = num((E.delais || {})[f.id]) || RELANCE_J;
+    var due = new Date(start); due.setDate(due.getDate() + dl);
     var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
     var left = Math.round((due.getTime() - today) / 86400000);
-    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:left, last:last, nrel:rels.length,
+    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
       paye:!!E.payes[f.id], taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
   }
   out.sort(function(a, b){ return (a.paye - b.paye) || (a.left - b.left) || (a.entree - b.entree); });
@@ -766,16 +816,16 @@ function renderFactures(){
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   for (i = 0; i < rows.length; i++){
     var r = rows[i], late = !r.paye && r.left <= 0;
-    var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((RELANCE_J - r.left) / RELANCE_J * 100)));
+    var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((r.dl - r.left) / r.dl * 100)));
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree);
-    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '">' +
+    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + (r.dl !== RELANCE_J ? ' · tous les ' + r.dl + ' j' : '');
+    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
-      '</div></div>';
+      '</div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Délai</button></div></div>';
   }
   h += '</div>';
   $('s-factures').innerHTML = h;
@@ -783,6 +833,61 @@ function renderFactures(){
   if (nc && old) nc.scrollTop = scroll;
   alignGlass($('s-factures'));
 }
+
+/* Glisser à gauche sur une facture : « Annuler » défait la dernière action, « Délai » règle le rythme de relance */
+function facUndo(id){
+  var E = data.facEtat, rels = E.relances[id] || [], last = rels.length ? num(rels[rels.length - 1]) : 0, pay = num(E.payes[id]);
+  if (pay && pay >= last) facPaye(id, false);
+  else if (last) facUnrelance(id);
+  else renderFactures();
+}
+function facDelai(id, v){
+  var r = facRow(id); if (!r) return;
+  var cur = v !== undefined ? v : r.dl;
+  openModal({kind:'fdelai', id:id, v:cur}, '<div class="mtitle">Relancer tous les…</div><div class="fm-l">' + esc(r.projet) + '</div>' +
+    '<div class="row" style="margin:26px 0">' + stepper('', cur + ' j', 'fdl', 'x') + '</div>' +
+    '<div class="row mbtns"><button data-act="fdlset" data-arg="7">7 j</button><button data-act="fdlset" data-arg="10">10 j</button><button data-act="fdlset" data-arg="15">15 j</button><button data-act="fdlset" data-arg="30">30 j</button></div>' +
+    '<div class="row mbtns" style="margin-top:22px"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
+}
+
+/* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
+function uid(){ return Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
+function matFind(id){ for (var i = 0; i < data.materiel.length; i++) if (data.materiel[i].id === id) return i; return -1; }
+function matCount(a){ var n = 0; for (var i = 0; i < a.items.length; i++) if (data.matCheck[a.items[i].id]) n++; return n; }
+function renderMateriel(){
+  var h = hdr('Matériel', 'Coche tout avant de partir', '<button data-act="mreset">Nouveau tournage</button><button class="white" data-act="madd">+ Appareil</button>');
+  h += '<div class="content">';
+  if (!data.materiel.length) h += '<div class="empty">Ajoute ton premier appareil avec « + Appareil ».</div>';
+  h += '<div class="pgrid">';
+  for (var i = 0; i < data.materiel.length; i++){
+    var a = data.materiel[i], n = matCount(a), t = a.items.length, done = t > 0 && n === t, reste = [];
+    for (var k = 0; k < a.items.length; k++) if (!data.matCheck[a.items[k].id]) reste.push(a.items[k].nom);
+    h += '<div class="glass pcard mcard' + (done ? ' done' : '') + '" data-act="mopen" data-arg="' + esc(a.id) + '"><div class="pc-c">' + esc(a.nom) + '</div>' +
+      '<div class="mc-n num">' + (t ? n + ' / ' + t + (done ? ' ✓' : '') : '—') + '</div>' +
+      '<div class="mc-l">' + (!t ? 'Aucun accessoire' : (done ? 'Tout est prêt' : esc(reste.join(', ')))) + '</div></div>';
+  }
+  h += '</div></div>';
+  $('s-materiel').innerHTML = h;
+  alignGlass($('s-materiel'));
+}
+function matOpen(id){
+  var ai = matFind(id); if (ai < 0) return;
+  var a = data.materiel[ai], h = '<div class="mtitle">' + esc(a.nom) + '</div>';
+  if (!a.items.length) h += '<div class="fm-l">Pas encore d’accessoire : ajoute-les ci-dessous.</div>';
+  for (var i = 0; i < a.items.length; i++){
+    var it = a.items[i], on = !!data.matCheck[it.id], arg = esc(a.id + '|' + it.id);
+    h += '<div class="row mrow2"><button class="mchk' + (on ? ' on' : '') + '" data-act="mtog" data-arg="' + arg + '"><span class="tchk">' + (on ? '✓' : '') + '</span>' + esc(it.nom) + '</button>' +
+      '<button class="xbtn" data-act="mdel" data-arg="' + arg + '">✕</button></div>';
+  }
+  h += '<div class="row mrow2" style="margin-top:20px"><input type="text" id="m-new" placeholder="Ajouter un accessoire" style="flex:1"><button class="white" data-act="mitem" data-arg="' + esc(a.id) + '">Ajouter</button></div>' +
+    '<div class="row mbtns" style="margin-top:24px"><button class="vio" data-act="mdelapp" data-arg="' + esc(a.id) + '">Supprimer</button><button data-act="mren" data-arg="' + esc(a.id) + '">Renommer</button><button class="white" data-act="mfin">Fermer</button></div>';
+  openModal({kind:'mat', id:a.id}, h);
+}
+function matName(title, val, act, arg){
+  openModal({kind:'mname'}, '<div class="mtitle">' + title + '</div><div class="mrow row"><input type="text" id="m-name" value="' + esc(val || '') + '" placeholder="Ex. Micro HF" style="flex:1"></div>' +
+    '<div class="row mbtns" style="margin-top:24px"><button data-act="mfin">Annuler</button><button class="white" data-act="' + act + '" data-arg="' + esc(arg || '') + '">Valider</button></div>');
+}
+function trimV(id){ var e = $(id); return e ? e.value.replace(/^\s+|\s+$/g, '') : ''; }
 
 /* ---------- Devis ---------- */
 function stepper(label, value, act, arg){
@@ -1444,6 +1549,44 @@ function handle(act, arg){
     case 'funrel': closeModal(); facUnrelance(arg); return;
     case 'fpaye': closeModal(); var fp = facRow(arg); facPaye(arg, !(fp && fp.paye)); return;
     case 'facopen': facOpen(arg); return;
+    case 'fundo': facUndo(arg); return;
+    case 'fdelai': facDelai(arg); return;
+    case 'fdl': if (modal && modal.kind === 'fdelai') facDelai(modal.id, Math.max(1, Math.min(60, num(modal.v) + (+arg.split(':')[1])))); return;
+    case 'fdlset': if (modal && modal.kind === 'fdelai') facDelai(modal.id, +arg); return;
+    case 'fdlok':
+      if (!modal || modal.kind !== 'fdelai') return;
+      if (num(modal.v) === RELANCE_J) delete data.facEtat.delais[modal.id]; else data.facEtat.delais[modal.id] = num(modal.v);
+      closeModal(); facSchedule(); renderFactures(); return;
+
+    case 'mopen': matOpen(arg); return;
+    case 'mtog': a = arg.split('|'); data.matCheck[a[1]] = !data.matCheck[a[1]]; save(); matOpen(a[0]); renderMateriel(); return;
+    case 'mitem':
+      var nv = trimV('m-new'); if (!nv) return;
+      i = matFind(arg); if (i < 0) return;
+      data.materiel[i].items.push({id:uid(), nom:nv}); save(); matOpen(arg); renderMateriel(); return;
+    case 'mdel':
+      a = arg.split('|'); i = matFind(a[0]); if (i < 0) return;
+      var its = data.materiel[i].items, mk = -1;
+      for (var q = 0; q < its.length; q++) if (its[q].id === a[1]) mk = q;
+      if (mk < 0) return;
+      askConfirm('Retirer « ' + its[mk].nom + ' » ?', 'Retirer', function(){ its.splice(mk, 1); delete data.matCheck[a[1]]; save(); matOpen(a[0]); renderMateriel(); });
+      return;
+    case 'madd': matName('Nouvel appareil', '', 'maddok'); return;
+    case 'maddok':
+      var nn = trimV('m-name'); if (!nn) return;
+      var na = {id:uid(), nom:nn, items:[]}; data.materiel.push(na); save(); renderMateriel(); matOpen(na.id); return;
+    case 'mren': i = matFind(arg); if (i < 0) return; matName('Renommer', data.materiel[i].nom, 'mrenok', arg); return;
+    case 'mrenok':
+      var rn = trimV('m-name'); i = matFind(arg); if (!rn || i < 0) return;
+      data.materiel[i].nom = rn; save(); renderMateriel(); matOpen(arg); return;
+    case 'mdelapp':
+      i = matFind(arg); if (i < 0) return;
+      askConfirm('Supprimer « ' + data.materiel[i].nom + ' » et sa liste ?', 'Supprimer', function(){
+        var ap = data.materiel[i]; for (var z = 0; z < ap.items.length; z++) delete data.matCheck[ap.items[z].id];
+        data.materiel.splice(i, 1); save(); closeModal(); renderMateriel(); });
+      return;
+    case 'mfin': closeModal(); if (current === 'materiel') renderMateriel(); return;
+    case 'mreset': askConfirm('Tout décocher pour un nouveau tournage ?', 'Tout décocher', function(){ data.matCheck = {}; save(); renderMateriel(); }); return;
 
     case 'ntog': dv[arg] = !dv[arg]; save(); renderDevis(); return;
     case 'nrem': dv.remise = Math.max(0, Math.min(50, num(dv.remise) + num(arg))); save(); renderDevis(); return;
@@ -1584,6 +1727,23 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
+var sw0 = null;
+function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
+function swEnd(x, y){
+  if (!sw0 || modalOpen() || confirmOpen()){ sw0 = null; return; }
+  var dx = x - sw0.x, dy = y - sw0.y, f = sw0.fid; sw0 = null;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  if (current === 'home'){ setHomePage(dx < 0 ? 1 : 0); lpSwallowUntil = Date.now() + 400; return; }
+  if (current === 'factures' && f){
+    var all = document.querySelectorAll('#s-factures .fcard.open');
+    for (var i = 0; i < all.length; i++) if (all[i] !== f) all[i].classList.remove('open');
+    f.classList.toggle('open', dx < 0); lpSwallowUntil = Date.now() + 400;
+  }
+}
+document.addEventListener('touchstart', function(e){ var t = e.touches[0]; swStart(e.target, t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchend', function(e){ var t = e.changedTouches[0]; swEnd(t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('mousedown', function(e){ swStart(e.target, e.clientX, e.clientY); });
+document.addEventListener('mouseup', function(e){ swEnd(e.clientX, e.clientY); });
 document.addEventListener('touchmove', function(e){
   var el = e.target;
   while (el && el.nodeType === 1){
