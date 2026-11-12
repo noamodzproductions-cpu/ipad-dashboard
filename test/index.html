@@ -65,10 +65,10 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widgets{flex:1;min-height:0;display:flex}
 /* Accueil sur 2 pages : glisser à gauche / à droite */
 .hpager{flex:1;min-height:0;overflow:hidden;position:relative}
-.htrack{display:flex;width:200%;height:100%;transition:transform .3s}
-.htrack.p1{transform:translateX(-50%)}
+.htrack{display:flex;width:200%;height:100%;transition:transform .25s ease-out;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+.htrack.p1{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
 .hpage{width:50%;height:100%;display:flex}
-.hdots{margin-right:18px;white-space:nowrap;font-size:0}
+.hdots{flex-shrink:0;height:26px;padding-top:14px;text-align:center;white-space:nowrap;font-size:0}
 .hdots span{display:inline-block;width:12px;height:12px;border-radius:6px;background:rgba(255,255,255,.3);margin:0 6px}
 .hdots span.on{background:#fff}
 .widgets2{align-items:flex-start}
@@ -281,7 +281,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-home" class="screen active">
   <div class="hdr row">
     <div class="grow"><div class="h1" id="greet">Bonjour Noam</div><div class="sub" id="date"></div></div>
-    <div class="hdots" id="hdots"><span class="on"></span><span></span></div>
     <div class="hclock num" id="clock">00:00</div>
     <button class="rbtn" data-act="go" data-arg="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
@@ -289,6 +288,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
     <div class="hpage"><div class="widgets" id="widgets"></div></div>
     <div class="hpage"><div class="widgets widgets2" id="widgets2"></div></div>
   </div></div>
+  <div class="hdots" id="hdots"><span class="on"></span><span></span></div>
 </section>
 <section id="s-devis" class="screen"></section>
 <section id="s-projets" class="screen"></section>
@@ -1727,22 +1727,47 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
-var sw0 = null;
+var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
 function swEnd(x, y){
   if (!sw0 || modalOpen() || confirmOpen()){ sw0 = null; return; }
   var dx = x - sw0.x, dy = y - sw0.y, f = sw0.fid; sw0 = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-  if (current === 'home'){ setHomePage(dx < 0 ? 1 : 0); lpSwallowUntil = Date.now() + 400; return; }
+  if (current === 'home'){ if (sw0m) { setHomePage(dx < 0 ? 1 : 0); lpSwallowUntil = Date.now() + 400; } return; }
   if (current === 'factures' && f){
     var all = document.querySelectorAll('#s-factures .fcard.open');
     for (var i = 0; i < all.length; i++) if (all[i] !== f) all[i].classList.remove('open');
     f.classList.toggle('open', dx < 0); lpSwallowUntil = Date.now() + 400;
   }
 }
-document.addEventListener('touchstart', function(e){ var t = e.touches[0]; swStart(e.target, t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchstart', function(e){ sw0m = false; var t = e.touches[0]; swStart(e.target, t.clientX, t.clientY); }, {passive:true});
+/* Accueil : la page suit le doigt pendant le glisser, puis se cale (seul transform change) */
+var hd = null;
+document.addEventListener('touchstart', function(e){
+  if (current !== 'home' || modalOpen() || confirmOpen()) { hd = null; return; }
+  var t = e.touches[0];
+  hd = {x:t.clientX, y:t.clientY, w:$('hpager').offsetWidth, drag:false, dx:0};
+}, {passive:true});
+document.addEventListener('touchmove', function(e){
+  if (!hd) return;
+  var t = e.touches[0], dx = t.clientX - hd.x, dy = t.clientY - hd.y;
+  if (!hd.drag){
+    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) return;
+    hd.drag = true; $('htrack').style.transition = 'none'; clearTimeout(lpTimer);
+  }
+  hd.dx = dx;
+  var off = Math.max(-hd.w - 40, Math.min(40, (homePg ? -hd.w : 0) + dx)), tr = 'translate3d(' + off + 'px,0,0)';
+  var s = $('htrack').style; s.webkitTransform = tr; s.transform = tr;
+}, {passive:true});
+document.addEventListener('touchend', function(){
+  if (!hd || !hd.drag){ hd = null; return; }
+  var n = homePg, s = $('htrack').style;
+  if (hd.dx < -hd.w * 0.2) n = 1; else if (hd.dx > hd.w * 0.2) n = 0;
+  s.transition = ''; s.webkitTransform = ''; s.transform = '';
+  setHomePage(n); lpSwallowUntil = Date.now() + 400; hd = null;
+}, {passive:true});
 document.addEventListener('touchend', function(e){ var t = e.changedTouches[0]; swEnd(t.clientX, t.clientY); }, {passive:true});
-document.addEventListener('mousedown', function(e){ swStart(e.target, e.clientX, e.clientY); });
+document.addEventListener('mousedown', function(e){ sw0m = true; swStart(e.target, e.clientX, e.clientY); });
 document.addEventListener('mouseup', function(e){ swEnd(e.clientX, e.clientY); });
 document.addEventListener('touchmove', function(e){
   var el = e.target;

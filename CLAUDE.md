@@ -14,7 +14,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - `DESIGN.md` (style Mobbin) = ancienne piste, remplacée par `accueil-bento.html`.
 
 ## Accueil page 2 + Matériel
-- Accueil /test sur 2 pages : glisser à gauche = page 2, à droite = retour (points dans l'en-tête). Page 2 : un petit widget « Matériel » (300×280) et du vide (place pour la suite). Retour auto à l'accueil = page 1.
+- Accueil /test sur 2 pages : glisser à gauche = page 2, à droite = retour ; la page SUIT LE DOIGT (translate3d) puis se cale (> 20 % de la largeur) ; points de page EN BAS. Page 2 : un petit widget « Matériel » (300×280) et du vide (place pour la suite). Retour auto à l'accueil = page 1.
 - Écran `materiel` : une carte par appareil (« 2 / 3 », accessoires restants ; vert ✓ quand tout est coché). Toucher = checklist de ses accessoires (grosses cases), ajout d'accessoire DANS l'appareil, renommer/supprimer. « + Appareil », « Nouveau tournage » = tout décocher. Données `data.materiel` [{id, nom, items:[{id, nom}]}] et `data.matCheck` {itemId:true}, sur l'iPad seulement (incluses dans l'export).
 
 ## Suivi des factures (`data/factures.json`)
