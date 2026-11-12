@@ -1829,7 +1829,7 @@ document.addEventListener('touchmove', function(e){
   while (el && el.nodeType === 1){
     if (el.tagName === 'TEXTAREA') return;
     var c = el.className;
-    if (typeof c === 'string' && /(^| )(content|res-r|overlay)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
+    if (typeof c === 'string' && /(^| )(content|res-r|overlay|mat-l|mat-r)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
     el = el.parentNode;
   }
   e.preventDefault();
