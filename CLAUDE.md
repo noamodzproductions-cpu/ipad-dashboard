@@ -15,7 +15,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 
 ## Accueil page 2 + Matériel
 - Accueil /test sur 2 pages : glisser à gauche = page 2, à droite = retour ; la page SUIT LE DOIGT (translate3d) puis se cale (> 20 % de la largeur) ; points de page EN BAS. Page 2 : un petit widget « Matériel » (300×280) et du vide (place pour la suite). Retour auto à l'accueil = page 1.
-- Écran `materiel` : une carte par appareil (« 2 / 3 », accessoires restants ; vert ✓ quand tout est coché). Toucher = checklist de ses accessoires (grosses cases), ajout d'accessoire DANS l'appareil, renommer/supprimer. « + Appareil », « Nouveau tournage » = tout décocher. Données `data.materiel` [{id, nom, items:[{id, nom}]}] et `data.matCheck` {itemId:true}, sur l'iPad seulement (incluses dans l'export).
+- Écran `materiel` (LISTE, 2 colonnes) : à gauche « ce que je prends » (cocher les appareils du tournage, `data.matPris`), à droite « à vérifier » = accessoires des appareils cochés, groupés par appareil (`data.matCheck`), « Tout est prêt ✓ » quand tout est coché. Bouton « Modifier » : toucher un appareil = ses accessoires (ajouter DANS l'appareil, ✕ retirer), renommer, supprimer ; « + Appareil ». « Nouveau tournage » = tout remettre à zéro. Données sur l'iPad seulement (incluses dans l'export).
 
 ## Suivi des factures (`data/factures.json`)
 - Écrit par la routine planning-semaine-ipad (liste lue à chaque passage, reste de Trello 1×/jour) : cartes ouvertes de la liste « 🧾 Solde en attente ». Format : `{updated, factures:[{id, projet, brut, reste, entree:"AAAA-MM-JJ"}]}`.
