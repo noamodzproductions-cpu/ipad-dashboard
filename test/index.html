@@ -201,6 +201,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .toast button{background:#111;border-color:#111;color:#A78BFA}
 .tchk{flex-shrink:0;width:64px;height:64px;line-height:58px;text-align:center;border-radius:20px;border:3px solid rgba(255,255,255,.4);margin-right:22px;font-size:34px;font-weight:700;color:#111}
 .task.on{opacity:.45}
+.task{transition:opacity .25s}
 .task.on .tchk{background:#4ade80;border-color:#4ade80}
 .task.on .ttxt{text-decoration:line-through}
 .ttag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.16);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;white-space:nowrap}
@@ -1464,7 +1465,16 @@ function handle(act, arg){
       var cur = findTask(arg);
       if (!cur) return;
       if (!data.tasksDone) data.tasksDone = {};
-      data.tasksDone[arg] = !isDoneTask(cur); save(); renderTaches(); pushPending(); return;
+      var nowDone = !isDoneTask(cur);
+      data.tasksDone[arg] = nowDone; save(); pushPending();
+      /* cocher : la case se coche et la carte se grise tout de suite, puis la tâche descend */
+      var tcard = nowDone ? document.querySelector('#s-taches [data-tid="' + arg + '"]') : null;
+      if (tcard){
+        tcard.classList.add('on'); tcard.classList.remove('urg');
+        var tbx = tcard.querySelector('.tchk'); if (tbx) tbx.textContent = '✓';
+        setTimeout(function(){ if (current === 'taches') renderTaches(); }, 650);
+      } else renderTaches();
+      return;
     case 'tday':
       /* jour précédent / suivant parmi les jours du planning (fonctionne même si le jour affiché n'y est pas) */
       var dd = (data.tasksCache && data.tasksCache.days) || [], cv = tView || isoDate(new Date()), pick = null;
