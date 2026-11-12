@@ -1824,16 +1824,7 @@ document.addEventListener('touchend', function(){
 document.addEventListener('touchend', function(e){ var t = e.changedTouches[0]; swEnd(t.clientX, t.clientY); }, {passive:true});
 document.addEventListener('mousedown', function(e){ sw0m = true; swStart(e.target, e.clientX, e.clientY); });
 document.addEventListener('mouseup', function(e){ swEnd(e.clientX, e.clientY); });
-document.addEventListener('touchmove', function(e){
-  var el = e.target;
-  while (el && el.nodeType === 1){
-    if (el.tagName === 'TEXTAREA') return;
-    var c = el.className;
-    if (typeof c === 'string' && /(^| )(content|res-r|overlay|mat-l|mat-r)( |$)/.test(c) && el.scrollHeight > el.clientHeight + 1) return;
-    el = el.parentNode;
-  }
-  e.preventDefault();
-}, {passive:false});
+/* plus de blocage global du glisser : fond noir uni, chaque liste défile normalement */
 
 document.addEventListener('click', function(e){
   markActivity();
