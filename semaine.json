@@ -1,5 +1,5 @@
 {
- "updated": "jeudi 12 nov. à 21h59",
+ "updated": "jeudi 12 nov. à 22h05",
  "days": [
   {
    "date": "2026-11-12",
@@ -92,6 +92,29 @@
      "id": "nuance-tournage-ssd",
      "client": "Zack",
      "text": "Nuance Audio : rushs + photos → SSD",
+     "done": false
+    }
+   ]
+  },
+  {
+   "date": "2026-11-18",
+   "jour": "Mercredi 18 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-19",
+   "jour": "Jeudi 19 novembre",
+   "tasks": [
+    {
+     "id": "mich-masterclass-tournage",
+     "client": "Michalak",
+     "text": "Michalak : tournage masterclass",
+     "done": false
+    },
+    {
+     "id": "mich-masterclass-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
      "done": false
     }
    ]
