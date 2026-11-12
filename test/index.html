@@ -1382,8 +1382,17 @@ function handle(act, arg){
     case 'music': playMusic(); return;
     case 'ttap':
       /* 1 appui = cocher (après un court délai), 2 appuis rapides = modifier */
-      if (tapTimer && tapId === arg){ clearTimeout(tapTimer); tapTimer = null; openTaskEdit(arg); return; }
-      clearTimeout(tapTimer); tapId = arg;
+      /* 2e appui rapide = modifier : on annule l'effet visuel du 1er appui (rien n'a encore été enregistré) */
+      if (tapTimer && tapId === arg){ clearTimeout(tapTimer); tapTimer = null; renderTaches(); openTaskEdit(arg); return; }
+      if (tapTimer){ clearTimeout(tapTimer); tapTimer = null; handle('tdone', tapId); }
+      tapId = arg;
+      /* effet immédiat : la case se coche (ou se décoche) dès l'appui, l'enregistrement suit 280 ms après */
+      var tcur = findTask(arg), tel = document.querySelector('#s-taches [data-tid="' + arg + '"]');
+      if (tcur && tel){
+        var tbox = tel.querySelector('.tchk');
+        if (!isDoneTask(tcur)){ tel.classList.add('on'); tel.classList.remove('urg'); if (tbox) tbox.textContent = '✓'; }
+        else { tel.classList.remove('on'); if (tbox) tbox.textContent = ''; }
+      }
       tapTimer = setTimeout(function(){ tapTimer = null; handle('tdone', tapId); }, 280);
       return;
     case 'tesave':
