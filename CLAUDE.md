@@ -30,6 +30,11 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - Coches locales à l'iPad, ou partagées dans semaine.json si une clé GitHub est collée dans Réglages (clé stockée à part, jamais exportée). Journée finie → « Journée terminée ✓ » et les tâches pas faites du/des jour(s) suivant(s) remontent en « En avance ».
 - Le fichier est PUBLIC (GitHub Pages) : noms de clients visibles. Chiffrement possible plus tard.
 
+## Planning (écran `planning`, bouton calendrier de Projets)
+- TOUT le planning : un bloc par jour à partir d'aujourd'hui (« Aujourd'hui », « Demain », puis nom du jour en gros + date + nombre à faire), jours vides = « Rien de prévu ».
+- Appui long (420 ms) sur une tâche = elle suit le doigt (fantôme), trait violet = point de chute, jour visé surligné ; lâcher = ops `mov` (autre jour) + `ord` (ordre du jour) via queueEdit, comme Projets. Un appui = Modifier (renommer, supprimer, jour suivant).
+- La routine planning-semaine met TOUJOURS aujourd'hui → +7 jours (même vides) + chaque jour plus lointain qui a une tâche.
+
 ## Contraintes Safari 12 / iPad Air 1
 - Un seul fichier HTML/CSS/JS vanilla, sans framework, sans dépendance, sans police web (police système -apple-system).
 - Interdit : `backdrop-filter`, `filter`, `blur()`, grosses ombres, animations CSS en boucle, `?.`, `??`, flex `gap` (grid-gap OK), `aspect-ratio`, `:is`/`:where`/`:has`, `inset`.
