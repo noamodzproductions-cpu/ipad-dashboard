@@ -1,5 +1,5 @@
 {
- "updated": "jeudi 12 nov. à 20h33",
+ "updated": "jeudi 12 nov. à 21h59",
  "days": [
   {
    "date": "2026-11-12",
@@ -68,6 +68,12 @@
      "id": "cmc-evasion-v1",
      "client": "Marie Claire",
      "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 (récap + interviews)",
+     "done": false
+    },
+    {
+     "id": "laduree-gravelle-v1",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle : faire la V1",
      "done": false
     }
    ]
