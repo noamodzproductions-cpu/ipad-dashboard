@@ -66,10 +66,10 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
 .widgets{flex:1;min-height:0;display:flex}
 /* Accueil sur 2 pages : glisser à gauche / à droite */
-.hpager{flex:1;min-height:0;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;-webkit-scroll-snap-type:mandatory}
+.hpager{flex:1;min-height:0;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch}
 .hpager::-webkit-scrollbar{display:none}
 .htrack{display:flex;width:200%;height:100%}
-.hpage{width:50%;height:100%;display:flex;flex-shrink:0;scroll-snap-align:start;overflow:hidden;padding-right:2px}
+.hpage{width:50%;height:100%;display:flex;flex-shrink:0;overflow:hidden;padding-right:2px}
 .hdots{flex-shrink:0;height:26px;padding-top:14px;text-align:center;white-space:nowrap;font-size:0}
 .hdots span{display:inline-block;width:12px;height:12px;border-radius:6px;background:rgba(255,255,255,.3);margin:0 6px}
 .hdots span.on{background:#fff}
@@ -244,7 +244,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tot-v{font-size:30px;font-weight:700;white-space:nowrap;margin-top:4px}
 
 /* Projets = tâches du jour (taches.json, rempli par la routine Suivi) */
-.task{display:flex;align-items:center;padding:16px 22px;margin-bottom:12px}
+.task{display:block;padding:0;margin-bottom:12px}
+.t-in{position:relative;z-index:1;display:flex;align-items:center;padding:16px 22px;background:#1c1c1e;will-change:transform;transition:transform .4s cubic-bezier(.2,1.15,.36,1)}
+.task.open2 .t-in{-webkit-transform:translate3d(-220px,0,0);transform:translate3d(-220px,0,0)}
+.t-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:220px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
+.t-act button{background:#A78BFA;border-color:#A78BFA;color:#111;font-size:24px}
 .utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
 .task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .task.lift{z-index:5;border-color:#A78BFA}
@@ -879,7 +883,7 @@ function renderFactures(){
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
-      '</div></div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Relancer le…</button></div></div>';
+      '</div></div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Relance</button></div></div>';
   }
   h += '</div>';
   $('s-factures').innerHTML = h;
@@ -1262,8 +1266,9 @@ function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
   return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
-    '<span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
-    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>';
+    '<div class="t-in"><span class="tchk">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
+    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div></div>' +
+    '<div class="t-act"><button data-act="tdel2" data-arg="' + esc(tk.id) + '">Supprimer</button></div></div>';
 }
 function renderTaches(){
   if (tGesture) return; /* pas de rafraîchissement pendant un glisser */
@@ -1486,11 +1491,11 @@ function tgMove(x, y, e){
   if (!g.mode){
     if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
     clearTimeout(g.timer);
-    if (dx < 0 && Math.abs(dx) > Math.abs(dy)){ g.mode = 'swipe'; tGesture = true; g.el.style.transition = 'none'; }
+    if (Math.abs(dx) > Math.abs(dy) && (dx < 0 || /(^| )open2( |$)/.test(g.el.className))){ g.mode = 'swipe'; tGesture = true; g.inner = g.el.querySelector('.t-in') || g.el; g.base = /(^| )open2( |$)/.test(g.el.className) ? -220 : 0; g.inner.style.transition = 'none'; }
     else { tg = null; return; }
   }
   if (e.cancelable) e.preventDefault();
-  if (g.mode === 'swipe'){ g.dx = Math.min(0, dx); g.el.style.transform = 'translateX(' + g.dx + 'px)'; return; }
+  if (g.mode === 'swipe'){ g.dx = dx; var sx = Math.min(0, g.base + dx); g.inner.style.webkitTransform = g.inner.style.transform = 'translate3d(' + sx + 'px,0,0)'; return; }
   /* drag : on échange avec la voisine quand on dépasse sa moitié */
   var el = g.el, box = document.querySelector('#s-taches .content'), off = y - g.base, s, h;
   if (box){
@@ -1513,14 +1518,19 @@ function tgEnd(){
   lpSwallowUntil = Date.now() + 450;
   var el = g.el, id = el.getAttribute('data-tid');
   if (g.mode === 'swipe'){
-    el.style.transition = 'transform .2s';
-    if (g.dx < -140){
-      el.style.transform = 'translateX(-110%)';
+    var inn = g.inner, wasOpen = g.base < 0;
+    if (wasOpen && g.dx < -90){
+      /* 2e glissement : suppression (bandeau Annuler 5 s) */
+      inn.style.transition = 'transform .2s'; inn.style.webkitTransform = inn.style.transform = 'translate3d(-110%,0,0)';
       setTimeout(function(){ tGesture = false; delTask(id); }, 200);
-    } else {
-      el.style.transform = '';
-      setTimeout(function(){ el.style.transition = ''; tGesture = false; }, 220);
+      return;
     }
+    inn.style.transition = ''; inn.style.webkitTransform = inn.style.transform = '';
+    var open = wasOpen ? g.dx < 60 : g.dx < -90;
+    var others = document.querySelectorAll('#s-taches .task.open2');
+    for (var oi = 0; oi < others.length; oi++) if (others[oi] !== el) others[oi].classList.remove('open2');
+    el.classList.toggle('open2', open);
+    setTimeout(function(){ tGesture = false; }, 220);
     return;
   }
   /* fin du rangement : nouvel ordre du jour */
@@ -1686,6 +1696,8 @@ function handle(act, arg){
     case 'link': closeModal(); window.open(arg, '_blank'); return;
     case 'music': playMusic(); return;
     case 'ttap':
+      var oc = document.querySelector('#s-taches .task.open2');
+      if (oc){ oc.classList.remove('open2'); return; }
       /* 1 appui = cocher (après un court délai), 2 appuis rapides = modifier */
       /* 2e appui rapide = modifier : on annule l'effet visuel du 1er appui (rien n'a encore été enregistré) */
       if (tapTimer && tapId === arg){ clearTimeout(tapTimer); tapTimer = null; renderTaches(); openTaskEdit(arg); return; }
@@ -1710,6 +1722,7 @@ function handle(act, arg){
       refreshTasks(); return;
     case 'twk': go('planning'); return;
     case 'pedit': openTaskEdit(arg); return;
+    case 'tdel2': delTask(arg); return;
     case 'tpull':
       var pd = dayOfTask(arg), tday = isoDate(new Date()), ptk = findTask(arg);
       if (!pd || !ptk) return;
@@ -1938,7 +1951,24 @@ document.addEventListener('touchstart', function(e){ sw0m = false; var t = e.tou
 (function(){
   var pgr = $('hpager'), t = null;
   if (!pgr) return;
+  var lastX = 0, dir = 0, touching = false, settleT = null, anim = null;
+  function settle(){
+    if (touching) return;
+    var w = Math.max(1, pgr.clientWidth), x = pgr.scrollLeft, f = x / w;
+    if (Math.abs(f - Math.round(f)) < 0.01) return;
+    var to = Math.max(0, Math.min(1, dir > 0 ? Math.ceil(f) : (dir < 0 ? Math.floor(f) : Math.round(f)))) * w, from = x, t0 = Date.now();
+    if (anim) clearInterval(anim);
+    anim = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / 320), e = 1 - Math.pow(1 - k, 3);
+      pgr.scrollLeft = from + (to - from) * e;
+      if (k >= 1){ clearInterval(anim); anim = null; }
+    }, 16);
+  }
+  pgr.addEventListener('touchstart', function(){ touching = true; if (anim){ clearInterval(anim); anim = null; } }, {passive:true});
+  pgr.addEventListener('touchend', function(){ touching = false; clearTimeout(settleT); settleT = setTimeout(settle, 140); }, {passive:true});
   pgr.addEventListener('scroll', function(){
+    var dx = pgr.scrollLeft - lastX; if (!anim && Math.abs(dx) > 0.5) dir = dx > 0 ? 1 : -1; lastX = pgr.scrollLeft;
+    if (!anim){ clearTimeout(settleT); settleT = setTimeout(settle, 140); }
     var n = Math.round(pgr.scrollLeft / Math.max(1, pgr.clientWidth));
     if (n !== homePg){ homePg = n; var d = $('hdots').children; for (var i = 0; i < d.length; i++) d[i].className = i === n ? 'on' : ''; }
   }, {passive:true});
