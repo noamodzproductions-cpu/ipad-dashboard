@@ -66,15 +66,15 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .hclock{font-size:58px;font-weight:300;letter-spacing:-1px}
 .widgets{flex:1;min-height:0;display:flex}
 /* Accueil sur 2 pages : glisser à gauche / à droite */
-.hpager{flex:1;min-height:0;overflow:hidden;position:relative}
-.htrack{display:flex;width:200%;height:100%;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;transition:transform .5s cubic-bezier(.2,1.22,.36,1);-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
-.htrack.p1{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
-.hpage{width:50%;height:100%;display:flex}
+.hpager{flex:1;min-height:0;overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;-webkit-scroll-snap-type:mandatory}
+.hpager::-webkit-scrollbar{display:none}
+.htrack{display:flex;width:200%;height:100%}
+.hpage{width:50%;height:100%;display:flex;flex-shrink:0;scroll-snap-align:start;overflow:hidden;padding-right:2px}
 .hdots{flex-shrink:0;height:26px;padding-top:14px;text-align:center;white-space:nowrap;font-size:0}
 .hdots span{display:inline-block;width:12px;height:12px;border-radius:6px;background:rgba(255,255,255,.3);margin:0 6px}
 .hdots span.on{background:#fff}
 .widgets2{align-items:flex-start}
-.wsmall{flex:0 0 auto;width:300px;height:280px}
+.widgets2 .wsmall{flex:0 0 auto;width:300px;height:280px}
 .bl{flex:1;min-width:0;display:flex}
 .br{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column}
 .br-top{flex:1;min-height:0;display:flex}
@@ -688,7 +688,7 @@ function renderHome(){
 var homePg = 0;
 function setHomePage(n){
   homePg = n ? 1 : 0;
-  $('htrack').className = 'htrack' + (homePg ? ' p1' : '');
+  var pgr = $('hpager'); if (pgr) pgr.scrollLeft = homePg * pgr.clientWidth;
   var d = $('hdots').children;
   for (var i = 0; i < d.length; i++) d[i].className = i === homePg ? 'on' : '';
 }
@@ -1934,37 +1934,15 @@ function swEnd(x, y){
   }
 }
 document.addEventListener('touchstart', function(e){ sw0m = false; var t = e.touches[0]; swStart(e.target, t.clientX, t.clientY); }, {passive:true});
-/* Accueil : la page suit le doigt pendant le glisser, puis se cale (seul transform change) */
-var hd = null;
-document.addEventListener('touchstart', function(e){
-  if (current !== 'home' || modalOpen() || confirmOpen()) { hd = null; return; }
-  var t = e.touches[0];
-  hd = {x:t.clientX, y:t.clientY, w:$('hpager').offsetWidth, drag:false, dx:0, lx:t.clientX, lt:Date.now(), v:0};
-}, {passive:true});
-document.addEventListener('touchmove', function(e){
-  if (!hd) return;
-  var t = e.touches[0], dx = t.clientX - hd.x, dy = t.clientY - hd.y;
-  if (!hd.drag){
-    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) return;
-    hd.drag = true; $('htrack').style.transition = 'none'; clearTimeout(lpTimer);
-  }
-  hd.dx = dx;
-  var now = Date.now(), dt = now - hd.lt;
-  if (dt > 0){ hd.v = 0.6 * ((t.clientX - hd.lx) / dt) + 0.4 * hd.v; hd.lx = t.clientX; hd.lt = now; }
-  /* élastique au-delà de la première / dernière page */
-  var off = (homePg ? -hd.w : 0) + dx;
-  if (off > 0) off = off * 0.35; else if (off < -hd.w) off = -hd.w + (off + hd.w) * 0.35;
-  var tr = 'translate3d(' + off + 'px,0,0)';
-  var s = $('htrack').style; s.webkitTransform = tr; s.transform = tr;
-}, {passive:true});
-document.addEventListener('touchend', function(){
-  if (!hd || !hd.drag){ hd = null; return; }
-  var n = homePg, s = $('htrack').style;
-  if (Date.now() - hd.lt > 120) hd.v = 0; /* doigt arrêté avant de lâcher : pas de lancer */
-  if (hd.v < -0.4 || hd.dx < -hd.w * 0.2) n = 1; else if (hd.v > 0.4 || hd.dx > hd.w * 0.2) n = 0;
-  s.transition = ''; s.webkitTransform = ''; s.transform = '';
-  setHomePage(n); lpSwallowUntil = Date.now() + 400; hd = null;
-}, {passive:true});
+/* Accueil : défilement natif aimanté (scroll-snap) ; les points suivent la page affichée */
+(function(){
+  var pgr = $('hpager'), t = null;
+  if (!pgr) return;
+  pgr.addEventListener('scroll', function(){
+    var n = Math.round(pgr.scrollLeft / Math.max(1, pgr.clientWidth));
+    if (n !== homePg){ homePg = n; var d = $('hdots').children; for (var i = 0; i < d.length; i++) d[i].className = i === n ? 'on' : ''; }
+  }, {passive:true});
+})();
 document.addEventListener('touchend', function(e){ var t = e.changedTouches[0]; swEnd(t.clientX, t.clientY); }, {passive:true});
 document.addEventListener('mousedown', function(e){ sw0m = true; swStart(e.target, e.clientX, e.clientY); });
 document.addEventListener('mouseup', function(e){ swEnd(e.clientX, e.clientY); });
