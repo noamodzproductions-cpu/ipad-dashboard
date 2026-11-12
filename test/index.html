@@ -67,7 +67,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widgets{flex:1;min-height:0;display:flex}
 /* Accueil sur 2 pages : glisser à gauche / à droite */
 .hpager{flex:1;min-height:0;overflow:hidden}
-.htrack{display:flex;width:200%;height:100%;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);transition:transform .55s cubic-bezier(.32,.72,0,1)}
+.htrack{display:flex;width:200%;height:100%;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);transition:transform .75s cubic-bezier(.32,.72,0,1)}
 .htrack.p1{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
 .hpage{width:50%;height:100%;display:flex;flex-shrink:0;overflow:hidden;padding-right:2px}
 .hdots{flex-shrink:0;height:26px;padding-top:14px;text-align:center;white-space:nowrap;font-size:0}
@@ -914,11 +914,9 @@ function facDelai(id, st){
   var lastTxt = st.ago === null ? 'Jamais relancé' : (st.ago === 0 ? 'Aujourd’hui' : (st.ago === 1 ? 'Hier' : 'Il y a ' + st.ago + ' j')) + (st.ago === null ? '' : ' · ' + cap(JOURS[new Date(base).getDay()]) + ' ' + dCourt(base));
   openModal(st, '<div class="mtitle">' + esc(r.projet) + '</div>' +
     '<div class="dh">Dernière relance</div><div class="fm-l" style="margin:6px 0 12px;color:#fff;font-size:28px;font-weight:600">' + lastTxt + '</div>' +
-    '<div>' + q([[0,'Aujourd’hui'],[1,'Hier'],[3,'Il y a 3 j'],[7,'Il y a 1 sem.'],['none','Jamais']], 'flaset', st.ago === null ? 'none' : st.ago) + '</div>' +
-    '<div class="row" style="margin:4px 0 18px">' + stepper('', st.ago === null ? '—' : st.ago + ' j', 'fla', 'x') + '<div class="grow fm-l" style="margin:0 0 0 18px">jours avant aujourd’hui</div></div>' +
+    '<div class="row" style="margin:4px 0 22px">' + stepper('', st.ago === null ? 'jamais' : 'il y a ' + st.ago + ' j', 'fla', 'x') + '</div>' +
     '<div class="dh">Relancer tous les</div>' +
-    '<div style="margin-top:10px">' + q([[7,'7 j'],[10,'10 j'],[15,'15 j'],[30,'30 j']], 'fevset', st.every) + '</div>' +
-    '<div class="row" style="margin:4px 0 18px">' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
+    '<div class="row" style="margin:10px 0 18px">' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
     '<div class="mprev" style="font-size:30px;margin:10px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : cap(JOURS[nx.getDay()]) + ' ' + dCourt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
     '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
 }
@@ -1767,7 +1765,16 @@ function handle(act, arg){
     case 'facopen': facOpen(arg); return;
     case 'fundo': facUndo(arg); return;
     case 'fdelai': facDelai(arg); return;
-    case 'fla': if (modal && modal.kind === 'fdelai'){ modal.ago = Math.max(0, Math.min(365, (modal.ago === null ? 0 : modal.ago) + (+arg.split(':')[1]))); modal.changed = true; facDelai(modal.id, modal); } return;
+    case 'fla':
+      /* jamais → [+] = aujourd'hui → [+] = il y a 1 j … ; [–] depuis aujourd'hui = jamais */
+      if (modal && modal.kind === 'fdelai'){
+        var dlt = +arg.split(':')[1];
+        if (modal.ago === null) modal.ago = dlt > 0 ? 0 : null;
+        else if (modal.ago === 0 && dlt < 0) modal.ago = null;
+        else modal.ago = Math.max(0, Math.min(365, modal.ago + dlt));
+        modal.changed = true; facDelai(modal.id, modal);
+      }
+      return;
     case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; facDelai(modal.id, modal); } return;
     case 'fev': if (modal && modal.kind === 'fdelai'){ modal.every = Math.max(1, Math.min(120, modal.every + (+arg.split(':')[1]))); facDelai(modal.id, modal); } return;
     case 'fevset': if (modal && modal.kind === 'fdelai'){ modal.every = +arg; facDelai(modal.id, modal); } return;
