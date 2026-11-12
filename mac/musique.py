@@ -3,10 +3,17 @@
 # http://MacBook-Pro-de-Noam.local:8765/lofi.gif et le Mac lance le live Lofi Girl
 # dans Google Chrome (sans ouvrir un 2e onglet s'il tourne déjà).
 # Lancé automatiquement par ~/Library/LaunchAgents/com.noam.musique.plist
+# Depuis le Dashboard (page https), Safari bloque l'appel direct au Mac (http) : l'iPad envoie donc
+# « lofi » sur le relais https ntfy.sh (canal NTFY_TOPIC) et ce script écoute ce canal en continu.
+import json
 import subprocess
+import threading
+import time
+import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = 8765
+NTFY_TOPIC = "noam-musique-2ccbb2035061ec467497"
 VIDEO = "CwPCy1GLS38"
 URL = "https://www.youtube.com/watch?v=" + VIDEO
 GIF = b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;"
@@ -64,5 +71,27 @@ class H(BaseHTTPRequestHandler):
         pass
 
 
+def ecouter_relais():
+    """Écoute ntfy.sh en continu (connexion longue) ; reconnecte tout seul si elle coupe."""
+    url = "https://ntfy.sh/%s/json" % NTFY_TOPIC
+    attente = 2
+    while True:
+        try:
+            with urllib.request.urlopen(url, timeout=90) as flux:
+                attente = 2
+                for ligne in flux:
+                    try:
+                        ev = json.loads(ligne.decode("utf-8"))
+                    except ValueError:
+                        continue
+                    if ev.get("event") == "message" and ev.get("message", "").strip() == "lofi":
+                        print("relais -> lofi ->", lancer(), flush=True)
+        except Exception as e:
+            print("relais coupé :", e, flush=True)
+            time.sleep(attente)
+            attente = min(attente * 2, 60)
+
+
 if __name__ == "__main__":
+    threading.Thread(target=ecouter_relais, daemon=True).start()
     HTTPServer(("0.0.0.0", PORT), H).serve_forever()
