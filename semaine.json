@@ -189,6 +189,12 @@
      "client": "Zack",
      "text": "Nuance Audio : faire la V1",
      "done": false
+    },
+    {
+     "id": "ensemble-solum-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Solum : faire la V1",
+     "done": false
     }
    ]
   }
