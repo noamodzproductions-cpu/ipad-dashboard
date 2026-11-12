@@ -1,19 +1,6 @@
 {
- "updated": "mercredi 11 nov. à 15h20",
+ "updated": "jeudi 12 nov. à 16h15",
  "days": [
-  {
-   "date": "2026-11-11",
-   "jour": "Mercredi 11 novembre",
-   "tasks": [
-    {
-     "id": "theia-montage",
-     "client": "Cercle de l'Espoir",
-     "text": "URGENT · Le Cercle de Théia : faire la V1",
-     "done": true,
-     "perso": true
-    }
-   ]
-  },
   {
    "date": "2026-11-12",
    "jour": "Jeudi 12 novembre",
@@ -22,6 +9,30 @@
      "id": "mich-call-prepa-19",
      "client": "Michalak",
      "text": "16h30 · Michalak : call prépa tournage masterclass du 19",
+     "done": false
+    },
+    {
+     "id": "relance-c98267-20261106",
+     "client": "",
+     "text": "URGENT · Clip Ogynae Onlyfan : relancer le paiement",
+     "done": false
+    },
+    {
+     "id": "relance-dcb663-20261110",
+     "client": "",
+     "text": "URGENT · Mika Maison de la Santé : relancer le paiement",
+     "done": false
+    },
+    {
+     "id": "astotel-lorette-photos",
+     "client": "Astotel",
+     "text": "URGENT · Astotel - Lorette : envoyer les photos",
+     "done": false
+    },
+    {
+     "id": "cmc-beaute-v2-interviews",
+     "client": "Marie Claire",
+     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Comptoir des huiles, Petits Bilingues)",
      "done": false
     }
    ]
