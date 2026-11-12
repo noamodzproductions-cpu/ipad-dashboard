@@ -1512,7 +1512,7 @@ document.addEventListener('mouseup', tgEnd);
 
 /* ---------- Réglages ---------- */
 function renderReglages(){
-  var h = hdr('Réglages') + '<div class="content"><div class="sgrid">';
+  var h = hdr('Réglages', '', '<button data-act="reload">' + ico(IC.reload, 'inl') + ' Recharger l’app</button>') + '<div class="content"><div class="sgrid">';
   for (var i = 0; i < SET_DEFS.length; i++){
     var d = SET_DEFS[i];
     h += '<div class="glass sitem"><div class="sitem-l">' + d[1] + '</div><div class="row">' +
@@ -1535,7 +1535,7 @@ function handle(act, arg){
   switch (act){
     case 'go': closeModal(); go(arg); return;
     case 'reload':
-      try { window.localStorage.setItem('noamdash-reopen', 'taches'); } catch(e){}
+      try { window.localStorage.setItem('noamdash-reopen', current); } catch(e){}
       location.replace(location.pathname + '?v=' + Date.now()); return;
     case 'link': closeModal(); window.open(arg, '_blank'); return;
     case 'music': playMusic(); return;
@@ -1848,7 +1848,7 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 load();
 var reopen = null;
 try { reopen = window.localStorage.getItem('noamdash-reopen'); window.localStorage.removeItem('noamdash-reopen'); } catch(e){}
-go(reopen === 'taches' ? 'taches' : 'home');
+go(['taches','reglages','factures','materiel','devis'].indexOf(reopen) >= 0 ? reopen : 'home');
 loadTasks(null);
 loadFactures();
 setInterval(tick, 500);
