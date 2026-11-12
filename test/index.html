@@ -876,7 +876,7 @@ function renderFactures(){
     var r = rows[i], late = !r.paye && r.left <= 0;
     var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((r.dl - r.left) / r.dl * 100)));
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
+    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
     h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%"></i></div>' +
@@ -899,15 +899,28 @@ function facUndo(id){
   else if (last) facUnrelance(id);
   else renderFactures();
 }
-function facDelai(id, v){
+/* Fenêtre « Relance » : 1) date de la dernière relance (corrigeable)  2) rythme « relancer tous les N jours » */
+function facDelai(id, st){
   var r = facRow(id); if (!r) return;
-  var cur = v !== undefined ? v : Math.max(1, r.left), t = new Date(); t.setDate(t.getDate() + cur);
-  var Q = [[1,'Demain'],[2,'Après-demain'],[7,'Dans 1 semaine'],[14,'Dans 2 semaines'],[30,'Dans 1 mois'],[60,'Dans 2 mois']], qb = '', k;
-  for (k = 0; k < Q.length; k++) qb += '<button class="' + (Q[k][0] === cur ? 'white' : '') + '" data-act="fdlset" data-arg="' + Q[k][0] + '" style="margin:0 10px 10px 0">' + Q[k][1] + '</button>';
-  openModal({kind:'fdelai', id:id, v:cur}, '<div class="mtitle">Relancer le…</div><div class="fm-l">' + esc(r.projet) + '</div>' +
-    '<div style="margin:18px 0 8px">' + qb + '</div>' +
-    '<div class="row" style="margin:10px 0 6px">' + stepper('', 'dans ' + cur + ' j', 'fdl', 'x') + '<div class="grow fm-l" style="margin:0 0 0 18px">' + cap(JOURS[t.getDay()]) + ' ' + dCourt(t.getTime()) + '</div></div>' +
-    '<div class="row mbtns" style="margin-top:22px"><button data-act="fdlreset">Rythme normal (15 j)</button><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
+  var E = data.facEtat, rels = E.relances[id] || [], today = dayStart(new Date());
+  if (!st){
+    var last = rels.length ? num(rels[rels.length - 1]) : 0;
+    st = {kind:'fdelai', id:id, ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false};
+  }
+  var base = st.ago === null ? dayStart(new Date(r.entree)) : today - st.ago * 86400000;
+  var nx = new Date(base); nx.setDate(nx.getDate() + st.every);
+  var left = Math.round((dayStart(nx) - today) / 86400000);
+  function q(list, act, cur){ var s = ''; for (var k = 0; k < list.length; k++) s += '<button class="' + (list[k][0] === cur ? 'white' : '') + '" data-act="' + act + '" data-arg="' + list[k][0] + '" style="margin:0 10px 10px 0">' + list[k][1] + '</button>'; return s; }
+  var lastTxt = st.ago === null ? 'Jamais relancé' : (st.ago === 0 ? 'Aujourd’hui' : (st.ago === 1 ? 'Hier' : 'Il y a ' + st.ago + ' j')) + (st.ago === null ? '' : ' · ' + cap(JOURS[new Date(base).getDay()]) + ' ' + dCourt(base));
+  openModal(st, '<div class="mtitle">' + esc(r.projet) + '</div>' +
+    '<div class="dh">Dernière relance</div><div class="fm-l" style="margin:6px 0 12px;color:#fff;font-size:28px;font-weight:600">' + lastTxt + '</div>' +
+    '<div>' + q([[0,'Aujourd’hui'],[1,'Hier'],[3,'Il y a 3 j'],[7,'Il y a 1 sem.'],['none','Jamais']], 'flaset', st.ago === null ? 'none' : st.ago) + '</div>' +
+    '<div class="row" style="margin:4px 0 18px">' + stepper('', st.ago === null ? '—' : st.ago + ' j', 'fla', 'x') + '<div class="grow fm-l" style="margin:0 0 0 18px">jours avant aujourd’hui</div></div>' +
+    '<div class="dh">Relancer tous les</div>' +
+    '<div style="margin-top:10px">' + q([[7,'7 j'],[10,'10 j'],[15,'15 j'],[30,'30 j']], 'fevset', st.every) + '</div>' +
+    '<div class="row" style="margin:4px 0 18px">' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
+    '<div class="mprev" style="font-size:30px;margin:10px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : cap(JOURS[nx.getDay()]) + ' ' + dCourt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
+    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
 }
 
 /* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
@@ -1754,12 +1767,22 @@ function handle(act, arg){
     case 'facopen': facOpen(arg); return;
     case 'fundo': facUndo(arg); return;
     case 'fdelai': facDelai(arg); return;
-    case 'fdl': if (modal && modal.kind === 'fdelai') facDelai(modal.id, Math.max(1, Math.min(120, num(modal.v) + (+arg.split(':')[1])))); return;
-    case 'fdlreset': if (modal && modal.kind === 'fdelai'){ delete data.facEtat.prochaine[modal.id]; closeModal(); facSchedule(); renderFactures(); } return;
-    case 'fdlset': if (modal && modal.kind === 'fdelai') facDelai(modal.id, +arg); return;
+    case 'fla': if (modal && modal.kind === 'fdelai'){ modal.ago = Math.max(0, Math.min(365, (modal.ago === null ? 0 : modal.ago) + (+arg.split(':')[1]))); modal.changed = true; facDelai(modal.id, modal); } return;
+    case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; facDelai(modal.id, modal); } return;
+    case 'fev': if (modal && modal.kind === 'fdelai'){ modal.every = Math.max(1, Math.min(120, modal.every + (+arg.split(':')[1]))); facDelai(modal.id, modal); } return;
+    case 'fevset': if (modal && modal.kind === 'fdelai'){ modal.every = +arg; facDelai(modal.id, modal); } return;
     case 'fdlok':
       if (!modal || modal.kind !== 'fdelai') return;
-      var pd = new Date(); pd.setDate(pd.getDate() + num(modal.v)); data.facEtat.prochaine[modal.id] = isoDate(pd);
+      var FE = data.facEtat, fid = modal.id;
+      if (modal.changed){
+        if (modal.ago === null) delete FE.relances[fid];
+        else {
+          var ts = dayStart(new Date()) - modal.ago * 86400000 + 12 * 3600000;
+          if (!FE.relances[fid] || !FE.relances[fid].length) FE.relances[fid] = [ts]; else FE.relances[fid][FE.relances[fid].length - 1] = ts;
+        }
+      }
+      if (modal.every === RELANCE_J) delete FE.delais[fid]; else FE.delais[fid] = modal.every;
+      if (FE.prochaine) delete FE.prochaine[fid];
       closeModal(); facSchedule(); renderFactures(); return;
 
     case 'mopen': matOpen(arg); return;
