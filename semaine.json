@@ -1,14 +1,14 @@
 {
- "updated": "jeudi 12 nov. à 22h25",
+ "updated": "vendredi 13 nov. à 10h20",
  "days": [
   {
-   "date": "2026-11-12",
-   "jour": "Jeudi 12 novembre",
+   "date": "2026-11-13",
+   "jour": "Vendredi 13 novembre",
    "tasks": [
     {
      "id": "mich-call-prepa-19",
      "client": "Michalak",
-     "text": "16h30 · Michalak : call prépa tournage masterclass du 19",
+     "text": "URGENT · Michalak : call prépa tournage masterclass du 19",
      "done": false
     },
     {
@@ -26,27 +26,21 @@
     {
      "id": "theia-v2",
      "client": "Cercle de l'Espoir",
-     "text": "Le Cercle de Théia : faire la V2 (hook mot du maire à 2:40)",
+     "text": "URGENT · Le Cercle de Théia : faire la V2 (hook mot du maire à 2:40)",
      "done": false
     },
     {
      "id": "cmc-beaute-sanex-v2",
      "client": "Marie Claire",
-     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Sanex (logo, sous-titres, intro, plan face)",
+     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Sanex (logo, sous-titres, intro, plan face)",
      "done": false
     },
     {
      "id": "cmc-lifestyle-lien",
      "client": "Marie Claire",
-     "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
+     "text": "URGENT · Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
      "done": false
-    }
-   ]
-  },
-  {
-   "date": "2026-11-13",
-   "jour": "Vendredi 13 novembre",
-   "tasks": [
+    },
     {
      "id": "cmc-evasion-photos",
      "client": "Marie Claire",
@@ -62,7 +56,7 @@
     {
      "id": "laduree-halloween-v1-stopmotion",
      "client": "Ladurée",
-     "text": "Ladurée Halloween : faire la V1 stop motion club",
+     "text": "URGENT · Ladurée Halloween : faire la V1 stop motion club",
      "done": false
     }
    ]
