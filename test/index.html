@@ -1510,7 +1510,7 @@ function openTaskDetail(id){
     h += '<div class="row mrow2"><button class="mchk' + (s.done ? ' on' : '') + '" data-act="tsub" data-arg="' + arg + '"><span class="tchk">' + (s.done ? '✓' : '') + '</span>' + esc(s.text) + '</button>' +
       (s.mine ? '<button class="xbtn" data-act="tsubdel" data-arg="' + arg + '">✕</button>' : '') + '</div>';
   }
-  h += '<div class="row mrow2"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"></div>' +
+  h += '<div class="row mrow2"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"><button class="white" data-act="tsubadd" data-arg="' + esc(id) + '" style="margin-left:12px">Ajouter</button></div>' +
     '<div class="tdet-ok"><button class="white" data-act="mfin2">OK</button></div>';
   openModal({kind:'tdet', id:id}, h);
 }
@@ -1917,7 +1917,10 @@ function handle(act, arg){
         var ap = data.materiel[i]; for (var z = 0; z < ap.items.length; z++) delete data.matCheck[ap.items[z].id];
         delete data.matPris[ap.id]; data.materiel.splice(i, 1); save(); closeModal(); renderMateriel(); });
       return;
-    case 'mfin2': closeModal(); renderTaches(); if (current === 'planning') renderPlanning(); return;
+    case 'mfin2':
+      /* texte tapé mais pas encore ajouté : on l'ajoute avant de fermer */
+      if (modal && modal.kind === 'tdet' && $('m-sub') && trimV('m-sub')){ tSubOf(modal.id).add.push({id:'n' + uid(), text:trimV('m-sub')}); save(); }
+      closeModal(); renderTaches(); if (current === 'planning') renderPlanning(); return;
     case 'mfin': closeModal(); if (current === 'materiel') renderMateriel(); return;
     case 'mreset': askConfirm('Tout remettre à zéro pour un nouveau tournage ?', 'Remettre à zéro', function(){ data.matCheck = {}; data.matPris = {}; save(); renderMateriel(); }); return;
 
