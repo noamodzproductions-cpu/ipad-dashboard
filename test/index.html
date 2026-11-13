@@ -1330,7 +1330,7 @@ function renderTaches(){
       }
       for (i = 0; i < fait.length; i++) h += taskCard(fait[i], day.date);
     }
-    if (W.updated) h += '<div class="muted tupd">Planning mis à jour ' + esc(W.updated) + ' · ' + (ghToken() ? (ghErr ? esc(ghErr) : 'coches synchronisées ✓') : 'coches sur cet iPad') + '</div>';
+    if (W.updated) h += '<div class="muted tupd">Claude est passé ' + esc(W.updated) + (W.whatsapp ? ' · WhatsApp lu ' + esc(String(W.whatsapp).replace(/^.* à /, 'à ')) : '') + ' · ' + (ghToken() ? (ghErr ? esc(ghErr) : 'coches synchronisées ✓') : 'coches sur cet iPad') + '</div>';
   }
   h += '</div>';
   var old = document.querySelector('#s-taches .content'), scroll = old ? old.scrollTop : 0;
