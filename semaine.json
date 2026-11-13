@@ -9,12 +9,64 @@
      "id": "mich-coffret-porte",
      "client": "Michalak",
      "text": "URGENT · Michalak : renvoyer la vidéo composition coffret (plan porte, musique) — publiée aujourd'hui",
-     "done": false
+     "done": false,
+     "notes": "Noélie (CREATEAM, 13/11 9h40) : vidéo à publier aujourd'hui. Retour de Céline (groupe Michalak, 12/11 18h07) : « j'ai l'impression que ce n'est pas changé ».",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Changer le plan : mettre le plan sur une porte",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Changer la musique",
+       "done": false
+      },
+      {
+       "id": "s3",
+       "text": "Renvoyer la vidéo à Noélie",
+       "done": false
+      }
+     ]
     },
     {
      "id": "cmc-beaute-v2-interviews",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Comptoir des huiles, Petits Bilingues)",
+     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Comptoir des huiles",
+     "done": false,
+     "perso": true,
+     "notes": "Retours de l'édition Beauté & Bien-être du 06/10 (Marie Claire).",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Couper le passage de la fin où on t'entend parler",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Appliquer le commentaire laissé sur Frame",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "cmc-beaute-v2-bilingues",
+     "client": "Marie Claire",
+     "perso": true,
+     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Petits Bilingues",
+     "notes": "Selma (groupe « Photos video Café MC », 12/11 17h58) : la modification est à faire de ton côté, à envoyer d'ici ce matin.",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Faire la modification demandée par Selma (voir son message du 12/11)",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Envoyer à Selma ce matin",
+       "done": false
+      }
+     ],
      "done": false
     },
     {
@@ -33,19 +85,51 @@
      "id": "theia-v2",
      "client": "Cercle de l'Espoir",
      "text": "URGENT · Le Cercle de Théia : faire la V2 (hook mot du maire à 2:40)",
-     "done": false
+     "done": false,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Mettre le mot du maire en hook (à 2:40)",
+       "done": false
+      }
+     ],
+     "notes": "Xuan-nam demande où en est le montage (12/11 23h15)."
     },
     {
      "id": "cmc-beaute-sanex-v2",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Sanex (logo, sous-titres, intro, plan face)",
-     "done": false
+     "done": false,
+     "notes": "Retours de la cliente Sanex (édition Beauté & Bien-être du 06/10).",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Logo Marie Claire plus visible, présent tout au long de la vidéo",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Ajouter les sous-titres",
+       "done": false
+      },
+      {
+       "id": "s3",
+       "text": "Couper « On souhaite ouvrir le dialogue… » : attaquer direct sur « Avec notre gamme Derma Ménopause »",
+       "done": false
+      },
+      {
+       "id": "s4",
+       "text": "Plan de face pour « Sanex garde la peau saine »",
+       "done": false
+      }
+     ]
     },
     {
      "id": "cmc-lifestyle-lien",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
-     "done": false
+     "done": false,
+     "notes": "Marie Claire ne trouve pas les vidéos de l'édition Lifestyle du 13/10 (pas dans le dossier envoyé à Gamzé)."
     },
     {
      "id": "cmc-evasion-photos",
