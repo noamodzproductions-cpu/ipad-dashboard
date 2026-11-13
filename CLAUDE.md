@@ -46,7 +46,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - Un seul fichier HTML/CSS/JS vanilla, sans framework, sans dépendance, sans police web (police système -apple-system).
 - Interdit : `backdrop-filter`, `filter`, `blur()`, grosses ombres, animations CSS en boucle, `?.`, `??`, flex `gap` (grid-gap OK), `aspect-ratio`, `:is`/`:where`/`:has`, `inset`.
 - Transitions uniquement sur `transform` et `opacity`. Appui = léger fondu d'opacité (boutons, cartes), jamais de rebond. L'heure et le chrono ne mettent à jour que leur texte et la poignée.
-- Couleurs : noir, blanc, gris + vert #4ade80 et violet #A78BFA ; rouge #f87171 UNIQUEMENT pour les factures en retard (Suivi des factures : bord + barre + étiquette « RETARD N j » quand non payée depuis ≥ 30 j ; vert = relance pas encore due, violet = à relancer).
+- Couleurs : noir, blanc, gris + vert #4ade80 et violet #A78BFA ; rouge #f87171 UNIQUEMENT pour les factures en retard (Suivi des factures : SEULE LA BARRE est colorée — vert = relance pas encore due, violet = à relancer, rouge = non payée depuis ≥ 30 j (+ étiquette rouge « RETARD N j » à côté du nom) ; pas de couleur sur le bord de la carte).
 - Cibles tactiles ≥ 70 px, textes lisibles à 1 m, tout tient en 1024×768 sans scroller (sauf les listes).
 - Données en localStorage `noamdash-test` (l'ancienne clé `noamdash` n'est plus utilisée).
 
