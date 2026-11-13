@@ -252,8 +252,10 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .t-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:220px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 #modal .mchk{white-space:normal;height:auto;min-height:84px;padding:14px 20px;line-height:1.3;display:flex;align-items:center}
 #modal .mchk .tchk{flex-shrink:0}
+.tdet-top{margin-bottom:6px}
+.tdet-t{font-size:28px;font-weight:700;line-height:1.25;margin:10px 0 6px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
-.tnotes{font-size:22px;line-height:1.4;color:rgba(255,255,255,.75);margin:6px 0 18px;white-space:pre-line}
+.tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
 .t-act button{background:#A78BFA;border-color:#A78BFA;color:#111;font-size:24px}
 .utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
@@ -539,7 +541,7 @@ function playMusic(){
     if (ok){ if (t){ t.className = 'wtile ok'; setTimeout(function(){ var u = $('hm-tile'); if (u) u.className = 'wtile'; }, 2500); } }
     else {
       if (t) t.className = 'wtile';
-      askConfirm('Le Mac ne répond pas (éteint ou en veille ?). Ouvrir le live sur l’iPad ?', 'Ouvrir', function(){ window.open(LOFI, '_blank'); });
+      askConfirm('Le Mac ne répond pas (éteint ou en veille ?). Ouvrir le live sur l’iPad ?', 'Ouvrir', function(){ window.open(data.musicUrl || LOFI, '_blank'); });
     }
   }
   setTimeout(function(){ end(false); }, 6000);
@@ -548,7 +550,7 @@ function playMusic(){
     x.open('POST', MUSIC_RELAY, true);
     x.onload = function(){ end(x.status >= 200 && x.status < 300); };
     x.onerror = function(){ end(false); };
-    x.send('lofi');
+    x.send(data.musicUrl || 'lofi');
   } catch(e){ end(false); }
 }
 function ico(p, cls){ return '<svg' + (cls ? ' class="' + cls + '"' : '') + ' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>'; }
@@ -1492,18 +1494,17 @@ function subCount(tk){
 function openTaskDetail(id){
   var tk = findTask(id); if (!tk) return;
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || ''), l = subsOf(tk), i, h;
-  h = tagsHtml(tk, urg && !on) + '<div class="mtitle" style="margin:10px 0 8px">' + esc((tk.text || '').replace(URG_RE, '')) + '</div>' +
-    (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '') +
-    '<div class="dh">Modifs à faire</div><div style="margin-top:10px">';
-  if (!l.length) h += '<div class="fm-l">Pas de modif listée. Ajoute-en une ci-dessous.</div>';
+  h = '<div class="row tdet-top"><div class="grow">' + tagsHtml(tk, urg && !on) + '</div>' +
+    '<button class="' + (on ? '' : 'ok') + '" data-act="tdetdone" data-arg="' + esc(id) + '">' + (on ? 'À refaire' : 'Fait ✓') + '</button>' +
+    '<button data-act="tdetedit" data-arg="' + esc(id) + '">Modifier</button><button class="white" data-act="mfin2">Fermer</button></div>' +
+    '<div class="tdet-t">' + esc((tk.text || '').replace(URG_RE, '')) + '</div>' +
+    (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
   for (i = 0; i < l.length; i++){
     var s = l[i], arg = esc(id + '|' + s.id);
     h += '<div class="row mrow2"><button class="mchk' + (s.done ? ' on' : '') + '" data-act="tsub" data-arg="' + arg + '"><span class="tchk">' + (s.done ? '✓' : '') + '</span>' + esc(s.text) + '</button>' +
       (s.mine ? '<button class="xbtn" data-act="tsubdel" data-arg="' + arg + '">✕</button>' : '') + '</div>';
   }
-  h += '</div><div class="row mrow2" style="margin-top:14px"><input type="text" id="m-sub" placeholder="Ajouter une modif" style="flex:1"><button class="white" data-act="tsubadd" data-arg="' + esc(id) + '">Ajouter</button></div>' +
-    '<div class="row mbtns" style="margin-top:24px"><button class="' + (on ? '' : 'ok') + '" data-act="tdetdone" data-arg="' + esc(id) + '">' + (on ? 'À refaire' : 'Fait ✓') + '</button>' +
-    '<button data-act="tdetedit" data-arg="' + esc(id) + '">Modifier</button><button class="white" data-act="mfin2">Fermer</button></div>';
+  h += '<div class="row mrow2" style="margin-top:12px"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"><button class="white" data-act="tsubadd" data-arg="' + esc(id) + '">Ajouter</button></div>';
   openModal({kind:'tdet', id:id}, h);
 }
 function openTaskEdit(id){
@@ -1730,6 +1731,9 @@ function renderReglages(){
     (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
     '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
     '<button class="white" data-act="ghsave">OK</button>' + (ghToken() ? '<button data-act="ghclear">Retirer</button>' : '') + '</div>';
+  h += '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Lien musique (YouTube, Spotify, Apple Music, SoundCloud)</div>' +
+    '<input type="url" id="m-music" value="' + esc(data.musicUrl || '') + '" placeholder="Lofi Girl par défaut" style="width:100%;font-size:20px"></div>' +
+    '<button class="white" data-act="musave">OK</button>' + (data.musicUrl ? '<button data-act="mureset">Lofi</button>' : '') + '</div>';
   h += '<div class="row" style="margin-top:4px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
     '<div class="muted" style="font-size:20px;margin-top:14px">Les données restent sur cet iPad. Exporte de temps en temps et colle le texte dans Notes.</div></div>';
   $('s-reglages').innerHTML = h;
@@ -1929,6 +1933,11 @@ function handle(act, arg){
       }
       if (!pick) return;
       tView = pick; renderTaches(); var cc = document.querySelector('#s-taches .content'); if (cc) cc.scrollTop = 0; return;
+    case 'musave':
+      var mu = trimV('m-music');
+      if (mu && !/^https:\/\/([a-z0-9-]+\.)*(youtube\.com|youtu\.be|spotify\.com|apple\.com|soundcloud\.com|deezer\.com)\//i.test(mu)){ $('m-music').style.borderColor = '#A78BFA'; return; }
+      data.musicUrl = mu; save(); renderReglages(); showToast(mu ? 'Lien musique enregistré' : 'Lofi Girl par défaut', null); return;
+    case 'mureset': data.musicUrl = ''; save(); renderReglages(); return;
     case 'ghsave':
       var tk = ($('gh-in').value || '').replace(/^\s+|\s+$/g, '');
       if (!tk) return;

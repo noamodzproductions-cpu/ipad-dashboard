@@ -6,6 +6,7 @@
 # Depuis le Dashboard (page https), Safari bloque l'appel direct au Mac (http) : l'iPad envoie donc
 # « lofi » sur le relais https ntfy.sh (canal NTFY_TOPIC) et ce script écoute ce canal en continu.
 import json
+import re
 import subprocess
 import threading
 import time
@@ -36,14 +37,17 @@ tell application "Google Chrome"
   tell front window to make new tab with properties {URL:"%s"}
   return "ouvert"
 end tell
-''' % (VIDEO, URL)
+'''
+# liens acceptés depuis l'iPad (le canal du relais est public : on n'ouvre que des sites de musique)
+AUTORISES = re.compile(r"^https://([a-z0-9-]+\.)*(youtube\.com|youtu\.be|spotify\.com|apple\.com|soundcloud\.com|deezer\.com)/[^\s\"\\]*$", re.I)
 
 
-def lancer():
-    r = subprocess.run(["osascript", "-e", SCRIPT], capture_output=True, text=True, timeout=20)
+def lancer(url=URL):
+    cle = VIDEO if url == URL else url
+    r = subprocess.run(["osascript", "-e", SCRIPT % (cle, url)], capture_output=True, text=True, timeout=20)
     if r.returncode != 0:
         # pas de droit d'automatisation : on ouvre simplement le lien
-        subprocess.run(["open", "-a", "Google Chrome", URL])
+        subprocess.run(["open", "-a", "Google Chrome", url])
         return "ouvert (open)"
     return r.stdout.strip()
 
@@ -84,8 +88,15 @@ def ecouter_relais():
                         ev = json.loads(ligne.decode("utf-8"))
                     except ValueError:
                         continue
-                    if ev.get("event") == "message" and ev.get("message", "").strip() == "lofi":
+                    if ev.get("event") != "message":
+                        continue
+                    msg = ev.get("message", "").strip()
+                    if msg == "lofi":
                         print("relais -> lofi ->", lancer(), flush=True)
+                    elif AUTORISES.match(msg):
+                        print("relais -> lien ->", lancer(msg), flush=True)
+                    else:
+                        print("relais -> ignoré (lien non autorisé)", flush=True)
         except Exception as e:
             print("relais coupé :", e, flush=True)
             time.sleep(attente)
