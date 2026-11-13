@@ -1,10 +1,22 @@
 {
- "updated": "vendredi 13 nov. à 10h20",
+ "updated": "vendredi 13 nov. à 10h26",
  "days": [
   {
    "date": "2026-11-13",
    "jour": "Vendredi 13 novembre",
    "tasks": [
+    {
+     "id": "mich-coffret-porte",
+     "client": "Michalak",
+     "text": "URGENT · Michalak : renvoyer la vidéo composition coffret (plan porte, musique) — publiée aujourd'hui",
+     "done": false
+    },
+    {
+     "id": "cmc-beaute-v2-interviews",
+     "client": "Marie Claire",
+     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Comptoir des huiles, Petits Bilingues)",
+     "done": false
+    },
     {
      "id": "mich-call-prepa-19",
      "client": "Michalak",
@@ -15,13 +27,7 @@
      "id": "astotel-lorette-photos",
      "client": "Astotel",
      "text": "URGENT · Astotel - Lorette : envoyer les photos",
-     "done": false
-    },
-    {
-     "id": "cmc-beaute-v2-interviews",
-     "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 (Comptoir des huiles, Petits Bilingues)",
-     "done": false
+     "done": true
     },
     {
      "id": "theia-v2",
