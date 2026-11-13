@@ -1,5 +1,5 @@
 {
- "updated": "vendredi 13 nov. à 14h49",
+ "updated": "vendredi 13 nov. à 15h45",
  "days": [
   {
    "date": "2026-11-13",
@@ -9,18 +9,18 @@
      "id": "mich-coffret-porte",
      "client": "Michalak",
      "text": "URGENT · Michalak : renvoyer la vidéo composition coffret",
-     "done": false,
+     "done": true,
      "notes": "Noélie, 9h40",
      "sous": [
       {
        "id": "s1",
        "text": "Plan sur une porte",
-       "done": false
+       "done": true
       },
       {
        "id": "s2",
        "text": "Autre musique",
-       "done": false
+       "done": true
       }
      ],
      "perso": true
@@ -75,12 +75,12 @@
      "id": "theia-v2",
      "client": "Cercle de l'Espoir",
      "text": "URGENT · Le Cercle de Théia : faire la V2 (hook mot du maire à 2:40)",
-     "done": false,
+     "done": true,
      "sous": [
       {
        "id": "s1",
        "text": "Mot du maire en hook (2:40)",
-       "done": false
+       "done": true
       }
      ],
      "notes": "Xuan-nam relance"
@@ -125,7 +125,7 @@
      "id": "cmc-evasion-photos",
      "client": "Marie Claire",
      "text": "Café Marie Claire Evasion, Food & Expérience : envoyer les photos",
-     "done": false
+     "done": true
     },
     {
      "id": "cmc-evasion-v1",
@@ -138,6 +138,13 @@
      "client": "Ladurée",
      "text": "URGENT · Ladurée Halloween : faire la V1 stop motion club",
      "done": false
+    },
+    {
+     "id": "curve-photos-toutes",
+     "client": "Curve Studio",
+     "text": "Curve Studio : envoyer toutes les photos",
+     "done": false,
+     "notes": "Noélie, une seule reçue"
     }
    ]
   },
@@ -252,6 +259,19 @@
    "date": "2026-11-20",
    "jour": "Vendredi 20 novembre",
    "tasks": [
+    {
+     "id": "benito-appart-tournage",
+     "client": "Benito",
+     "text": "Benito : finir le tournage appartement",
+     "done": false,
+     "notes": "Matin, heure à caler"
+    },
+    {
+     "id": "benito-appart-tournage-ssd",
+     "client": "Benito",
+     "text": "Benito : rushs + photos → SSD",
+     "done": false
+    },
     {
      "id": "citadium-v1",
      "client": "Ensemble",
