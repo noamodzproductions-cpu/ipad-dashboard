@@ -1748,7 +1748,7 @@ function renderReglages(){
     (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
     '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
     '<button class="white" data-act="ghsave">OK</button>' + (ghToken() ? '<button data-act="ghclear">Retirer</button>' : '') + '</div>';
-  h += '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Lien musique (YouTube, Spotify, Apple Music, SoundCloud)</div>' +
+  h += '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Lien musique YouTube</div>' +
     '<input type="url" id="m-music" value="' + esc(data.musicUrl || '') + '" placeholder="Lofi Girl par défaut" style="width:100%;font-size:20px"></div>' +
     '<button class="white" data-act="musave">OK</button>' + (data.musicUrl ? '<button data-act="mureset">Lofi</button>' : '') + '</div>';
   h += '<div class="row" style="margin-top:4px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
@@ -1981,9 +1981,13 @@ function handle(act, arg){
       if (!pick) return;
       tView = pick; renderTaches(); var cc = document.querySelector('#s-taches .content'); if (cc) cc.scrollTop = 0; return;
     case 'musave':
-      var mu = trimV('m-music');
-      if (mu && !/^https:\/\/([a-z0-9-]+\.)*(youtube\.com|youtu\.be|spotify\.com|apple\.com|soundcloud\.com|deezer\.com)\//i.test(mu)){ $('m-music').style.borderColor = '#A78BFA'; return; }
-      data.musicUrl = mu; save(); renderReglages(); showToast(mu ? 'Lien musique enregistré' : 'Lofi Girl par défaut', null); return;
+      /* retrouve le lien même au milieu d'un texte partagé, passe en https */
+      var raw = trimV('m-music'), mm = /https?:\/\/[^\s"'<>]+/i.exec(raw), mu = mm ? mm[0].replace(/^http:/i, 'https:').replace(/[.,;)!]+$/, '') : '';
+      if (raw && (!mu || !/^https:\/\/([a-z0-9-]+\.)*(youtube\.com|youtu\.be)\//i.test(mu))){
+        $('m-music').style.borderColor = '#A78BFA'; showToast('Lien pas reconnu : colle un lien YouTube', null); return;
+      }
+      if (mu === (data.musicUrl || '')) return;
+      data.musicUrl = mu; save(); renderReglages(); showToast(mu ? 'Lien musique enregistré ✓' : 'Lofi Girl par défaut', null); return;
     case 'mureset': data.musicUrl = ''; save(); renderReglages(); return;
     case 'ghsave':
       var tk = ($('gh-in').value || '').replace(/^\s+|\s+$/g, '');
@@ -2065,6 +2069,8 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
+document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-sub' && modal && modal.kind === 'tdet'){ e.preventDefault(); handle('tsubadd', modal.id); } });
 var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }

@@ -39,7 +39,7 @@ tell application "Google Chrome"
 end tell
 '''
 # liens acceptés depuis l'iPad (le canal du relais est public : on n'ouvre que des sites de musique)
-AUTORISES = re.compile(r"^https://([a-z0-9-]+\.)*(youtube\.com|youtu\.be|spotify\.com|apple\.com|soundcloud\.com|deezer\.com)/[^\s\"\\]*$", re.I)
+AUTORISES = re.compile(r"^https://([a-z0-9-]+\.)*(youtube\.com|youtu\.be)/[^\s\"\\]*$", re.I)
 
 
 def lancer(url=URL):
