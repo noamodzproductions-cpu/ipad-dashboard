@@ -6,6 +6,13 @@
    "jour": "Vendredi 13 novembre",
    "tasks": [
     {
+     "id": "benito-agenda-tournage",
+     "client": "Benito",
+     "text": "Benito : tournage ven. 20 matin → agenda",
+     "done": false,
+     "notes": "Confirmer l'heure"
+    },
+    {
      "id": "mich-coffret-porte",
      "client": "Michalak",
      "text": "URGENT · Michalak : renvoyer la vidéo composition coffret",
@@ -141,8 +148,8 @@
     },
     {
      "id": "curve-photos-toutes",
-     "client": "Curve Studio",
-     "text": "Curve Studio : envoyer toutes les photos",
+     "client": "Kurv Studio",
+     "text": "Kurv Studio : envoyer toutes les photos",
      "done": false,
      "notes": "Noélie, une seule reçue"
     }
