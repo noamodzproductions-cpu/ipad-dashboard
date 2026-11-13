@@ -154,6 +154,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .paid .fc-when{color:#4ade80}
 .fc-hist{font-size:20px;color:rgba(255,255,255,.6);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fcard.late{border-left-color:#A78BFA}
+.fcard.good{border-left-color:#4ade80}
+.fcard.bad{border-left-color:#f87171}
+.bad .fbar i{background:#f87171}
+.bad .fc-when{color:#f87171}
+.rtag{display:inline-block;vertical-align:middle;height:28px;line-height:28px;padding:0 10px;margin-left:12px;border-radius:14px;background:#f87171;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px}
 .fc-n{font-size:30px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fc-d{font-size:21px;color:rgba(255,255,255,.65);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .late .fc-d{color:#cbb8ff;font-weight:600}
@@ -877,8 +882,10 @@ function renderFactures(){
     var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((r.dl - r.left) / r.dl * 100)));
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
     var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
-    h += '<div class="glass fcard' + (late ? ' late' : '') + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
-      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
+    /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
+    var bad = !r.paye && r.days >= 30;
+    h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
+      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + r.days + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
