@@ -252,8 +252,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .t-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:220px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 #modal .mchk{white-space:normal;height:auto;min-height:84px;padding:14px 20px;line-height:1.3;display:flex;align-items:center}
 #modal .mchk .tchk{flex-shrink:0}
-.tdet-top{margin-bottom:6px}
-.tdet-t{font-size:28px;font-weight:700;line-height:1.25;margin:10px 0 6px}
+.tdet-p{font-size:18px;color:rgba(255,255,255,.55);margin-top:10px}
+.tdet-t{font-size:32px;font-weight:700;line-height:1.25;margin:2px 0 12px;min-height:44px}
+.inl{width:100%;font-size:26px}
+.tdet-ok{position:-webkit-sticky;position:sticky;bottom:0;padding:14px 0 20px;background:#000}
+.tdet-ok button{width:100%;height:84px;font-size:30px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
 .tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
@@ -1481,8 +1484,8 @@ function openWeek(){
 /* Sous-modifs d'une tâche : "sous" écrit par la routine (retours WhatsApp surtout) + ajouts faits sur l'iPad (data.tSub) */
 function tSubOf(id){ var s = data.tSub[id] || (data.tSub[id] = {add:[], chk:{}}); if (!s.add) s.add = []; if (!s.chk) s.chk = {}; return s; }
 function subsOf(tk){
-  var out = [], s = data.tSub[tk.id] || {add:[], chk:{}}, i, x, l = tk.sous instanceof Array ? tk.sous : [];
-  for (i = 0; i < l.length; i++){ x = l[i]; out.push({id:x.id || ('s' + i), text:x.text || x.t || '', done:(s.chk || {}).hasOwnProperty(x.id || ('s' + i)) ? !!s.chk[x.id || ('s' + i)] : !!x.done, mine:false}); }
+  var out = [], s = data.tSub[tk.id] || {add:[], chk:{}}, i, x, l = tk.sous instanceof Array ? tk.sous : [], tx = s.txt || {};
+  for (i = 0; i < l.length; i++){ x = l[i]; out.push({id:x.id || ('s' + i), text:tx[x.id || ('s' + i)] || x.text || x.t || '', done:(s.chk || {}).hasOwnProperty(x.id || ('s' + i)) ? !!s.chk[x.id || ('s' + i)] : !!x.done, mine:false}); }
   for (i = 0; i < (s.add || []).length; i++){ x = s.add[i]; out.push({id:x.id, text:x.text, done:!!(s.chk || {})[x.id], mine:true}); }
   return out;
 }
@@ -1491,21 +1494,35 @@ function subCount(tk){
   for (var i = 0; i < l.length; i++) if (l[i].done) n++;
   return '<div class="tsub num">' + n + ' / ' + l.length + ' modif' + (l.length > 1 ? 's' : '') + '</div>';
 }
+function splitTask(tk){
+  var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
+  return k > 0 ? {proj:full.slice(0, k), act:full.slice(k + 3)} : {proj:'', act:full};
+}
+/* fiche de tâche : simple, tout se modifie sur place, un seul bouton OK */
 function openTaskDetail(id){
   var tk = findTask(id); if (!tk) return;
-  var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || ''), l = subsOf(tk), i, h;
-  h = '<div class="row tdet-top"><div class="grow">' + tagsHtml(tk, urg && !on) + '</div>' +
-    '<button class="' + (on ? '' : 'ok') + '" data-act="tdetdone" data-arg="' + esc(id) + '">' + (on ? 'À refaire' : 'Fait ✓') + '</button>' +
-    '<button data-act="tdetedit" data-arg="' + esc(id) + '">Modifier</button><button class="white" data-act="mfin2">Fermer</button></div>' +
-    '<div class="tdet-t">' + esc((tk.text || '').replace(URG_RE, '')) + '</div>' +
+  var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || ''), l = subsOf(tk), sp = splitTask(tk), i, h;
+  h = tagsHtml(tk, urg && !on) + (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
+    '<div class="tdet-t" data-act="tren" data-arg="' + esc(id) + '">' + esc(cap(sp.act)) + '</div>' +
     (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
   for (i = 0; i < l.length; i++){
     var s = l[i], arg = esc(id + '|' + s.id);
     h += '<div class="row mrow2"><button class="mchk' + (s.done ? ' on' : '') + '" data-act="tsub" data-arg="' + arg + '"><span class="tchk">' + (s.done ? '✓' : '') + '</span>' + esc(s.text) + '</button>' +
       (s.mine ? '<button class="xbtn" data-act="tsubdel" data-arg="' + arg + '">✕</button>' : '') + '</div>';
   }
-  h += '<div class="row mrow2" style="margin-top:12px"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"><button class="white" data-act="tsubadd" data-arg="' + esc(id) + '">Ajouter</button></div>';
+  h += '<div class="row mrow2"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"></div>' +
+    '<div class="tdet-ok"><button class="white" data-act="mfin2">OK</button></div>';
   openModal({kind:'tdet', id:id}, h);
+}
+/* édition sur place : l'élément devient un champ texte ; Entrée ou sortie du champ = enregistrer */
+function inlineEdit(el, val, onSave){
+  el.innerHTML = '<input type="text" class="inl" value="' + esc(val) + '">';
+  var inp = el.querySelector('input'), done = false;
+  function fin(){ if (done) return; done = true; window.__inlFin = null; var v = inp.value.replace(/^\s+|\s+$/g, ''); onSave(v && v !== val ? v : null); }
+  window.__inlFin = fin;
+  inp.addEventListener('keydown', function(e){ if (e.keyCode === 13){ e.preventDefault(); fin(); } });
+  inp.addEventListener('blur', fin);
+  inp.focus(); try { inp.setSelectionRange(0, inp.value.length); } catch(e){}
 }
 function openTaskEdit(id){
   var tk = findTask(id), day = dayOfTask(id);
@@ -1758,11 +1775,41 @@ function handle(act, arg){
       var oc2 = document.querySelector('#s-taches .task.open2');
       if (oc2){ oc2.classList.remove('open2'); return; }
       handle('tdone', arg); return;
+    case 'tren':
+      var te = document.querySelector('#modal .tdet-t'); if (!te || te.querySelector('input')) return;
+      var tkr = findTask(arg); if (!tkr) return; var spr = splitTask(tkr);
+      inlineEdit(te, cap(spr.act), function(v){
+        if (v){ var nv = spr.proj ? spr.proj + ' : ' + v : v; tEd().ren[arg] = {v:nv, at:Date.now()}; queueEdit({op:'ren', id:arg, v:nv}); refreshTasks(); }
+        openTaskDetail(arg);
+      });
+      return;
     case 'tsub':
+      /* double-appui sur une modif = la corriger sur place (le 1er appui est annulé) */
+      if (window.__sub && window.__sub.a === arg && Date.now() - window.__sub.t < 380){
+        var prev = window.__sub; window.__sub = null;
+        a = arg.split('|'); var tsx = tSubOf(a[0]);
+        if (prev.had) tsx.chk[a[1]] = prev.was; else delete tsx.chk[a[1]];
+        save(); openTaskDetail(a[0]);
+        var bt = document.querySelector('#modal [data-act="tsub"][data-arg="' + arg + '"]'); if (!bt) return;
+        var row = bt.parentNode, cur = null, lst = subsOf(findTask(a[0]) || {id:a[0]});
+        for (i = 0; i < lst.length; i++) if (lst[i].id === a[1]) cur = lst[i];
+        if (!cur) return;
+        inlineEdit(row, cur.text, function(v){
+          if (v){ if (cur.mine){ for (var q = 0; q < tsx.add.length; q++) if (tsx.add[q].id === a[1]) tsx.add[q].text = v; } else { if (!tsx.txt) tsx.txt = {}; tsx.txt[a[1]] = v; } save(); }
+          openTaskDetail(a[0]); renderTaches();
+        });
+        return;
+      }
       a = arg.split('|'); var ts = tSubOf(a[0]); var stc = subsOf(findTask(a[0]) || {id:a[0]});
       var sd = null; for (i = 0; i < stc.length; i++) if (stc[i].id === a[1]) sd = stc[i];
+      window.__sub = {a:arg, t:Date.now(), had:ts.chk.hasOwnProperty(a[1]), was:ts.chk[a[1]]};
       if (sd){ ts.chk[a[1]] = !sd.done; save(); }
-      openTaskDetail(a[0]); renderTaches(); return;
+      openTaskDetail(a[0]); renderTaches();
+      /* toutes les modifs cochées = tâche validée */
+      var tka = findTask(a[0]), all = subsOf(tka || {id:a[0]}), okAll = all.length > 0;
+      for (i = 0; i < all.length; i++) if (!all[i].done) okAll = false;
+      if (okAll && tka && !isDoneTask(tka)) setTimeout(function(){ handle('tdone', a[0]); }, 400);
+      return;
     case 'tsubadd':
       var sv = trimV('m-sub'); if (!sv) return;
       tSubOf(arg).add.push({id:'n' + uid(), text:sv}); save(); openTaskDetail(arg); renderTaches(); return;
@@ -2018,6 +2065,7 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-sub' && modal && modal.kind === 'tdet'){ e.preventDefault(); handle('tsubadd', modal.id); } });
 var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
 function swEnd(x, y){
@@ -2054,6 +2102,9 @@ document.addEventListener('mouseup', function(e){ swEnd(e.clientX, e.clientY); }
 document.addEventListener('click', function(e){
   markActivity();
   if (lpFired || Date.now() < lpSwallowUntil){ lpFired = false; lpSwallowUntil = 0; e.preventDefault(); e.stopPropagation(); return; }
+  /* un champ en cours d'édition s'enregistre dès qu'on touche ailleurs */
+  if (window.__inlFin && !(e.target && e.target.className === 'inl')) window.__inlFin();
+  if (e.target === $('modal') && modal && modal.kind === 'tdet'){ handle('mfin2', ''); return; }
   var el = closestAttr(e.target, 'data-act');
   if (!el) return;
   handle(el.getAttribute('data-act'), el.getAttribute('data-arg') || '');
