@@ -15,7 +15,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = 8765
 NTFY_TOPIC = "noam-musique-2ccbb2035061ec467497"
-VIDEO = "CwPCy1GLS38"
+VIDEO = "rFZHOHl-L8A"
 URL = "https://www.youtube.com/watch?v=" + VIDEO
 GIF = b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;"
 
