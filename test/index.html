@@ -313,6 +313,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .sitem input{width:140px;font-size:32px;text-align:right}
 .u{font-size:24px;color:rgba(255,255,255,.65)}
 .ghrow{padding:14px 18px;margin-bottom:14px;border-radius:24px}
+.rrow{display:flex;align-items:center;width:100%;height:96px;padding:0 26px;margin-bottom:14px;border-radius:24px;font-size:28px;font-weight:600;text-align:left;color:#fff}
+.rrow .rlab{white-space:nowrap}
+.rrow .rsum{font-size:21px;font-weight:400;margin-right:14px;white-space:nowrap}
+.rrow:active{opacity:.6}
+.rrow svg{width:28px;height:28px;-webkit-flex:none;flex:none;opacity:.5}
 
 /* Fenêtres : fond flouté pré-calculé, sans backdrop-filter */
 .overlay{position:fixed;top:0;left:0;right:0;bottom:0;display:none;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000}
@@ -639,6 +644,7 @@ function hdr(title, sub, right){
 }
 function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
+  if (name === 'reglages' && current !== 'reglages') regPage = '';
   current = name;
   var ids = ['home','devis','projets','reglages','taches','factures','materiel','planning'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
@@ -1736,23 +1742,50 @@ document.addEventListener('mousemove', function(e){ if (pg && e.buttons) pgMove(
 document.addEventListener('mouseup', pgEnd);
 
 /* ---------- Réglages ---------- */
+var regPage = '';
+function shortWhen(s){ var m = /^(\S+)\s.*à\s*(\S+)$/.exec(String(s || '')); return m ? m[1].slice(0, 3) + '. ' + m[2] : String(s || ''); }
+function regRow(id, label, sum){
+  return '<div class="glass rrow" data-act="regp" data-arg="' + id + '"><div class="grow rlab">' + label + '</div><div class="muted rsum">' + sum + '</div>' + ico(IC.next, 'inl') + '</div>';
+}
 function renderReglages(){
-  var h = hdr('Réglages', '', '<button data-act="reload">' + ico(IC.reload, 'inl') + ' Recharger l’app</button>') + '<div class="content"><div class="sgrid">';
-  for (var i = 0; i < SET_DEFS.length; i++){
-    var d = SET_DEFS[i];
-    h += '<div class="glass sitem"><div class="sitem-l">' + d[1] + '</div><div class="row">' +
-      '<input type="number" inputmode="decimal" data-set="' + d[0] + '" value="' + esc(data.settings[d[0]]) + '"' + (d[0] === 'photo' ? ' placeholder="—"' : '') + '>' +
-      '<span class="u">' + d[2] + '</span></div></div>';
+  var W = data.tasksCache || {}, h, i;
+  var chk = W.updated ? 'Dernier check : Claude ' + esc(shortWhen(W.updated)) + (W.whatsapp ? ' · WhatsApp ' + esc(shortWhen(W.whatsapp)) : '') : 'Pas encore de check';
+  if (!regPage){
+    h = hdr('Réglages', chk, '<button class="rbtn" data-act="reload" aria-label="Recharger l’app">' + ico(IC.reload) + '</button>') + '<div class="content">' +
+      regRow('devis', 'Devis', esc(data.settings.jour) + ' € / jour') +
+      regRow('musique', 'Musique', data.musicUrl ? 'Lien perso' : 'Par défaut') +
+      regRow('sync', 'Projets & synchro', ghToken() ? 'Clé GitHub active ✓' : 'Coches sur l’iPad') +
+      regRow('donnees', 'Données', 'Exporter / Importer') + '</div>';
+  } else {
+    var T = {devis:'Devis', musique:'Musique', sync:'Projets & synchro', donnees:'Données'};
+    h = '<div class="hdr row"><button class="rbtn" data-act="regp" data-arg="" aria-label="Réglages">' + ico(IC.back) + '</button><div class="grow"><div class="h1">' + T[regPage] + '</div><div class="sub">Réglages</div></div></div><div class="content">';
+    if (regPage === 'devis'){
+      h += '<div class="sgrid">';
+      for (i = 0; i < SET_DEFS.length; i++){
+        var d = SET_DEFS[i];
+        h += '<div class="glass sitem"><div class="sitem-l">' + d[1] + '</div><div class="row">' +
+          '<input type="number" inputmode="decimal" data-set="' + d[0] + '" value="' + esc(data.settings[d[0]]) + '"' + (d[0] === 'photo' ? ' placeholder="—"' : '') + '>' +
+          '<span class="u">' + d[2] + '</span></div></div>';
+      }
+      h += '</div>';
+    } else if (regPage === 'musique'){
+      h += '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Lien musique YouTube</div>' +
+        '<input type="url" id="m-music" autocorrect="off" autocapitalize="off" spellcheck="false" value="' + esc(data.musicUrl || '') + '" placeholder="Ta musique par défaut" style="width:100%;font-size:20px"></div>' +
+        '<button class="white" data-act="musave">OK</button>' + (data.musicUrl ? '<button data-act="mureset">Par défaut</button>' : '') + '</div>' +
+        '<div class="muted" style="font-size:20px">Colle un lien YouTube : il s’enregistre tout seul. Vide = ta musique par défaut.</div>';
+    } else if (regPage === 'sync'){
+      h += '<div class="glass ghrow"><div class="sitem-l">Dernier passage de Claude</div><div style="font-size:24px">' + (W.updated ? esc(W.updated) : '—') + '</div>' +
+        '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div><div style="font-size:24px">' + (W.whatsapp ? esc(W.whatsapp) : '—') + '</div></div>' +
+        '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
+        (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
+        '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
+        '<button class="white" data-act="ghsave">OK</button>' + (ghToken() ? '<button data-act="ghclear">Retirer</button>' : '') + '</div>';
+    } else {
+      h += '<div class="row"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
+        '<div class="muted" style="font-size:20px;margin-top:14px">Les données restent sur cet iPad. Exporte de temps en temps et colle le texte dans Notes.</div>';
+    }
+    h += '</div>';
   }
-  h += '</div><div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
-    (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
-    '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
-    '<button class="white" data-act="ghsave">OK</button>' + (ghToken() ? '<button data-act="ghclear">Retirer</button>' : '') + '</div>';
-  h += '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Lien musique YouTube</div>' +
-    '<input type="url" id="m-music" autocorrect="off" autocapitalize="off" spellcheck="false" value="' + esc(data.musicUrl || '') + '" placeholder="Ta musique par défaut" style="width:100%;font-size:20px"></div>' +
-    '<button class="white" data-act="musave">OK</button>' + (data.musicUrl ? '<button data-act="mureset">Par défaut</button>' : '') + '</div>';
-  h += '<div class="row" style="margin-top:4px"><button class="grow" data-act="exp">Exporter les données</button><button class="grow" data-act="imp">Importer des données</button></div>' +
-    '<div class="muted" style="font-size:20px;margin-top:14px">Les données restent sur cet iPad. Exporte de temps en temps et colle le texte dans Notes.</div></div>';
   $('s-reglages').innerHTML = h;
   alignGlass($('s-reglages'));
 }
@@ -1762,6 +1795,7 @@ function handle(act, arg){
   var dv = data.devis, a, i, p, c;
   switch (act){
     case 'go': closeModal(); go(arg); return;
+    case 'regp': regPage = arg; renderReglages(); return;
     case 'reload':
       try { window.localStorage.setItem('noamdash-reopen', current); } catch(e){}
       location.replace(location.pathname + '?v=' + Date.now()); return;

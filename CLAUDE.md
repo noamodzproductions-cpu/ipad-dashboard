@@ -42,6 +42,9 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
   - Données du Dashboard : semaine.json, data/factures.json, data/production.json, data/factures-etat.json.
 - Si l'analyse débouche sur des tâches : proposer de les ajouter à semaine.json (format et règles de la routine planning-semaine), ne pas les ajouter sans accord.
 
+## Réglages
+- Page principale : en-tête « Dernier check : Claude <jour> <heure> · WhatsApp … » (champs updated / whatsapp de semaine.json), petite icône ⟳ Recharger en haut à droite, puis 4 lignes (`regPage`) : Devis (TOUS les tarifs, modifiables), Musique (lien YouTube), Projets & synchro (heures des checks + clé GitHub), Données (export/import). Chaque sous-page a ← vers Réglages.
+
 ## Contraintes Safari 12 / iPad Air 1
 - Un seul fichier HTML/CSS/JS vanilla, sans framework, sans dépendance, sans police web (police système -apple-system).
 - Interdit : `backdrop-filter`, `filter`, `blur()`, grosses ombres, animations CSS en boucle, `?.`, `??`, flex `gap` (grid-gap OK), `aspect-ratio`, `:is`/`:where`/`:has`, `inset`.
