@@ -34,6 +34,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - TOUT le planning : un bloc par jour à partir d'aujourd'hui (« Aujourd'hui », « Demain », puis nom du jour en gros + date + nombre à faire), jours vides = « Rien de prévu ».
 - Appui long (420 ms) sur une tâche = elle suit le doigt (fantôme), trait violet = point de chute, jour visé surligné ; lâcher = ops `mov` (autre jour) + `ord` (ordre du jour) via queueEdit, comme Projets. Un appui = fiche de la tâche (modifs) ; modifier/supprimer = glisser à gauche (⚙ / 🗑), comme Projets.
 - Un bloc « Week-end » daté du samedi compte comme aujourd'hui le dimanche (`dayDate()`) ; la routine ne doit plus grouper le week-end.
+- Week-end = repos : aucune tâche samedi/dimanche (sauf date fixe ou mise par Noam) ; les reports vont au prochain jour ouvré.
 - La routine planning-semaine met TOUJOURS aujourd'hui → +7 jours (même vides) + chaque jour plus lointain qui a une tâche.
 
 ## Analyse à la demande (« fais une analyse de X »)
