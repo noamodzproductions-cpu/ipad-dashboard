@@ -1,5 +1,5 @@
 {
- "updated": "dimanche 15 nov. à 1h06",
+ "updated": "dimanche 15 nov. à 1h20",
  "whatsapp": "dimanche 15 nov. à 1h06",
  "days": [
   {
@@ -100,7 +100,7 @@
      "id": "laduree-halloween-v1-stopmotion",
      "client": "Ladurée",
      "text": "URGENT · Ladurée Halloween : faire la V1 stop motion club",
-     "done": false
+     "done": true
     },
     {
      "id": "curve-photos-toutes",
@@ -108,6 +108,12 @@
      "text": "URGENT · Kurv Studio : envoyer toutes les photos",
      "done": false,
      "notes": "Noélie, une seule reçue"
+    },
+    {
+     "id": "cmc-lifestyle-horizontal",
+     "client": "Marie Claire",
+     "text": "URGENT · Café Marie Claire Lifestyle : faire le récap horizontal",
+     "done": false
     }
    ]
   },
@@ -125,7 +131,7 @@
      "id": "laduree-halloween-v1-macarons",
      "client": "Ladurée",
      "text": "Ladurée Halloween : faire la V1 duplicat macarons",
-     "done": false
+     "done": true
     },
     {
      "id": "cmc-evasion-v1-interviews",
@@ -161,7 +167,7 @@
      "id": "laduree-halloween-v1-carte",
      "client": "Ladurée",
      "text": "Ladurée Halloween : faire la V1 carte mode",
-     "done": false
+     "done": true
     },
     {
      "id": "laduree-gravelle-v1-lieu2",
