@@ -255,19 +255,26 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 /* Projets = tâches du jour (taches.json, rempli par la routine Suivi) */
 .task{display:block;padding:0;margin-bottom:12px}
 .t-in{position:relative;z-index:1;display:flex;align-items:center;padding:16px 22px;background:#1c1c1e;will-change:transform;transition:transform .4s cubic-bezier(.2,1.15,.36,1)}
-.task.open2 .t-in{-webkit-transform:translate3d(-220px,0,0);transform:translate3d(-220px,0,0)}
-.t-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:220px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
+.open2 .t-in{-webkit-transform:translate3d(-190px,0,0);transform:translate3d(-190px,0,0)}
+.t-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:190px;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;background:#111}
+.t-act .sa{width:74px;height:74px;min-height:0;border-radius:37px;padding:0;margin-left:12px;display:flex;align-items:center;justify-content:center}
+.t-act .sa svg{width:30px;height:30px}
+.t-act .sa-ed{background:#3a3a40;border-color:#3a3a40;color:#fff}
 #modal .mchk{white-space:normal;height:auto;min-height:84px;padding:14px 20px;line-height:1.3;display:flex;align-items:center}
 #modal .mchk .tchk{flex-shrink:0}
 .tdet-p{font-size:18px;color:rgba(255,255,255,.55);margin-top:10px}
 .tdet-t{font-size:32px;font-weight:700;line-height:1.25;margin:2px 0 12px;min-height:44px}
 .inl{width:100%;font-size:26px}
+.esh{align-items:center;margin:-6px 0 18px}
+.esh-t{text-align:center;font-size:24px;font-weight:700}
+.lnk{background:none;border:none;color:#cbb8ff;font-size:24px;height:70px;padding:0 6px;min-width:0}
+.lnk.b{font-weight:700;color:#fff}
 .tdet-ok{position:-webkit-sticky;position:sticky;bottom:0;padding:14px 0 20px;background:#000}
 .tdet-ok button{width:100%;height:84px;font-size:30px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
 .tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
-.t-act button{background:#A78BFA;border-color:#A78BFA;color:#111;font-size:24px}
+.t-act .sa-del{background:#A78BFA;border-color:#A78BFA;color:#111}
 .utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
 .task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .task.lift{z-index:5;border-color:#A78BFA}
@@ -300,7 +307,8 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .pday-d{font-size:24px;color:rgba(255,255,255,.6);margin-left:14px;white-space:nowrap}
 .pday-c{margin-left:auto;font-size:20px;color:rgba(255,255,255,.6);white-space:nowrap}
 .plist{min-height:20px}
-.ptask{display:flex;align-items:center;min-height:76px;padding:12px 18px;margin-bottom:10px;border-radius:18px;background:#2a2a2e;border:1px solid rgba(255,255,255,.1);border-left-width:6px;border-left-color:#2a2a2e}
+.ptask .t-in{min-height:76px;padding:12px 18px;background:#2a2a2e;transition:transform .35s cubic-bezier(.2,1,.3,1)}
+.ptask{display:block;position:relative;overflow:hidden;padding:0;margin-bottom:10px;border-radius:18px;background:#2a2a2e;border:1px solid rgba(255,255,255,.1);border-left-width:6px;border-left-color:#2a2a2e}
 
 .ptask .grow > .ttag{margin-bottom:4px}
 .ptxt{font-size:24px;font-weight:500;line-height:1.25}
@@ -1312,18 +1320,31 @@ function pushPending(){
 var FIXE_RE = /^(URGENT\s*·\s*)?\d{1,2}h\d{0,2}\s*·|tournage|shooting/i;
 function isFixe(tk){ return FIXE_RE.test(tk.text || '') || /-ssd$/.test(tk.id || ''); }
 function isDoneTask(k){ var m = data.tasksDone || {}; return m.hasOwnProperty(k.id) ? !!m[k.id] : !!k.done; }
+var IC_GEAR = '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>';
+var IC_TRASH = '<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/>';
+/* glisser une tâche : ⚙ modifier / 🗑 supprimer (glisser à fond = supprimer) */
+function swAct(id){
+  return '<div class="t-act"><button class="sa sa-ed" data-act="tedit2" data-arg="' + esc(id) + '" aria-label="Modifier">' + ico(IC_GEAR) + '</button>' +
+    '<button class="sa sa-del" data-act="tdel2" data-arg="' + esc(id) + '" aria-label="Supprimer">' + ico(IC_TRASH) + '</button></div>';
+}
+function closeSwiped(){ var o = document.querySelector('.open2'); if (o){ o.classList.remove('open2'); return true; } return false; }
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
   return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
     '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
     '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div>' + subCount(tk) + '</div></div>' +
-    '<div class="t-act"><button data-act="tdel2" data-arg="' + esc(tk.id) + '">Supprimer</button></div></div>';
+    swAct(tk.id) + '</div>';
+}
+/* bloc « Week-end » daté du samedi : le dimanche, il compte comme aujourd'hui */
+function dayDate(d){
+  if (d && /^week-?end/i.test(d.jour || '')){ var s = parseIso(d.date); if (s){ s.setDate(s.getDate() + 1); var su = isoDate(s); if (su === isoDate(new Date())) return su; } }
+  return d ? d.date : '';
 }
 function renderTaches(){
   if (tGesture) return; /* pas de rafraîchissement pendant un glisser */
   var W = data.tasksCache, days = (W && W.days) ? W.days : [], today = isoDate(new Date()), i, j, idx = -1;
   if (!tView) tView = today;
-  for (i = 0; i < days.length; i++) if (days[i].date === tView) idx = i;
+  for (i = 0; i < days.length; i++) if (dayDate(days[i]) === tView) idx = i;
   var day = idx >= 0 ? days[idx] : null, isToday = tView === today, todo = [], fait = [];
   if (day) for (i = 0; i < day.tasks.length; i++) (isDoneTask(day.tasks[i]) ? fait : todo).push(day.tasks[i]);
   var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
@@ -1550,13 +1571,11 @@ function inlineEdit(el, val, onSave){
 function openTaskEdit(id){
   var tk = findTask(id), day = dayOfTask(id);
   if (!tk) return;
-  var nx = day ? nextDayOf(day.date) : null, base = (tk.text || '').replace(URG_RE, '');
-  openModal({kind:'tedit', id:id, text:base, base:base, to:nx ? nx.date : ''},
-    '<div class="mtitle">Modifier la tâche</div>' +
+  var base = (tk.text || '').replace(URG_RE, ''), W = data.tasksCache, ds = (W && W.days) || [], last = ds.length ? ds[ds.length - 1].date : '';
+  openModal({kind:'tedit', id:id, text:base, base:base, day:day ? day.date : ''},
+    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Modifier</div><button class="lnk b" data-act="tesave">OK</button></div>' +
     '<input type="text" id="m-ttxt" data-bind="text" value="' + esc(base) + '" style="width:100%">' +
-    '<div class="row mbtns" style="margin-top:30px"><button class="vio" data-act="tedel">Supprimer</button>' +
-    (nx ? '<button data-act="temov">→ ' + esc(nx.jour.split(' ')[0]) + '</button>' : '') + '</div>' +
-    '<div class="row mbtns" style="margin-top:18px"><button data-act="mclose">Annuler</button><button class="white" data-act="tesave">Enregistrer</button></div>');
+    (day ? '<div class="row" style="margin-top:22px;align-items:center"><div class="grow dh">Jour</div><input class="dinput" type="date" id="m-tday" min="' + isoDate(new Date()) + '" max="' + esc(last) + '" value="' + esc(day.date) + '"></div>' : ''));
 }
 
 /* gestes sur les tâches : glisser à gauche (supprimer) et appui long (ranger) */
@@ -1566,11 +1585,11 @@ function tSib(el, dir){
   return (s && s.getAttribute('data-tid') && s.getAttribute('data-day') === el.getAttribute('data-day') && !/(^| )on( |$)/.test(s.className)) ? s : null;
 }
 function tgStart(target, x, y){
-  if (current !== 'taches' || modal) return;
+  if ((current !== 'taches' && current !== 'planning') || modal) return;
   var el = closestAttr(target, 'data-tid');
   if (!el) return;
   var g = tg = {el:el, x0:x, y0:y, dx:0, mode:null};
-  g.timer = setTimeout(function(){
+  if (current === 'taches') g.timer = setTimeout(function(){
     if (tg !== g || g.mode || /(^| )on( |$)/.test(el.className)) return;
     g.mode = 'drag'; tGesture = true; g.base = g.y0; el.className += ' lift';
     el.style.transform = 'scale(1.03)';
@@ -1580,6 +1599,7 @@ function tgMove(x, y, e){
   var g = tg;
   if (!g) return;
   var dx = x - g.x0, dy = y - g.y0;
+  if (pg && pg.mode){ tg = null; return; } /* Planning : la tâche est en train d'être déplacée */
   if (!g.mode){
     if (Math.abs(dx) < 12 && Math.abs(dy) < 12) return;
     clearTimeout(g.timer);
@@ -1611,7 +1631,7 @@ function tgEnd(){
   var el = g.el, id = el.getAttribute('data-tid');
   if (g.mode === 'swipe'){
     var inn = g.inner, wasOpen = g.base < 0;
-    if (wasOpen && g.dx < -90){
+    if ((wasOpen && g.dx < -90) || (!wasOpen && g.dx < -Math.max(300, el.offsetWidth * 0.5))){
       /* 2e glissement : suppression (bandeau Annuler 5 s) */
       inn.style.transition = 'transform .2s'; inn.style.webkitTransform = inn.style.transform = 'translate3d(-110%,0,0)';
       setTimeout(function(){ tGesture = false; delTask(id); }, 200);
@@ -1619,7 +1639,7 @@ function tgEnd(){
     }
     inn.style.transition = ''; inn.style.webkitTransform = inn.style.transform = '';
     var open = wasOpen ? g.dx < 60 : g.dx < -90;
-    var others = document.querySelectorAll('#s-taches .task.open2');
+    var others = document.querySelectorAll('.open2');
     for (var oi = 0; oi < others.length; oi++) if (others[oi] !== el) others[oi].classList.remove('open2');
     el.classList.toggle('open2', open);
     setTimeout(function(){ tGesture = false; }, 220);
@@ -1650,7 +1670,7 @@ document.addEventListener('mouseup', tgEnd);
    Lâcher = ops 'mov' (changement de jour) + 'ord' (ordre du jour), envoyées comme les autres modifs (routine respecte). */
 function planLabel(day, today){
   var t = new Date(), tm = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1), parts = String(day.jour || day.date).split(' ');
-  if (day.date === today) return {n:'Aujourd’hui', d:day.jour};
+  if (dayDate(day) === today) return {n:'Aujourd’hui', d:day.jour};
   if (day.date === isoDate(tm)) return {n:'Demain', d:day.jour};
   return {n:parts[0], d:parts.slice(1).join(' ')};
 }
@@ -1660,13 +1680,13 @@ function tagsHtml(tk, urg){
 }
 function renderPlanning(){
   var W = data.tasksCache, days = (W && W.days) || [], today = isoDate(new Date()), h, i, k, n = 0;
-  for (i = 0; i < days.length; i++) if (days[i].date >= today) for (k = 0; k < days[i].tasks.length; k++) if (!isDoneTask(days[i].tasks[k])) n++;
+  for (i = 0; i < days.length; i++) if (dayDate(days[i]) >= today) for (k = 0; k < days[i].tasks.length; k++) if (!isDoneTask(days[i].tasks[k])) n++;
   h = hdr('Planning', n + ' tâche' + (n > 1 ? 's' : '') + ' à faire') + '<div class="content">' +
-    '<div class="phint">Reste appuyé sur une tâche puis glisse-la pour la déplacer · un appui pour la modifier</div>';
+    '<div class="phint">Glisse une tâche à gauche : ⚙ modifier, 🗑 supprimer (à fond = supprimer) · reste appuyé pour la déplacer</div>';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   for (i = 0; i < days.length; i++){
     var d = days[i];
-    if (d.date < today) continue;
+    if (dayDate(d) < today) continue;
     var lb = planLabel(d, today), todo = 0;
     for (k = 0; k < d.tasks.length; k++) if (!isDoneTask(d.tasks[k])) todo++;
     h += '<div class="glass pday' + (d.date === today ? ' today' : '') + '"><div class="pday-h"><span class="pday-n">' + esc(lb.n) + '</span><span class="pday-d">' + esc(lb.d) + '</span>' +
@@ -1674,8 +1694,8 @@ function renderPlanning(){
     if (!d.tasks.length) h += '<div class="pempty">Rien de prévu</div>';
     for (k = 0; k < d.tasks.length; k++){
       var tk = d.tasks[k], on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
-      h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
-        '<div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>';
+      h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
+        '<div class="t-in"><div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>' + swAct(tk.id) + '</div>';
     }
     h += '</div></div>';
   }
@@ -1883,13 +1903,16 @@ function handle(act, arg){
       if (!modal) return;
       var tv = (modal.text || '').replace(/^\s+|\s+$/g, '').replace(URG_RE, '');
       if (!tv){ $('m-ttxt').style.borderColor = '#A78BFA'; return; }
-      var tid = modal.id, tb = modal.base;
+      var tid = modal.id, tb = modal.base, tdo = modal.day, tdn = $('m-tday') ? $('m-tday').value : tdo;
+      if (tdn && tdn !== tdo && !findDay(data.tasksCache, tdn)){ $('m-tday').style.borderColor = '#A78BFA'; showToast('Ce jour n’est pas dans le planning', null); return; }
       closeModal();
       if (tv !== tb){ tEd().ren[tid] = {v:tv, at:Date.now()}; queueEdit({op:'ren', id:tid, v:tv}); }
+      if (tdn && tdn !== tdo){ tEd().mov[tid] = {v:tdn, at:Date.now()}; queueEdit({op:'mov', id:tid, v:tdn}); }
       refreshTasks(); return;
     case 'twk': go('planning'); return;
-    case 'pedit': openTaskEdit(arg); return;
+    case 'pedit': if (closeSwiped()) return; openTaskDetail(arg); return;
     case 'tdel2': delTask(arg); return;
+    case 'tedit2': closeSwiped(); openTaskEdit(arg); return;
     case 'tpull':
       var pd = dayOfTask(arg), tday = isoDate(new Date()), ptk = findTask(arg);
       if (!pd || !ptk) return;
