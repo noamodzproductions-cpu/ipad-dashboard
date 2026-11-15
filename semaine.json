@@ -1,5 +1,5 @@
 {
- "updated": "dimanche 15 nov. à 2h59",
+ "updated": "dimanche 15 nov. à 14h05",
  "whatsapp": "dimanche 15 nov. à 2h59",
  "days": [
   {
@@ -43,6 +43,13 @@
      "notes": "Noélie, une seule reçue",
      "prio": 3,
      "perso": true
+    },
+    {
+     "id": "theia-v1",
+     "client": "Théia",
+     "text": "Le Cercle de Théia : faire la V1",
+     "done": false,
+     "prio": 2
     },
     {
      "id": "cmc-lifestyle-lien",
