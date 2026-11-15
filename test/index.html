@@ -272,6 +272,9 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tdet-ok{position:-webkit-sticky;position:sticky;bottom:0;padding:14px 0 20px;background:#000}
 .tdet-ok button{width:100%;height:84px;font-size:30px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
+/* compteur de sous-tâches à droite de la carte (vidéos du projet / modifs) */
+.tcount{flex-shrink:0;margin-left:14px;min-width:64px;height:40px;line-height:40px;padding:0 12px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-size:21px;font-weight:700;text-align:center}
+.tcount.ok{background:rgba(74,222,128,.18);color:#4ade80}
 .tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
 .t-act .sa-del{background:#A78BFA;border-color:#A78BFA;color:#111}
@@ -1336,7 +1339,7 @@ function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
   return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
     '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
-    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div>' + subCount(tk) + '</div></div>' +
+    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div>' + subCount(tk) + '</div>' +
     swAct(tk.id) + '</div>';
 }
 /* bloc « Week-end » daté du samedi : le dimanche, il compte comme aujourd'hui */
@@ -1542,7 +1545,7 @@ function subsOf(tk){
 function subCount(tk){
   var l = subsOf(tk), n = 0; if (!l.length) return '';
   for (var i = 0; i < l.length; i++) if (l[i].done) n++;
-  return '<div class="tsub num">' + n + ' / ' + l.length + ' modif' + (l.length > 1 ? 's' : '') + '</div>';
+  return '<div class="tcount num' + (n === l.length ? ' ok' : '') + '">' + n + '/' + l.length + '</div>';
 }
 function splitTask(tk){
   var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
@@ -1710,7 +1713,7 @@ function renderPlanning(){
     for (k = 0; k < d.tasks.length; k++){
       var tk = d.tasks[k], on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
       h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
-        '<div class="t-in"><div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>' + swAct(tk.id) + '</div>';
+        '<div class="t-in"><div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div>' + subCount(tk) + '</div>' + swAct(tk.id) + '</div>';
     }
     h += '</div></div>';
   }

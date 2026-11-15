@@ -7,80 +7,27 @@
    "jour": "Dimanche 15 novembre",
    "tasks": [
     {
-     "id": "cmc-beaute-v2-interviews",
+     "id": "cmc-beaute-v2",
      "client": "Marie Claire",
-     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Comptoir des huiles",
+     "text": "Café Marie Claire Beauté : V2",
      "done": true,
-     "perso": true,
      "sous": [
       {
-       "id": "s1",
-       "text": "Couper ma voix à la fin",
-       "done": false
+       "id": "cmc-beaute-v2-interviews",
+       "text": "Comptoir des huiles",
+       "done": true
       },
       {
-       "id": "s2",
-       "text": "Commentaire Frame",
-       "done": false
+       "id": "cmc-beaute-v2-bilingues",
+       "text": "Petits Bilingues",
+       "done": true
+      },
+      {
+       "id": "cmc-beaute-sanex-v2",
+       "text": "Sanex",
+       "done": true
       }
      ]
-    },
-    {
-     "id": "cmc-beaute-v2-bilingues",
-     "client": "Marie Claire",
-     "perso": true,
-     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Petits Bilingues",
-     "notes": "Selma, à envoyer ce matin",
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Faire la modif de Selma",
-       "done": false
-      }
-     ],
-     "done": true
-    },
-    {
-     "id": "cmc-beaute-sanex-v2",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Sanex",
-     "done": true,
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Logo visible tout le long",
-       "done": false
-      },
-      {
-       "id": "s2",
-       "text": "Sous-titres",
-       "done": false
-      },
-      {
-       "id": "s3",
-       "text": "Couper « On souhaite ouvrir le dialogue »",
-       "done": false
-      },
-      {
-       "id": "s4",
-       "text": "Plan de face à la fin",
-       "done": false
-      }
-     ],
-     "perso": true
-    },
-    {
-     "id": "cmc-evasion-v1",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
-     "done": true,
-     "notes": "Logo Vincent manquant"
-    },
-    {
-     "id": "laduree-halloween-v1-stopmotion",
-     "client": "Ladurée",
-     "text": "Ladurée Halloween : faire la V1 stop motion club",
-     "done": true
     }
    ]
   },
@@ -104,6 +51,52 @@
      "done": false,
      "notes": "Vidéos du 13/10 introuvables",
      "prio": 1
+    },
+    {
+     "id": "cmc-evasion",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire Evasion : V1",
+     "done": false,
+     "sous": [
+      {
+       "id": "cmc-evasion-v1",
+       "text": "Récap",
+       "done": true
+      },
+      {
+       "id": "cmc-evasion-v1-interviews",
+       "text": "Interviews",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "laduree-gravelle",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
+     "done": false,
+     "sous": [
+      {
+       "id": "laduree-gravelle-v1",
+       "text": "Le Pavillon (lieu)",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-lieu2",
+       "text": "La salle en détails",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats1",
+       "text": "The Most Difficult Choice",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats2",
+       "text": "Le dressage d'un plat",
+       "done": false
+      }
+     ]
     },
     {
      "id": "benito-agenda-tournage",
@@ -131,18 +124,6 @@
      "done": false
     },
     {
-     "id": "cmc-evasion-v1-interviews",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 interviews",
-     "done": false
-    },
-    {
-     "id": "laduree-gravelle-v1",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : V1 Le Pavillon (lieu)",
-     "done": false
-    },
-    {
      "id": "astotel-lorette-v1",
      "client": "Astotel",
      "text": "Astotel - Lorette : faire la V1",
@@ -165,18 +146,6 @@
      "client": "Zack",
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false
-    },
-    {
-     "id": "laduree-halloween-v1-carte",
-     "client": "Ladurée",
-     "text": "Ladurée Halloween : faire la V1 carte mode",
-     "done": true
-    },
-    {
-     "id": "laduree-gravelle-v1-lieu2",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : V1 La salle en détails",
-     "done": false
     }
    ]
   },
@@ -185,22 +154,32 @@
    "jour": "Mercredi 18 novembre",
    "tasks": [
     {
-     "id": "laduree-halloween-v1-macarons",
+     "id": "laduree-halloween",
      "client": "Ladurée",
-     "text": "Ladurée Halloween : faire la V1 duplicat macarons",
-     "done": false
-    },
-    {
-     "id": "laduree-gravelle-v1-plats1",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : V1 The Most Difficult Choice",
-     "done": false
-    },
-    {
-     "id": "laduree-gravelle-v1-plats2",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : V1 Le dressage d'un plat",
-     "done": false
+     "text": "Ladurée Halloween (octobre) : V1 des vidéos",
+     "done": false,
+     "sous": [
+      {
+       "id": "laduree-halloween-v1-stopmotion",
+       "text": "Stop motion club",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-v1-macarons",
+       "text": "Duplicat macarons",
+       "done": false
+      },
+      {
+       "id": "laduree-halloween-v1-carte",
+       "text": "Carte mode Halloween",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-3",
+       "text": "Marie-Antoinette plan large",
+       "done": true
+      }
+     ]
     }
    ]
   },
@@ -280,6 +259,18 @@
   "mer11-travel-mug",
   "cmc-call-ajustements",
   "mer11-point-zac-noelie",
-  "cmc-lifestyle-horizontal"
+  "cmc-lifestyle-horizontal",
+  "laduree-halloween-v1-stopmotion",
+  "laduree-halloween-v1-macarons",
+  "laduree-halloween-v1-carte",
+  "laduree-gravelle-v1",
+  "laduree-gravelle-v1-lieu2",
+  "laduree-gravelle-v1-plats1",
+  "laduree-gravelle-v1-plats2",
+  "cmc-evasion-v1",
+  "cmc-evasion-v1-interviews",
+  "cmc-beaute-v2-interviews",
+  "cmc-beaute-v2-bilingues",
+  "cmc-beaute-sanex-v2"
  ]
 }
