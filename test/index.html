@@ -113,9 +113,13 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .ftots{margin:0 0 8px}
 .fcard{display:block;padding:0;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;will-change:transform;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
-.fcard.open .fc-in{-webkit-transform:translate3d(-340px,0,0);transform:translate3d(-340px,0,0)}
+.fcard.open .fc-in{-webkit-transform:translate3d(-230px,0,0);transform:translate3d(-230px,0,0)}
 /* glisser une facture à gauche : Annuler / Délai */
-.fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:340px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
+.fi-l{font-size:24px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.fi-v{font-weight:600;text-align:right}
+.frg{align-items:center;margin-bottom:16px}
+.frg-v{font-size:24px;font-weight:600;margin-top:4px}
+.fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:230px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 .fc-act button{height:76px;font-size:21px;padding:0 16px;white-space:nowrap}
 .fc-act button + button{margin-left:12px}
 /* Matériel */
@@ -599,6 +603,7 @@ function normalize(d){
   if (!d.facEtat.encaisses) d.facEtat.encaisses = {};
   if (!d.facEtat.delais) d.facEtat.delais = {};
   if (!d.facEtat.prochaine) d.facEtat.prochaine = {};
+  if (!d.facEtat.envoi) d.facEtat.envoi = {};
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
     {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
@@ -773,6 +778,7 @@ function facPurge(){
   for (i = 0; i < l.length; i++) ids[l[i].id] = 1;
   for (k in E.relances) if (E.relances.hasOwnProperty(k) && !ids[k]){ delete E.relances[k]; ch = true; }
   for (k in E.payes) if (E.payes.hasOwnProperty(k) && !ids[k]){ delete E.payes[k]; ch = true; }
+  for (k in (E.envoi || {})) if (E.envoi.hasOwnProperty(k) && !ids[k]){ delete E.envoi[k]; ch = true; }
   if (ch) facSchedule();
 }
 /* avec la clé : reprend l'état enregistré sur GitHub (sauf si des changements locaux attendent d'être envoyés) */
@@ -783,7 +789,7 @@ function facPull(){
     if (!ok || !j || !j.content || data.facDirty) return;
     try {
       var e = JSON.parse(b64dec(j.content));
-      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}, prochaine:e.prochaine || {}};
+      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}, prochaine:e.prochaine || {}, envoi:e.envoi || {}};
       facPurge(); save(); renderFactures();
     } catch(er){}
   });
@@ -809,6 +815,8 @@ function facRows(){
   for (var i = 0; i < list.length; i++){
     var f = list[i], d = parseIso(f.entree);
     if (!d) continue;
+    var ent = d.getTime();
+    if (num((E.envoi || {})[f.id])) d = new Date(num(E.envoi[f.id]));
     var rels = E.relances[f.id] || [], last = rels.length ? num(rels[rels.length - 1]) : 0;
     var start = dayStart(d);
     if (last && dayStart(new Date(last)) > start) start = dayStart(new Date(last));
@@ -819,10 +827,11 @@ function facRows(){
     if (pr){ due = pr; dl = Math.max(1, Math.round((dayStart(pr) - start) / 86400000)); }
     var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
     var left = Math.round((due.getTime() - today) / 86400000);
-    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
+    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), ent:ent, due:due.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
       paye:!!E.payes[f.id], taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
   }
-  out.sort(function(a, b){ return (a.paye - b.paye) || (a.left - b.left) || (a.entree - b.entree); });
+  /* la plus en retard (envoyée depuis le plus longtemps) en haut, payées en bas */
+  out.sort(function(a, b){ return (a.paye - b.paye) || (b.days - a.days) || (a.left - b.left); });
   return out;
 }
 function facRow(id){ var r = facRows(); for (var i = 0; i < r.length; i++) if (r[i].id === id) return r[i]; return null; }
@@ -861,17 +870,20 @@ function facPaye(id, on){
   facSchedule(); renderFactures();
   if (on) showToast(r.projet + ' · payé', function(){ facPaye(id, false); });
 }
+function agoTxt(n){ return n === 0 ? 'aujourd’hui' : (n === 1 ? 'hier' : 'il y a ' + n + ' j'); }
 function facOpen(id){
   var r = facRow(id); if (!r) return;
-  var rels = data.facEtat.relances[id] || [], h = '<div class="mtitle">' + esc(r.projet) + '</div>' +
-    '<div class="fm-l num">Reste à toucher <b>' + eur(r.reste) + '</b></div>' +
-    '<div class="fm-l num">Dans « Solde en attente » depuis le ' + dCourt(r.entree) + ' (' + r.days + ' j)</div>' +
-    '<div class="fm-l">' + (rels.length ? 'Relances : ' + rels.map(function(m){ return dCourt(m); }).join(', ') : 'Pas encore relancé') + '</div>' +
-    (r.left > 0 && !r.paye ? '<div class="fm-l">Prochaine relance possible dans ' + r.left + ' j</div>' : '') +
-    '<div class="row mbtns" style="margin-top:28px">' + (r.left <= 0 && !r.paye ? '<button class="ko" data-act="frel" data-arg="' + esc(id) + '">J’ai relancé</button>' : '') +
-    '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(id) + '">' + (r.paye ? 'Payé ✓ (annuler)' : 'Payé') + '</button></div>';
-  if (rels.length) h += '<div class="row mbtns" style="margin-top:16px"><button data-act="funrel" data-arg="' + esc(id) + '">Annuler la relance du ' + dCourt(rels[rels.length - 1]) + '</button></div>';
-  h += '<div class="row mbtns" style="margin-top:16px"><button class="white" data-act="mclose">Fermer</button></div>';
+  var today = dayStart(new Date()), env = Math.round((today - dayStart(new Date(r.entree))) / 86400000), nx = new Date(r.due);
+  function li(l, v){ return '<div class="row fi-l"><div class="grow muted">' + l + '</div><div class="fi-v num">' + v + '</div></div>'; }
+  var h = '<div class="mtitle">' + esc(r.projet) + '</div>' +
+    li('Reste à toucher', eur(r.reste)) +
+    li('Facture envoyée', cap(JOURS[new Date(r.entree).getDay()]) + ' ' + dCourt(r.entree) + ' · ' + agoTxt(env)) +
+    li('Dernière relance', r.last ? dCourt(r.last) + ' · ' + agoTxt(Math.round((today - dayStart(new Date(r.last))) / 86400000)) : 'Jamais') +
+    li('Relances', r.nrel ? r.nrel + '×' : '0') +
+    (r.paye ? li('Payé', dCourt(data.facEtat.payes[id])) : li('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : cap(JOURS[nx.getDay()]) + ' ' + dCourt(r.due) + ' · dans ' + r.left + ' j')) +
+    li('Relancer tous les', r.dl + ' j') +
+    '<div class="muted" style="font-size:19px;margin-top:14px">Pour modifier : glisse la facture vers la gauche → Réglages.</div>' +
+    '<div class="row mbtns" style="margin-top:22px"><button class="white" data-act="mclose">OK</button></div>';
   openModal({kind:'fac', id:id}, h);
 }
 /* met à jour la tuile de l'accueil ou la page Factures, selon l'écran affiché */
@@ -893,18 +905,20 @@ function renderFactures(){
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   for (i = 0; i < rows.length; i++){
     var r = rows[i], late = !r.paye && r.left <= 0;
-    var fill = r.paye ? 100 : Math.max(0, Math.min(100, Math.round((r.dl - r.left) / r.dl * 100)));
+    /* barre = temps depuis l'envoi sur 30 j : vert → jaune → rouge */
+    var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
+    var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · facture du ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
+    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · envoyée le ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
     var bad = !r.paye && r.days >= 30;
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + r.days + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
-      '<div class="fbar"><i style="width:' + fill + '%"></i></div>' +
+      '<div class="fbar"><i style="width:' + fill + '%' + bcol + '"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
-      '</div></div><div class="fc-act"><button data-act="fundo" data-arg="' + esc(r.id) + '">Annuler</button><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Relance</button></div></div>';
+      '</div></div><div class="fc-act"><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Réglages</button></div></div>';
   }
   h += '</div>';
   $('s-factures').innerHTML = h;
@@ -926,20 +940,19 @@ function facDelai(id, st){
   var E = data.facEtat, rels = E.relances[id] || [], today = dayStart(new Date());
   if (!st){
     var last = rels.length ? num(rels[rels.length - 1]) : 0;
-    st = {kind:'fdelai', id:id, ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false};
+    st = {kind:'fdelai', id:id, env:Math.max(0, Math.round((today - dayStart(new Date(r.entree))) / 86400000)), chEnv:false,
+      ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false};
   }
-  var base = st.ago === null ? dayStart(new Date(r.entree)) : today - st.ago * 86400000;
+  var envD = today - st.env * 86400000, base = st.ago === null ? envD : Math.max(envD, today - st.ago * 86400000);
   var nx = new Date(base); nx.setDate(nx.getDate() + st.every);
   var left = Math.round((dayStart(nx) - today) / 86400000);
-  function q(list, act, cur){ var s = ''; for (var k = 0; k < list.length; k++) s += '<button class="' + (list[k][0] === cur ? 'white' : '') + '" data-act="' + act + '" data-arg="' + list[k][0] + '" style="margin:0 10px 10px 0">' + list[k][1] + '</button>'; return s; }
-  var lastTxt = st.ago === null ? 'Jamais relancé' : (st.ago === 0 ? 'Aujourd’hui' : (st.ago === 1 ? 'Hier' : 'Il y a ' + st.ago + ' j')) + (st.ago === null ? '' : ' · ' + cap(JOURS[new Date(base).getDay()]) + ' ' + dCourt(base));
+  function dt(ms){ return cap(JOURS[new Date(ms).getDay()]) + ' ' + dCourt(ms); }
   openModal(st, '<div class="mtitle">' + esc(r.projet) + '</div>' +
-    '<div class="dh">Dernière relance</div><div class="fm-l" style="margin:6px 0 12px;color:#fff;font-size:28px;font-weight:600">' + lastTxt + '</div>' +
-    '<div class="row" style="margin:4px 0 22px">' + stepper('', st.ago === null ? 'jamais' : 'il y a ' + st.ago + ' j', 'fla', 'x') + '</div>' +
-    '<div class="dh">Relancer tous les</div>' +
-    '<div class="row" style="margin:10px 0 18px">' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
-    '<div class="mprev" style="font-size:30px;margin:10px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : cap(JOURS[nx.getDay()]) + ' ' + dCourt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
-    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">Valider</button></div>');
+    '<div class="row frg"><div class="grow"><div class="dh">Facture envoyée</div><div class="frg-v">' + dt(envD) + ' · ' + agoTxt(st.env) + '</div></div>' + stepper('', st.env + ' j', 'fen', 'x') + '</div>' +
+    '<div class="row frg"><div class="grow"><div class="dh">Dernière relance</div><div class="frg-v">' + (st.ago === null ? 'Jamais' : dt(today - st.ago * 86400000) + ' · ' + agoTxt(st.ago)) + '</div></div>' + stepper('', st.ago === null ? '—' : st.ago + ' j', 'fla', 'x') + '</div>' +
+    '<div class="row frg"><div class="grow"><div class="dh">Relancer tous les</div><div class="frg-v">' + st.every + ' jours</div></div>' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
+    '<div class="mprev" style="font-size:28px;margin:16px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
+    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>');
 }
 
 /* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
@@ -1906,6 +1919,7 @@ function handle(act, arg){
       }
       return;
     case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; facDelai(modal.id, modal); } return;
+    case 'fen': if (modal && modal.kind === 'fdelai'){ modal.env = Math.max(0, Math.min(365, modal.env + (+arg.split(':')[1]))); modal.chEnv = true; facDelai(modal.id, modal); } return;
     case 'fev': if (modal && modal.kind === 'fdelai'){ modal.every = Math.max(1, Math.min(120, modal.every + (+arg.split(':')[1]))); facDelai(modal.id, modal); } return;
     case 'fevset': if (modal && modal.kind === 'fdelai'){ modal.every = +arg; facDelai(modal.id, modal); } return;
     case 'fdlok':
@@ -1917,6 +1931,11 @@ function handle(act, arg){
           var ts = dayStart(new Date()) - modal.ago * 86400000 + 12 * 3600000;
           if (!FE.relances[fid] || !FE.relances[fid].length) FE.relances[fid] = [ts]; else FE.relances[fid][FE.relances[fid].length - 1] = ts;
         }
+      }
+      if (modal.chEnv){
+        var fr = facRow(fid), ets = dayStart(new Date()) - modal.env * 86400000 + 12 * 3600000;
+        if (!FE.envoi) FE.envoi = {};
+        if (fr && dayStart(new Date(ets)) === dayStart(new Date(fr.ent))) delete FE.envoi[fid]; else FE.envoi[fid] = ets;
       }
       if (modal.every === RELANCE_J) delete FE.delais[fid]; else FE.delais[fid] = modal.every;
       if (FE.prochaine) delete FE.prochaine[fid];
