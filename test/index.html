@@ -1359,12 +1359,14 @@ function renderTaches(){
     (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
-    if (!day) h += '<div class="empty">Rien de prévu ce jour.</div>';
+    /* week-end = repos : pas de tâches « en avance » le samedi / dimanche */
+    var weRepos = isToday && (new Date().getDay() === 0 || new Date().getDay() === 6);
+    if (!day) h += '<div class="empty">' + (weRepos ? 'Week-end · repos ✓' : 'Rien de prévu ce jour.') + '</div>';
     else {
-      if (!todo.length) h += '<div class="glass tall">Journée terminée ✓</div>';
+      if (!todo.length) h += '<div class="glass tall">' + (weRepos ? 'Week-end · repos ✓' : 'Journée terminée ✓') + '</div>';
       for (i = 0; i < todo.length; i++) h += taskCard(todo[i], day.date);
       /* journée finie : on remonte les tâches pas faites des jours suivants */
-      if (isToday && !todo.length){
+      if (isToday && !todo.length && !weRepos){
         for (j = idx + 1; j < days.length; j++){
           var next = [], nd = days[j];
           for (i = 0; i < nd.tasks.length; i++) if (!isFixe(nd.tasks[i])) next.push(nd.tasks[i]);
