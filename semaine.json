@@ -9,7 +9,7 @@
     {
      "id": "curve-photos-toutes",
      "client": "Kurv Studio",
-     "text": "URGENT · Kurv Studio : envoyer toutes les photos",
+     "text": "Kurv Studio : envoyer toutes les photos",
      "done": false,
      "notes": "Noélie, une seule reçue",
      "prio": 3,
@@ -18,14 +18,14 @@
     {
      "id": "benito-agenda-tournage",
      "client": "Benito",
-     "text": "URGENT · Benito : tournage ven. 20 matin → agenda",
+     "text": "Benito : tournage ven. 20 matin → agenda",
      "done": false,
      "notes": "10h proposé, confirmer"
     },
     {
      "id": "cmc-beaute-v2-interviews",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Comptoir des huiles",
+     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Comptoir des huiles",
      "done": true,
      "perso": true,
      "sous": [
@@ -45,7 +45,7 @@
      "id": "cmc-beaute-v2-bilingues",
      "client": "Marie Claire",
      "perso": true,
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Petits Bilingues",
+     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Petits Bilingues",
      "notes": "Selma, à envoyer ce matin",
      "sous": [
       {
@@ -59,13 +59,13 @@
     {
      "id": "mich-call-prepa-19",
      "client": "Michalak",
-     "text": "URGENT · Michalak : call prépa tournage masterclass du 19",
+     "text": "Michalak : call prépa tournage masterclass du 19",
      "done": false
     },
     {
      "id": "cmc-beaute-sanex-v2",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Sanex",
+     "text": "Café Marie Claire Beauté et bien-être : faire la V2 Sanex",
      "done": true,
      "sous": [
       {
@@ -94,33 +94,34 @@
     {
      "id": "cmc-lifestyle-lien",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
+     "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
      "done": false,
-     "notes": "Vidéos du 13/10 introuvables"
+     "notes": "Vidéos du 13/10 introuvables",
+     "prio": 2
     },
     {
      "id": "cmc-evasion-v1",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
+     "text": "Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
      "done": true,
      "notes": "Logo Vincent manquant"
     },
     {
      "id": "laduree-halloween-v1-stopmotion",
      "client": "Ladurée",
-     "text": "URGENT · Ladurée Halloween : faire la V1 stop motion club",
+     "text": "Ladurée Halloween : faire la V1 stop motion club",
      "done": true
     },
     {
      "id": "cmc-lifestyle-horizontal",
      "client": "Marie Claire",
-     "text": "URGENT · Café Marie Claire Lifestyle : faire le récap horizontal",
+     "text": "Café Marie Claire Lifestyle : faire le récap horizontal",
      "done": false
     },
     {
      "id": "mich-retouche-photos",
      "client": "Michalak",
-     "text": "URGENT · Michalak : retoucher toutes les photos",
+     "text": "Michalak : retoucher toutes les photos",
      "done": false
     }
    ]

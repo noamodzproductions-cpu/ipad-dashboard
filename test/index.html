@@ -1684,13 +1684,13 @@ function planLabel(day, today){
   if (day.date === isoDate(tm)) return {n:'Demain', d:day.jour};
   return {n:parts[0], d:parts.slice(1).join(' ')};
 }
-/* niveau d'urgence : 3 = très en retard (rouge), 2 = urgent (orange), 1 = vite (jaune) ; "prio" écrit par la routine, sinon « URGENT · » = 2 */
+/* niveau d'urgence : 3 = très en retard (rouge), 2 = urgent (orange), 1 = vite (jaune) ; uniquement le champ "prio" écrit par la routine */
 var PRIO_TXT = ['', 'VITE', 'URGENT', 'TRÈS EN RETARD'];
 function prioOf(tk){
   if (!tk || isDoneTask(tk)) return 0;
   var p = Math.round(num(tk.prio));
   if (p >= 1 && p <= 3) return p;
-  return /^URGENT/.test(tk.text || '') ? 2 : 0;
+  return 0; /* « URGENT · » dans le texte ne suffit plus : seulement "prio" (urgence avec parcimonie) */
 }
 function tagsHtml(tk, urg){
   var p = prioOf(tk);
