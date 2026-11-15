@@ -1888,7 +1888,7 @@ function handle(act, arg){
       if (tv !== tb){ tEd().ren[tid] = {v:tv, at:Date.now()}; queueEdit({op:'ren', id:tid, v:tv}); }
       refreshTasks(); return;
     case 'twk': go('planning'); return;
-    case 'pedit': openTaskDetail(arg); return;
+    case 'pedit': openTaskEdit(arg); return;
     case 'tdel2': delTask(arg); return;
     case 'tpull':
       var pd = dayOfTask(arg), tday = isoDate(new Date()), ptk = findTask(arg);
