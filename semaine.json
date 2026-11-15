@@ -1,6 +1,6 @@
 {
- "updated": "samedi 14 nov. à 23h05",
- "whatsapp": "vendredi 13 nov. à 15h45",
+ "updated": "dimanche 15 nov. à 1h06",
+ "whatsapp": "dimanche 15 nov. à 1h06",
  "days": [
   {
    "date": "2026-11-14",
@@ -11,13 +11,13 @@
      "client": "Benito",
      "text": "URGENT · Benito : tournage ven. 20 matin → agenda",
      "done": false,
-     "notes": "Confirmer l'heure"
+     "notes": "10h proposé, confirmer"
     },
     {
      "id": "cmc-beaute-v2-interviews",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Comptoir des huiles",
-     "done": false,
+     "done": true,
      "perso": true,
      "sous": [
       {
@@ -45,7 +45,7 @@
        "done": false
       }
      ],
-     "done": false
+     "done": true
     },
     {
      "id": "mich-call-prepa-19",
@@ -57,7 +57,7 @@
      "id": "cmc-beaute-sanex-v2",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Beauté et bien-être : faire la V2 Sanex",
-     "done": false,
+     "done": true,
      "sous": [
       {
        "id": "s1",
@@ -93,7 +93,8 @@
      "id": "cmc-evasion-v1",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
-     "done": false
+     "done": false,
+     "notes": "Logo Vincent manquant"
     },
     {
      "id": "laduree-halloween-v1-stopmotion",
@@ -221,7 +222,7 @@
      "client": "Benito",
      "text": "Benito : finir le tournage appartement",
      "done": false,
-     "notes": "Matin, heure à caler"
+     "notes": "10h (à confirmer)"
     },
     {
      "id": "benito-appart-tournage-ssd",

@@ -1,6 +1,6 @@
 {
- "updated": "samedi 14 nov. à 23h05",
- "trello_complet": "2026-11-14",
+ "updated": "dimanche 15 nov. à 1h06",
+ "trello_complet": "2026-11-15",
  "factures": [
   {
    "id": "6aa7e25a40bb3b1f54c98267",
@@ -29,6 +29,13 @@
    "brut": 250,
    "reste": 250,
    "entree": "2026-11-11"
+  },
+  {
+   "id": "6aedf6b52e3b3c02022d6d19",
+   "projet": "Le Cercle de l'Espoir",
+   "brut": 250,
+   "reste": 250,
+   "entree": "2026-11-15"
   }
  ]
 }
