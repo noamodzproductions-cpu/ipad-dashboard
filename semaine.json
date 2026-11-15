@@ -116,13 +116,7 @@
      "id": "mich-call-prepa-19",
      "client": "Michalak",
      "text": "Michalak : call prépa tournage masterclass du 19",
-     "done": false
-    },
-    {
-     "id": "cmc-lifestyle-horizontal",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Lifestyle : faire le récap horizontal",
-     "done": false
+     "done": true
     },
     {
      "id": "mich-retouche-photos",
@@ -145,7 +139,7 @@
     {
      "id": "laduree-gravelle-v1",
      "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : faire la V1 Lieu 1",
+     "text": "Ladurée Pavillon Gravelle : V1 Le Pavillon (lieu)",
      "done": false
     },
     {
@@ -181,7 +175,7 @@
     {
      "id": "laduree-gravelle-v1-lieu2",
      "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : faire la V1 Lieu 2",
+     "text": "Ladurée Pavillon Gravelle : V1 La salle en détails",
      "done": false
     }
    ]
@@ -199,13 +193,13 @@
     {
      "id": "laduree-gravelle-v1-plats1",
      "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : faire la V1 Plats 1",
+     "text": "Ladurée Pavillon Gravelle : V1 The Most Difficult Choice",
      "done": false
     },
     {
      "id": "laduree-gravelle-v1-plats2",
      "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle : faire la V1 Plats 2",
+     "text": "Ladurée Pavillon Gravelle : V1 Le dressage d'un plat",
      "done": false
     }
    ]
@@ -285,6 +279,7 @@
   "mer11-macaron-pain-perdu",
   "mer11-travel-mug",
   "cmc-call-ajustements",
-  "mer11-point-zac-noelie"
+  "mer11-point-zac-noelie",
+  "cmc-lifestyle-horizontal"
  ]
 }
