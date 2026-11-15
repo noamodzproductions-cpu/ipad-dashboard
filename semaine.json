@@ -1,10 +1,10 @@
 {
- "updated": "dimanche 15 nov. à 1h47",
- "whatsapp": "dimanche 15 nov. à 1h39",
+ "updated": "dimanche 15 nov. à 2h42",
+ "whatsapp": "dimanche 15 nov. à 2h40",
  "days": [
   {
-   "date": "2026-11-14",
-   "jour": "Week-end 14-15 novembre",
+   "date": "2026-11-15",
+   "jour": "Dimanche 15 novembre",
    "tasks": [
     {
      "id": "curve-photos-toutes",
@@ -147,6 +147,12 @@
      "client": "Ladurée",
      "text": "Ladurée Pavillon Gravelle : faire la V1 Lieu 1",
      "done": false
+    },
+    {
+     "id": "astotel-lorette-v1",
+     "client": "Astotel",
+     "text": "Astotel - Lorette : faire la V1",
+     "done": false
     }
    ]
   },
@@ -261,7 +267,12 @@
   },
   {
    "date": "2026-11-21",
-   "jour": "Week-end 21-22 novembre",
+   "jour": "Samedi 21 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-22",
+   "jour": "Dimanche 22 novembre",
    "tasks": []
   }
  ],
