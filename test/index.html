@@ -1793,6 +1793,8 @@ function renderReglages(){
     } else if (regPage === 'sync'){
       h += '<div class="glass ghrow"><div class="sitem-l">Dernier passage de Claude</div><div style="font-size:24px">' + (W.updated ? esc(W.updated) : '—') + '</div>' +
         '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div><div style="font-size:24px">' + (W.whatsapp ? esc(W.whatsapp) : '—') + '</div></div>' +
+        '<div class="row" style="margin-bottom:6px"><button class="grow" data-act="lire" data-arg="lire-trello">Lire Trello</button><button class="grow" data-act="lire" data-arg="lire-whatsapp" style="margin-left:14px">Lire WhatsApp</button></div>' +
+        '<div class="muted" style="font-size:18px;margin-bottom:16px">Le Mac relit juste cette source (allumé, Chrome ouvert pour WhatsApp). L’heure ci-dessus change quand c’est fini.</div>' +
         '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
         (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
         '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
@@ -1813,6 +1815,13 @@ function handle(act, arg){
   switch (act){
     case 'go': closeModal(); go(arg); return;
     case 'regp': regPage = arg; renderReglages(); return;
+    case 'lire':
+      if (arg !== 'lire-trello' && arg !== 'lire-whatsapp') return;
+      var lx = new XMLHttpRequest(), lnom = arg === 'lire-trello' ? 'Trello' : 'WhatsApp';
+      lx.open('POST', MUSIC_RELAY, true);
+      lx.onload = function(){ showToast(lx.status < 300 ? 'Lecture ' + lnom + ' demandée au Mac · 1 à 5 min' : 'Le relais ne répond pas', null); };
+      lx.onerror = function(){ showToast('Pas de connexion : réessaie', null); };
+      lx.send(arg); return;
     case 'reload':
       try { window.localStorage.setItem('noamdash-reopen', current); } catch(e){}
       location.replace(location.pathname + '?v=' + Date.now()); return;

@@ -42,6 +42,44 @@ end tell
 AUTORISES = re.compile(r"^https://([a-z0-9-]+\.)*(youtube\.com|youtu\.be)/[^\s\"\\]*$", re.I)
 
 
+# Boutons « Lire Trello » / « Lire WhatsApp » de l'iPad : lance une lecture courte avec Claude (Sonnet)
+DOSSIER = "/Users/noamoudiz/ipad-dashboard"
+CLAUDE = "/Users/noamoudiz/.local/bin/claude"
+LECTURES = {
+    "lire-trello": ("lire-trello.md", "Read,Edit,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
+                    "mcp__claude_ai_Trello__trelloReadBoard,mcp__claude_ai_Trello__trelloReadCard,mcp__claude_ai_Trello__trelloReadList,"
+                    "mcp__claude_ai_Trello__trelloReadChecklist,mcp__claude_ai_Trello__trelloSearch,mcp__claude_ai_Trello__trelloWriteCard", False),
+    "lire-whatsapp": ("lire-whatsapp.md", "Read,Edit,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
+                      "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
+                      "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__read_page,"
+                      "mcp__claude-in-chrome__find,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__javascript_tool", True),
+}
+en_cours = threading.Lock()
+
+
+def lecture(nom):
+    """Une seule lecture à la fois ; 15 min max ; journal dans /tmp/lecture.log."""
+    if not en_cours.acquire(blocking=False):
+        print("relais ->", nom, "-> déjà une lecture en cours", flush=True)
+        return
+    try:
+        fichier, outils, chrome = LECTURES[nom]
+        consigne = open("%s/mac/%s" % (DOSSIER, fichier), encoding="utf-8").read()
+        cmd = [CLAUDE, "-p", consigne, "--model", "sonnet", "--allowedTools", outils, "--output-format", "text"]
+        if chrome:
+            cmd.append("--chrome")
+        debut = time.time()
+        with open("/tmp/lecture.log", "a") as log:
+            log.write("\n=== %s %s ===\n" % (time.strftime("%Y-%m-%d %H:%M"), nom))
+            log.flush()
+            subprocess.run(cmd, cwd=DOSSIER, stdout=log, stderr=log, timeout=900)
+        print("relais ->", nom, "-> fini en %d s" % (time.time() - debut), flush=True)
+    except Exception as e:
+        print("relais ->", nom, "-> erreur :", e, flush=True)
+    finally:
+        en_cours.release()
+
+
 def lancer(url=URL):
     cle = VIDEO if url == URL else url
     r = subprocess.run(["osascript", "-e", SCRIPT % (cle, url)], capture_output=True, text=True, timeout=20)
@@ -91,7 +129,10 @@ def ecouter_relais():
                     if ev.get("event") != "message":
                         continue
                     msg = ev.get("message", "").strip()
-                    if msg == "lofi":
+                    if msg in LECTURES:
+                        print("relais ->", msg, "-> lancée", flush=True)
+                        threading.Thread(target=lecture, args=(msg,), daemon=True).start()
+                    elif msg == "lofi":
                         print("relais -> lofi ->", lancer(), flush=True)
                     elif AUTORISES.match(msg):
                         print("relais -> lien ->", lancer(msg), flush=True)
