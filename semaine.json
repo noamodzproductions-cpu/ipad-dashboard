@@ -7,6 +7,15 @@
    "jour": "Week-end 14-15 novembre",
    "tasks": [
     {
+     "id": "curve-photos-toutes",
+     "client": "Kurv Studio",
+     "text": "URGENT · Kurv Studio : envoyer toutes les photos",
+     "done": false,
+     "notes": "Noélie, une seule reçue",
+     "prio": 3,
+     "perso": true
+    },
+    {
      "id": "benito-agenda-tournage",
      "client": "Benito",
      "text": "URGENT · Benito : tournage ven. 20 matin → agenda",
@@ -101,13 +110,6 @@
      "client": "Ladurée",
      "text": "URGENT · Ladurée Halloween : faire la V1 stop motion club",
      "done": true
-    },
-    {
-     "id": "curve-photos-toutes",
-     "client": "Kurv Studio",
-     "text": "URGENT · Kurv Studio : envoyer toutes les photos",
-     "done": false,
-     "notes": "Noélie, une seule reçue"
     },
     {
      "id": "cmc-lifestyle-horizontal",

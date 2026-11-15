@@ -275,6 +275,16 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
 .t-act .sa-del{background:#A78BFA;border-color:#A78BFA;color:#111}
+/* couleurs d'urgence (demandées par Noam) */
+.utag.u3{background:#f87171}
+.utag.u2{background:#fb923c}
+.utag.u1{background:#facc15}
+.task.p3 .t-in{box-shadow:inset 7px 0 0 #f87171}
+.task.p2 .t-in{box-shadow:inset 7px 0 0 #fb923c}
+.task.p1 .t-in{box-shadow:inset 7px 0 0 #facc15}
+.ptask.p3{border-left-color:#f87171}
+.ptask.p2{border-left-color:#fb923c}
+.ptask.p1{border-left-color:#facc15}
 .utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
 .task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .task.lift{z-index:5;border-color:#A78BFA}
@@ -1330,7 +1340,7 @@ function swAct(id){
 function closeSwiped(){ var o = document.querySelector('.open2'); if (o){ o.classList.remove('open2'); return true; } return false; }
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
-  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
+  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
     '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
     '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div>' + subCount(tk) + '</div></div>' +
     swAct(tk.id) + '</div>';
@@ -1674,8 +1684,17 @@ function planLabel(day, today){
   if (day.date === isoDate(tm)) return {n:'Demain', d:day.jour};
   return {n:parts[0], d:parts.slice(1).join(' ')};
 }
+/* niveau d'urgence : 3 = très en retard (rouge), 2 = urgent (orange), 1 = vite (jaune) ; "prio" écrit par la routine, sinon « URGENT · » = 2 */
+var PRIO_TXT = ['', 'VITE', 'URGENT', 'TRÈS EN RETARD'];
+function prioOf(tk){
+  if (!tk || isDoneTask(tk)) return 0;
+  var p = Math.round(num(tk.prio));
+  if (p >= 1 && p <= 3) return p;
+  return /^URGENT/.test(tk.text || '') ? 2 : 0;
+}
 function tagsHtml(tk, urg){
-  var s = (urg ? '<span class="utag">URGENT</span>' : '') + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '');
+  var p = prioOf(tk);
+  var s = (p ? '<span class="utag u' + p + '">' + PRIO_TXT[p] + '</span>' : '') + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '');
   return s ? '<div>' + s + '</div>' : '';
 }
 function renderPlanning(){
@@ -1694,7 +1713,7 @@ function renderPlanning(){
     if (!d.tasks.length) h += '<div class="pempty">Rien de prévu</div>';
     for (k = 0; k < d.tasks.length; k++){
       var tk = d.tasks[k], on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
-      h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
+      h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
         '<div class="t-in"><div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div></div>' + swAct(tk.id) + '</div>';
     }
     h += '</div></div>';
