@@ -279,12 +279,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .utag.u3{background:#f87171}
 .utag.u2{background:#fb923c}
 .utag.u1{background:#facc15}
-.task.p3 .t-in{box-shadow:inset 7px 0 0 #f87171}
-.task.p2 .t-in{box-shadow:inset 7px 0 0 #fb923c}
-.task.p1 .t-in{box-shadow:inset 7px 0 0 #facc15}
-.ptask.p3{border-left-color:#f87171}
-.ptask.p2{border-left-color:#fb923c}
-.ptask.p1{border-left-color:#facc15}
 .utag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:#A78BFA;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px;margin:0 8px 6px 0;vertical-align:top}
 .task{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .task.lift{z-index:5;border-color:#A78BFA}
@@ -1684,8 +1678,8 @@ function planLabel(day, today){
   if (day.date === isoDate(tm)) return {n:'Demain', d:day.jour};
   return {n:parts[0], d:parts.slice(1).join(' ')};
 }
-/* niveau d'urgence : 3 = très en retard (rouge), 2 = urgent (orange), 1 = vite (jaune) ; uniquement le champ "prio" écrit par la routine */
-var PRIO_TXT = ['', 'VITE', 'URGENT', 'TRÈS EN RETARD'];
+/* niveau d'urgence : 3 = très en retard (rouge), 2 = en retard (orange), 1 = urgent, client pressé (jaune) ; uniquement le champ "prio" écrit par la routine */
+var PRIO_TXT = ['', 'URGENT', 'EN RETARD', 'TRÈS EN RETARD'];
 function prioOf(tk){
   if (!tk || isDoneTask(tk)) return 0;
   var p = Math.round(num(tk.prio));
