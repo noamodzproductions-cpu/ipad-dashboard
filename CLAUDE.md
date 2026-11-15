@@ -44,6 +44,7 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 
 ## Réglages
 - Page principale : en-tête « Dernier check : Claude <jour> <heure> · WhatsApp … » (champs updated / whatsapp de semaine.json), petite icône ⟳ Recharger en haut à droite, puis 4 lignes (`regPage`) : Devis (TOUS les tarifs, modifiables), Musique (lien YouTube), Projets & synchro (heures des checks + clé GitHub), Données (export/import). Chaque sous-page a ← vers Réglages.
+- Projets & synchro : boutons « Lire Trello » / « Lire WhatsApp » → l'iPad POST `lire-trello` / `lire-whatsapp` sur le relais ntfy (même canal que la musique) ; `mac/musique.py` lance alors `claude -p` (Sonnet, outils limités, une lecture à la fois, 15 min max, journal /tmp/lecture.log) avec la consigne `mac/lire-trello.md` (activité du tableau depuis `trello_vu` + factures) ou `mac/lire-whatsapp.md` (nouveaux messages seulement, `--chrome`). ~25 s chacun. Le Mac doit être allumé ; pour WhatsApp, l'extension Claude in Chrome doit être connectée.
 
 ## Contraintes Safari 12 / iPad Air 1
 - Un seul fichier HTML/CSS/JS vanilla, sans framework, sans dépendance, sans police web (police système -apple-system).
