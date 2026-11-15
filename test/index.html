@@ -115,6 +115,9 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;will-change:transform;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
 .fcard.open .fc-in{-webkit-transform:translate3d(-230px,0,0);transform:translate3d(-230px,0,0)}
 /* glisser une facture à gauche : Annuler / Délai */
+.fi-b{margin-bottom:18px}
+.fi-big{font-size:34px;font-weight:700;margin-top:2px}
+.fi-s{font-size:20px;margin-top:2px}
 .fi-l{font-size:24px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .fi-v{font-weight:600;text-align:right}
 .frg{align-items:center;margin-bottom:16px}
@@ -874,15 +877,13 @@ function agoTxt(n){ return n === 0 ? 'aujourd’hui' : (n === 1 ? 'hier' : 'il y
 function facOpen(id){
   var r = facRow(id); if (!r) return;
   var today = dayStart(new Date()), env = Math.round((today - dayStart(new Date(r.entree))) / 86400000), nx = new Date(r.due);
-  function li(l, v){ return '<div class="row fi-l"><div class="grow muted">' + l + '</div><div class="fi-v num">' + v + '</div></div>'; }
+  function dl(ms){ return cap(JOURS[new Date(ms).getDay()]) + ' ' + dCourt(ms); }
+  function blk(l, big, small){ return '<div class="fi-b"><div class="dh">' + l + '</div><div class="fi-big num">' + big + '</div>' + (small ? '<div class="muted fi-s">' + small + '</div>' : '') + '</div>'; }
   var h = '<div class="mtitle">' + esc(r.projet) + '</div>' +
-    li('Reste à toucher', eur(r.reste)) +
-    li('Facture envoyée', cap(JOURS[new Date(r.entree).getDay()]) + ' ' + dCourt(r.entree) + ' · ' + agoTxt(env)) +
-    li('Dernière relance', r.last ? dCourt(r.last) + ' · ' + agoTxt(Math.round((today - dayStart(new Date(r.last))) / 86400000)) : 'Jamais') +
-    li('Relances', r.nrel ? r.nrel + '×' : '0') +
-    (r.paye ? li('Payé', dCourt(data.facEtat.payes[id])) : li('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : cap(JOURS[nx.getDay()]) + ' ' + dCourt(r.due) + ' · dans ' + r.left + ' j')) +
-    li('Relancer tous les', r.dl + ' j') +
-    '<div class="muted" style="font-size:19px;margin-top:14px">Pour modifier : glisse la facture vers la gauche → Réglages.</div>' +
+    blk('Facture envoyée', cap(agoTxt(env)), dl(r.entree)) +
+    blk('Dernière relance', r.last ? cap(agoTxt(Math.round((today - dayStart(new Date(r.last))) / 86400000))) : 'Jamais', r.last ? dl(r.last) : '') +
+    (r.paye ? blk('Payé', dl(data.facEtat.payes[id]), '') :
+      blk('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">Maintenant</span>' : 'Dans ' + r.left + ' j', r.left <= 0 ? '' : dl(r.due))) +
     '<div class="row mbtns" style="margin-top:22px"><button class="white" data-act="mclose">OK</button></div>';
   openModal({kind:'fac', id:id}, h);
 }
@@ -948,8 +949,11 @@ function facDelai(id, st){
   var left = Math.round((dayStart(nx) - today) / 86400000);
   function dt(ms){ return cap(JOURS[new Date(ms).getDay()]) + ' ' + dCourt(ms); }
   openModal(st, '<div class="mtitle">' + esc(r.projet) + '</div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Facture envoyée</div><div class="frg-v">' + dt(envD) + ' · ' + agoTxt(st.env) + '</div></div>' + stepper('', st.env + ' j', 'fen', 'x') + '</div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Dernière relance</div><div class="frg-v">' + (st.ago === null ? 'Jamais' : dt(today - st.ago * 86400000) + ' · ' + agoTxt(st.ago)) + '</div></div>' + stepper('', st.ago === null ? '—' : st.ago + ' j', 'fla', 'x') + '</div>' +
+    '<div class="row frg"><div class="grow"><div class="dh">Facture envoyée</div><div class="frg-v">' + cap(agoTxt(st.env)) + '</div></div>' +
+      '<input class="dinput" type="date" id="f-env" max="' + isoDate(new Date()) + '" value="' + isoDate(new Date(envD)) + '"></div>' +
+    '<div class="row frg"><div class="grow"><div class="dh">Dernière relance</div><div class="frg-v">' + (st.ago === null ? 'Jamais' : cap(agoTxt(st.ago))) + '</div></div>' +
+      (st.ago === null ? '' : '<button data-act="flaset" data-arg="none" style="margin-right:12px">Jamais</button>') +
+      '<input class="dinput" type="date" id="f-rel" max="' + isoDate(new Date()) + '" value="' + (st.ago === null ? '' : isoDate(new Date(today - st.ago * 86400000))) + '"></div>' +
     '<div class="row frg"><div class="grow"><div class="dh">Relancer tous les</div><div class="frg-v">' + st.every + ' jours</div></div>' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
     '<div class="mprev" style="font-size:28px;margin:16px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
     '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>');
@@ -2127,6 +2131,14 @@ document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 
 document.addEventListener('keydown', markActivity);
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
+/* factures : date d'envoi / de dernière relance choisies au calendrier */
+document.addEventListener('change', function(e){
+  var el = e.target; if (!el || (el.id !== 'f-env' && el.id !== 'f-rel') || !modal || modal.kind !== 'fdelai') return;
+  var d = parseIso(el.value), n = d ? Math.max(0, Math.round((dayStart(new Date()) - dayStart(d)) / 86400000)) : null;
+  if (el.id === 'f-env'){ if (n === null) return; modal.env = n; modal.chEnv = true; }
+  else { modal.ago = n; modal.changed = true; }
+  facDelai(modal.id, modal);
+});
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-sub' && modal && modal.kind === 'tdet'){ e.preventDefault(); handle('tsubadd', modal.id); } });
 var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
