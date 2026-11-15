@@ -93,7 +93,7 @@
      "id": "cmc-evasion-v1",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Evasion, Food & Expérience : faire la V1 récap (vertical + horizontal)",
-     "done": false,
+     "done": true,
      "notes": "Logo Vincent manquant"
     },
     {
@@ -113,6 +113,12 @@
      "id": "cmc-lifestyle-horizontal",
      "client": "Marie Claire",
      "text": "URGENT · Café Marie Claire Lifestyle : faire le récap horizontal",
+     "done": false
+    },
+    {
+     "id": "mich-retouche-photos",
+     "client": "Michalak",
+     "text": "URGENT · Michalak : retoucher toutes les photos",
      "done": false
     }
    ]
@@ -182,9 +188,9 @@
    "jour": "Mercredi 18 novembre",
    "tasks": [
     {
-     "id": "laduree-halloween-v1-marie-antoinette",
+     "id": "laduree-halloween-v1-macarons",
      "client": "Ladurée",
-     "text": "Ladurée Halloween : faire la V1 Marie-Antoinette plan large",
+     "text": "Ladurée Halloween : faire la V1 duplicat macarons",
      "done": false
     },
     {
