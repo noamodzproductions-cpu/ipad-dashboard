@@ -1,36 +1,7 @@
 {
- "updated": "dimanche 15 nov. à 19h55",
+ "updated": "lundi 16 nov. à 12h13",
  "whatsapp": "dimanche 15 nov. à 2h59",
  "days": [
-  {
-   "date": "2026-11-15",
-   "jour": "Dimanche 15 novembre",
-   "tasks": [
-    {
-     "id": "cmc-beaute-v2",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Beauté : V2",
-     "done": true,
-     "sous": [
-      {
-       "id": "cmc-beaute-v2-interviews",
-       "text": "Comptoir des huiles",
-       "done": true
-      },
-      {
-       "id": "cmc-beaute-v2-bilingues",
-       "text": "Petits Bilingues",
-       "done": true
-      },
-      {
-       "id": "cmc-beaute-sanex-v2",
-       "text": "Sanex",
-       "done": true
-      }
-     ]
-    }
-   ]
-  },
   {
    "date": "2026-11-16",
    "jour": "Lundi 16 novembre",
@@ -253,6 +224,11 @@
   {
    "date": "2026-11-22",
    "jour": "Dimanche 22 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-23",
+   "jour": "Lundi 23 novembre",
    "tasks": []
   }
  ],
