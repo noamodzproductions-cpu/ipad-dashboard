@@ -8,4 +8,4 @@ Règles complètes du planning (format, textes courts, une tâche par vidéo, pr
 4. Factures : relis la liste « 🧾 Solde en attente » et mets data/factures.json à jour comme dans les règles (y compris le déplacement des cartes payées, seule écriture Trello autorisée).
 5. Mets "trello_vu" = maintenant (AAAA-MM-JJTHH:MM, UTC) dans data/production.json et, dans semaine.json, "updated" ET "trello" au format « dimanche 15 nov. à 1h20 » (heure de Paris) — même si rien n'a changé. Ne change PAS "whatsapp".
 6. `git -C /Users/noamoudiz/ipad-dashboard add semaine.json data/production.json data/factures.json`, `commit -m "Planning : lecture Trello (iPad)"`, `push` (si le push est refusé : pull --no-rebase puis push).
-7. Réponds en une ligne : ce qui a changé.
+7. Réponds en une seule ligne, la toute dernière : « OK : <ce qui a changé, très court> ». Si une étape a échoué (outil inaccessible, pas d'accès au Trello, push refusé…), ne fais rien de plus et réponds « ERREUR : <raison très courte, en français simple> ».

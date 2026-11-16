@@ -1836,8 +1836,8 @@ function renderReglages(){
         '<div class="muted" style="font-size:20px">Colle un lien YouTube : il s’enregistre tout seul. Vide = ta musique par défaut.</div>';
     } else if (regPage === 'sync'){
       h += '<div class="glass ghrow"><div class="sitem-l">Dernier passage de Claude</div><div style="font-size:24px">' + (W.updated ? esc(W.updated) : '—') + '</div>' +
-        '<div class="sitem-l" style="margin-top:12px">Dernière lecture Trello</div><div style="font-size:24px">' + (W.trello ? esc(W.trello) : '—') + '</div>' +
-        '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div><div style="font-size:24px">' + (W.whatsapp ? esc(W.whatsapp) : '—') + '</div></div>' +
+        '<div class="sitem-l" style="margin-top:12px">Dernière lecture Trello</div>' + lectLine('trello', W.trello) +
+        '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div>' + lectLine('whatsapp', W.whatsapp) + '</div>' +
         '<div class="row" style="margin-bottom:6px"><button class="grow" data-act="lire" data-arg="lire-trello">Lire Trello</button><button class="grow" data-act="lire" data-arg="lire-whatsapp" style="margin-left:14px">Lire WhatsApp</button></div>' +
         '<div class="muted" style="font-size:18px;margin-bottom:16px">Le Mac relit juste cette source (allumé, Chrome ouvert pour WhatsApp). L’heure ci-dessus change quand c’est fini.</div>' +
         '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
@@ -1854,6 +1854,59 @@ function renderReglages(){
   alignGlass($('s-reglages'));
 }
 
+/* ---------- État des lectures Trello / WhatsApp (le Mac écrit sur le canal « -etat ») ---------- */
+var LECT_RELAY = MUSIC_RELAY + '-etat', lectTimer = null;
+function lectOf(k){ if (!data.lect) data.lect = {}; return data.lect[k] || {}; }
+function lectSet(k, st, msg){
+  if (!data.lect) data.lect = {};
+  var o = data.lect[k] || {};
+  if (st === 'wait') o = { t0: Date.now() };
+  o.st = st; o.msg = msg || ''; o.t = Date.now(); data.lect[k] = o; save();
+  if (st === 'ok' || st === 'err'){
+    showToast((k === 'trello' ? 'Trello' : 'WhatsApp') + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
+    if (st === 'ok'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
+  }
+  if (current === 'reglages') renderReglages();
+}
+function lectLine(k, last){
+  var o = lectOf(k), txt, col = '';
+  if (o.st === 'wait' || o.st === 'run'){ txt = o.st === 'run' ? 'Lecture en cours…' : 'Demande envoyée au Mac…'; col = 'color:#A78BFA;'; }
+  else if (o.st === 'err' && Date.now() - o.t < 6 * 3600000){ txt = 'Erreur : ' + o.msg; col = 'color:#fb923c;'; }
+  else txt = last || '—';
+  return '<div style="font-size:24px;' + col + '">' + esc(txt) + '</div>';
+}
+function lectPoll(){
+  clearTimeout(lectTimer);
+  var ks = ['trello', 'whatsapp'], since = 0, busy = false, i, o;
+  for (i = 0; i < ks.length; i++){ o = lectOf(ks[i]); if (o.st === 'wait' || o.st === 'run'){ busy = true; if (!since || o.t0 < since) since = o.t0; } }
+  if (!busy) return;
+  var x = new XMLHttpRequest();
+  x.open('GET', LECT_RELAY + '/json?poll=1&since=' + Math.floor(since / 1000 - 5), true);
+  x.onload = function(){
+    var lines = (x.responseText || '').split('\n'), j, ev, p, k2, o2;
+    for (j = 0; j < lines.length; j++){
+      try { ev = JSON.parse(lines[j]); } catch(e){ continue; }
+      if (!ev || ev.event !== 'message' || !ev.message) continue;
+      p = String(ev.message).split('|'); k2 = p[0]; o2 = lectOf(k2);
+      if (!(o2.st === 'wait' || o2.st === 'run') || ev.time * 1000 < o2.t0 - 5000) continue;
+      if (p[1] === 'en cours' && o2.st === 'wait') lectSet(k2, 'run', '');
+      else if (p[1] === 'ok') lectSet(k2, 'ok', p.slice(2).join('|'));
+      else if (p[1] === 'erreur') lectSet(k2, 'err', p.slice(2).join('|') || 'Erreur inconnue');
+    }
+    lectCheck(); lectTimer = setTimeout(lectPoll, 4000);
+  };
+  x.onerror = function(){ lectCheck(); lectTimer = setTimeout(lectPoll, 8000); };
+  x.send();
+}
+function lectCheck(){
+  var ks = ['trello', 'whatsapp'], i, o, now = Date.now();
+  for (i = 0; i < ks.length; i++){
+    o = lectOf(ks[i]);
+    if (o.st === 'wait' && now - o.t0 > 45000) lectSet(ks[i], 'err', 'Le Mac ne répond pas (éteint ou en veille ?)');
+    else if (o.st === 'run' && now - o.t0 > 17 * 60000) lectSet(ks[i], 'err', 'Pas de nouvelles du Mac depuis 17 min');
+  }
+}
+
 /* ---------- Actions ---------- */
 function handle(act, arg){
   var dv = data.devis, a, i, p, c;
@@ -1862,10 +1915,13 @@ function handle(act, arg){
     case 'regp': regPage = arg; renderReglages(); return;
     case 'lire':
       if (arg !== 'lire-trello' && arg !== 'lire-whatsapp') return;
-      var lx = new XMLHttpRequest(), lnom = arg === 'lire-trello' ? 'Trello' : 'WhatsApp';
+      var lk = arg.replace('lire-', ''), lc = lectOf(lk);
+      if (lc.st === 'wait' || lc.st === 'run') return;
+      lectSet(lk, 'wait', 'Demande envoyée au Mac…');
+      var lx = new XMLHttpRequest();
       lx.open('POST', MUSIC_RELAY, true);
-      lx.onload = function(){ showToast(lx.status < 300 ? 'Lecture ' + lnom + ' demandée au Mac · 1 à 5 min' : 'Le relais ne répond pas', null); };
-      lx.onerror = function(){ showToast('Pas de connexion : réessaie', null); };
+      lx.onload = function(){ if (lx.status >= 300) lectSet(lk, 'err', 'Le relais ne répond pas, réessaie'); else lectPoll(); };
+      lx.onerror = function(){ lectSet(lk, 'err', 'Pas de connexion internet sur l’iPad'); };
       lx.send(arg); return;
     case 'reload':
       try { window.localStorage.setItem('noamdash-reopen', current); } catch(e){}
@@ -2269,6 +2325,7 @@ go(['taches','reglages','factures','materiel','devis','planning'].indexOf(reopen
 loadTasks(null);
 loadFactures();
 setInterval(tick, 500);
+lectPoll();
 if ('serviceWorker' in navigator && location.protocol === 'https:'){
   try { navigator.serviceWorker.register('sw.js'); } catch(e){}
 }

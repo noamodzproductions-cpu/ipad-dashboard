@@ -55,12 +55,44 @@ LECTURES = {
                       "mcp__claude-in-chrome__find,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__javascript_tool", True),
 }
 en_cours = threading.Lock()
+ETAT_TOPIC = NTFY_TOPIC + "-etat"   # le Mac y écrit l'état des lectures, l'iPad le lit
+
+
+def etat(nom, st, msg=""):
+    """Envoie « trello|en cours », « trello|ok|… » ou « trello|erreur|… » à l'iPad."""
+    court = nom.replace("lire-", "")
+    try:
+        req = urllib.request.Request("https://ntfy.sh/" + ETAT_TOPIC,
+                                     data=("%s|%s|%s" % (court, st, msg[:120])).encode("utf-8"), method="POST")
+        urllib.request.urlopen(req, timeout=15).close()
+    except Exception as e:
+        print("état non envoyé :", e, flush=True)
+
+
+def raison(texte, code, erreurs=""):
+    """Traduit la fin de la réponse de Claude en une raison courte pour l'iPad."""
+    lignes = [l.strip() for l in texte.strip().splitlines() if l.strip()]
+    fin = lignes[-1] if lignes else ""
+    m = re.search(r"ERREUR\s*:?\s*(.+)", texte)
+    if m:
+        return "erreur", m.group(1).strip()
+    bas = (texte + "\n" + erreurs).lower()
+    if "not logged in" in bas or "please run /login" in bas or "authentication" in bas or "invalid api key" in bas:
+        return "erreur", "Claude n'est pas connecté sur le Mac"
+    if "usage limit" in bas or "rate limit" in bas:
+        return "erreur", "Limite d'utilisation de Claude atteinte"
+    if code != 0:
+        return "erreur", "Claude s'est arrêté (code %d)" % code
+    if not fin:
+        return "erreur", "Pas de réponse de Claude"
+    return "ok", re.sub(r"^OK\s*:?\s*", "", fin)
 
 
 def lecture(nom):
     """Une seule lecture à la fois ; 15 min max ; journal dans /tmp/lecture.log."""
     if not en_cours.acquire(blocking=False):
         print("relais ->", nom, "-> déjà une lecture en cours", flush=True)
+        etat(nom, "erreur", "Une autre lecture est déjà en cours, réessaie dans 2 min")
         return
     try:
         fichier, outils, chrome = LECTURES[nom]
@@ -69,12 +101,19 @@ def lecture(nom):
         if chrome:
             cmd.append("--chrome")
         debut = time.time()
+        etat(nom, "en cours")
+        r = subprocess.run(cmd, cwd=DOSSIER, capture_output=True, text=True, timeout=900)
+        sortie = (r.stdout or "") + "\n" + (r.stderr or "")
         with open("/tmp/lecture.log", "a") as log:
-            log.write("\n=== %s %s ===\n" % (time.strftime("%Y-%m-%d %H:%M"), nom))
-            log.flush()
-            subprocess.run(cmd, cwd=DOSSIER, stdout=log, stderr=log, timeout=900)
-        print("relais ->", nom, "-> fini en %d s" % (time.time() - debut), flush=True)
+            log.write("\n=== %s %s ===\n%s\n" % (time.strftime("%Y-%m-%d %H:%M"), nom, sortie))
+        st, msg = raison(r.stdout or "", r.returncode, r.stderr or "")
+        etat(nom, st, msg)
+        print("relais ->", nom, "-> %s en %d s : %s" % (st, time.time() - debut, msg), flush=True)
+    except subprocess.TimeoutExpired:
+        etat(nom, "erreur", "Trop long (plus de 15 min), arrêté")
+        print("relais ->", nom, "-> trop long", flush=True)
     except Exception as e:
+        etat(nom, "erreur", "Problème sur le Mac : %s" % e)
         print("relais ->", nom, "-> erreur :", e, flush=True)
     finally:
         en_cours.release()
