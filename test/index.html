@@ -554,6 +554,7 @@ var IC = {
   arrow:'<path d="M7 17L17 7M9 7h8v8"/>', cam:'<path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/>', reload:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>', euro:'<path d="M17 6.5A6.5 6.5 0 1 0 17 17.5M4 10.5h9M4 13.5h9"/>',
   check:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/>',
   fact:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
 };
@@ -1359,6 +1360,7 @@ function renderTaches(){
   var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
   var h = '<div class="hdr row"><button class="rbtn" data-act="go" data-arg="home" aria-label="Accueil">' + ico(IC.back) + '</button>' +
     '<div class="grow"><div class="h1">Projets</div><div class="sub">' + (isToday ? 'Aujourd’hui · ' : '') + esc(title) + '</div></div>' +
+    (W ? '<button class="rbtn wkbtn" data-act="tadd" data-arg="' + esc(tView) + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') +
     '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
     (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
@@ -1410,9 +1412,9 @@ function findTask(id){
 var URG_RE = /^URGENT\s*·\s*/, tGesture = false, tapTimer = null, tapId = null, toastTimer = null, toastCb = null;
 function tEd(){
   var e = data.tEdits || (data.tEdits = {}), k, n, lim = Date.now() - 14 * 86400000;
-  for (n in {del:1, ren:1, mov:1, ord:1}){
+  for (n in {del:1, ren:1, mov:1, ord:1, add:1}){
     if (!e[n] || typeof e[n] !== 'object') e[n] = {};
-    for (k in e[n]) if (e[n].hasOwnProperty(k) && !(e[n][k] && e[n][k].at > lim)) delete e[n][k];
+    for (k in e[n]) if (e[n].hasOwnProperty(k) && !(e[n][k] && (e[n][k].at > lim || (n === 'add' && e[n][k].day >= isoDate(new Date(Date.now() - 86400000)))))) delete e[n][k];
   }
   if (!(data.tQ instanceof Array)) data.tQ = [];
   return e;
@@ -1451,10 +1453,22 @@ function applyOp(w, op){
     tk = pullTask(w, op.id);
     if (tk){ tk.perso = true; to.tasks.push(tk); }
   } else if (op.op === 'ord') orderDay(findDay(w, op.day), op.ids);
+  else if (op.op === 'add'){
+    if (w.supprimes instanceof Array && w.supprimes.indexOf(op.id) >= 0) return;
+    for (var a = 0; a < w.days.length; a++) for (var b = 0; b < w.days[a].tasks.length; b++) if (w.days[a].tasks[b].id === op.id) return;
+    var ad = findDay(w, op.day);
+    if (!ad){
+      var dd = new Date(op.day + 'T12:00:00');
+      ad = {date:op.day, jour:cap(JOURS[dd.getDay()]) + ' ' + dd.getDate() + ' ' + MOIS[dd.getMonth()], tasks:[]};
+      w.days.push(ad); w.days.sort(function(x, y){ return x.date < y.date ? -1 : x.date > y.date ? 1 : 0; });
+    }
+    ad.tasks.push({id:op.id, client:'', text:op.v, done:false, perso:true});
+  }
 }
 function applyEdits(w){
   if (!w || !(w.days instanceof Array)) return w;
   var e = tEd(), k;
+  for (k in e.add) if (e.add.hasOwnProperty(k)) applyOp(w, {op:'add', id:k, day:e.add[k].day, v:e.add[k].v});
   for (k in e.del) if (e.del.hasOwnProperty(k)) while (pullTask(w, k)) {}
   if (w.supprimes instanceof Array) for (var i = 0; i < w.supprimes.length; i++) while (pullTask(w, w.supprimes[i])) {}
   for (k in e.ren) if (e.ren.hasOwnProperty(k)) applyOp(w, {op:'ren', id:k, v:e.ren[k].v});
@@ -1479,7 +1493,7 @@ function pushEdits(){
     try { w = JSON.parse(b64dec(j.content)); } catch(e){ ghBusy = false; return; }
     if (!(w.days instanceof Array)){ ghBusy = false; return; }
     applyOp(w, op);
-    var lab = {del:'Supprimé : ', ren:'Renommé : ', mov:'Déplacé : ', ord:'Rangé : '}[op.op] + (op.id || op.day);
+    var lab = {del:'Supprimé : ', ren:'Renommé : ', mov:'Déplacé : ', ord:'Rangé : ', add:'Ajouté : '}[op.op] + (op.id || op.day);
     ghReq('PUT', {message:'iPad · ' + lab, content:b64enc(JSON.stringify(w, null, 1) + '\n'), sha:j.sha, branch:'main'}, function(ok2, j2, st2){
       if (ok2){
         ghErr = ''; data.tQ.shift(); data.tasksCache = applyEdits(w); save(); ghBusy = false;
@@ -1591,6 +1605,16 @@ function openTaskEdit(id){
     '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Modifier</div><button class="lnk b" data-act="tesave">OK</button></div>' +
     '<input type="text" id="m-ttxt" data-bind="text" value="' + esc(base) + '" style="width:100%">' +
     (day ? '<div class="row" style="margin-top:22px;align-items:center"><div class="grow dh">Jour</div><input class="dinput" type="date" id="m-tday" min="' + isoDate(new Date()) + '" max="' + esc(last) + '" value="' + esc(day.date) + '"></div>' : ''));
+}
+
+function openTaskAdd(day){
+  var today = isoDate(new Date());
+  if (!day || day < today) day = today;
+  openModal({kind:'tadd', text:''},
+    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Nouvelle tâche</div><button class="lnk b" data-act="tasave">OK</button></div>' +
+    '<input type="text" id="m-ttxt" data-bind="text" value="" placeholder="Ex. Kurv : envoyer les photos" autocomplete="off" style="width:100%">' +
+    '<div class="row" style="margin-top:22px;align-items:center"><div class="grow dh">Jour</div><input class="dinput" type="date" id="m-tday" min="' + today + '" value="' + esc(day) + '"></div>');
+  try { $('m-ttxt').focus(); } catch(e){}
 }
 
 /* gestes sur les tâches : glisser à gauche (supprimer) et appui long (ranger) */
@@ -1705,7 +1729,7 @@ function tagsHtml(tk, urg){
 function renderPlanning(){
   var W = data.tasksCache, days = (W && W.days) || [], today = isoDate(new Date()), h, i, k, n = 0;
   for (i = 0; i < days.length; i++) if (dayDate(days[i]) >= today) for (k = 0; k < days[i].tasks.length; k++) if (!isDoneTask(days[i].tasks[k])) n++;
-  h = hdr('Planning', n + ' tâche' + (n > 1 ? 's' : '') + ' à faire') + '<div class="content">' +
+  h = hdr('Planning', n + ' tâche' + (n > 1 ? 's' : '') + ' à faire', W ? '<button class="rbtn" data-act="tadd" data-arg="' + today + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') + '<div class="content">' +
     '<div class="phint">Glisse une tâche à gauche : ⚙ modifier, 🗑 supprimer (à fond = supprimer) · reste appuyé pour la déplacer</div>';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   for (i = 0; i < days.length; i++){
@@ -1990,6 +2014,18 @@ function handle(act, arg){
       if (tv !== tb){ tEd().ren[tid] = {v:tv, at:Date.now()}; queueEdit({op:'ren', id:tid, v:tv}); }
       if (tdn && tdn !== tdo){ tEd().mov[tid] = {v:tdn, at:Date.now()}; queueEdit({op:'mov', id:tid, v:tdn}); }
       refreshTasks(); return;
+    case 'tadd': closeSwiped(); openTaskAdd(arg); return;
+    case 'tasave':
+      if (!modal || modal.kind !== 'tadd') return;
+      var av = ($('m-ttxt').value || '').replace(/^\s+|\s+$/g, ''), ady = $('m-tday').value || isoDate(new Date());
+      if (!av){ $('m-ttxt').style.borderColor = '#A78BFA'; return; }
+      if (ady < isoDate(new Date())) ady = isoDate(new Date());
+      var aid = 'noam-' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+      closeModal();
+      tEd().add[aid] = {day:ady, v:av, at:Date.now()}; queueEdit({op:'add', id:aid, day:ady, v:av});
+      refreshTasks();
+      showToast('Tâche ajoutée', function(){ var e3 = tEd(); delete e3.add[aid]; e3.del[aid] = {at:Date.now()}; queueEdit({op:'del', id:aid}); refreshTasks(); });
+      return;
     case 'twk': go('planning'); return;
     case 'pedit': if (closeSwiped()) return; openTaskDetail(arg); return;
     case 'tdel2': delTask(arg); return;
@@ -2242,6 +2278,7 @@ document.addEventListener('mousemove', function(e){ if (e.buttons) lpMove(e.clie
 document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-ttxt' && modal && modal.kind === 'tadd'){ e.preventDefault(); handle('tasave', ''); } });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
 /* factures : date d'envoi / de dernière relance choisies au calendrier */
