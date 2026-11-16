@@ -1,6 +1,6 @@
 {
- "updated": "lundi 16 nov. à 12h13",
- "whatsapp": "dimanche 15 nov. à 2h59",
+ "updated": "lundi 16 nov. à 12h55",
+ "whatsapp": "lundi 16 nov. à 12h55",
  "days": [
   {
    "date": "2026-11-16",
@@ -11,7 +11,7 @@
      "client": "Kurv Studio",
      "text": "Kurv Studio : envoyer toutes les photos",
      "done": false,
-     "notes": "Noélie, une seule reçue",
+     "notes": "Email à Noélie + Nathalie",
      "prio": 3,
      "perso": true
     },
@@ -81,7 +81,7 @@
      "client": "Benito",
      "text": "Benito : tournage ven. 20 matin → agenda",
      "done": false,
-     "notes": "10h proposé, confirmer"
+     "notes": "10h confirmé"
     },
     {
      "id": "mich-call-prepa-19",
@@ -188,7 +188,7 @@
      "client": "Benito",
      "text": "Benito : finir le tournage appartement",
      "done": false,
-     "notes": "10h (à confirmer)"
+     "notes": "10h confirmé"
     },
     {
      "id": "benito-appart-tournage-ssd",
