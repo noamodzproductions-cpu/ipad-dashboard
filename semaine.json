@@ -1,6 +1,6 @@
 {
- "updated": "lundi 16 nov. à 15h55",
- "trello": "lundi 16 nov. à 15h55",
+ "updated": "lundi 16 nov. à 19h57",
+ "trello": "lundi 16 nov. à 19h57",
  "whatsapp": "lundi 16 nov. à 12h55",
  "days": [
   {
@@ -36,6 +36,7 @@
      "client": "Marie Claire",
      "text": "Café Marie Claire Evasion : V1",
      "done": false,
+     "prio": 2,
      "sous": [
       {
        "id": "cmc-evasion-v1",
@@ -94,13 +95,15 @@
      "id": "mich-retouche-photos",
      "client": "Michalak",
      "text": "Michalak : retoucher toutes les photos",
-     "done": false
+     "done": false,
+     "prio": 3
     },
     {
      "id": "kermes-v1",
      "client": "Ensemble",
      "text": "Ensemble Kermes : faire la V1 the last race",
-     "done": false
+     "done": false,
+     "prio": 3
     },
     {
      "id": "astotel-lorette-v1",
