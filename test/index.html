@@ -688,8 +688,10 @@ function go(name){
 /* ---------- Tick : seuls les textes, la poignée et les états changent ---------- */
 var lastActivity = Date.now();
 var lastHM = '', lastDate = '', lastGreet = '';
+var lastDay = isoDate(new Date());
 function tick(){
   var now = new Date(), hr = now.getHours();
+  if (isoDate(now) !== lastDay){ lastDay = isoDate(now); tView = null; if (data.tasksCache) refreshTasks(); }
   var hm = pad(hr) + ':' + pad(now.getMinutes());
   if (hm !== lastHM){ $('clock').textContent = hm; lastHM = hm; }
   var ds = cap(JOURS[now.getDay()]) + ' ' + (now.getDate() === 1 ? '1er' : now.getDate()) + ' ' + MOIS[now.getMonth()];
@@ -1474,7 +1476,32 @@ function applyEdits(w){
   for (k in e.ren) if (e.ren.hasOwnProperty(k)) applyOp(w, {op:'ren', id:k, v:e.ren[k].v});
   for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v});
   for (k in e.ord) if (e.ord.hasOwnProperty(k)) applyOp(w, {op:'ord', day:k, ids:e.ord[k].v});
+  rollOver(w);
   return w;
+}
+/* après minuit : les tâches pas faites des jours passés restent visibles, en haut d'aujourd'hui
+   (sauf le samedi / dimanche : elles réapparaissent le lundi) */
+function rollOver(w){
+  var now = new Date(), today = isoDate(now), wd = now.getDay(), moved = [], i, t, d, tk;
+  if (wd === 0 || wd === 6) return;
+  for (i = 0; i < w.days.length; i++){
+    d = w.days[i];
+    if (dayDate(d) >= today) continue;
+    for (t = d.tasks.length - 1; t >= 0; t--){
+      tk = d.tasks[t];
+      if (isDoneTask(tk)) continue;
+      if (!tk.rep) tk.rep = d.date;
+      moved.unshift(d.tasks.splice(t, 1)[0]);
+    }
+  }
+  if (!moved.length) return;
+  var td = findDay(w, today);
+  if (!td){
+    td = {date:today, jour:cap(JOURS[wd]) + ' ' + now.getDate() + ' ' + MOIS[now.getMonth()], tasks:[]};
+    w.days.push(td); w.days.sort(function(x, y){ return x.date < y.date ? -1 : x.date > y.date ? 1 : 0; });
+  }
+  td.tasks = moved.concat(td.tasks);
+  if (tEd().ord[today]) orderDay(td, tEd().ord[today].v);
 }
 function queueEdit(op, delay){
   tEd(); op.at = Date.now() + (delay || 0); data.tQ.push(op); save();
@@ -1723,7 +1750,8 @@ function prioOf(tk){
 }
 function tagsHtml(tk, urg){
   var p = prioOf(tk);
-  var s = (p ? '<span class="utag u' + p + '">' + PRIO_TXT[p] + '</span>' : '') + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '');
+  var y = new Date(); y.setDate(y.getDate() - 1);
+  var s = (p ? '<span class="utag u' + p + '">' + PRIO_TXT[p] + '</span>' : '') + (tk.rep && tk.rep < isoDate(new Date()) ? '<div class="ttag">' + (tk.rep === isoDate(y) ? 'D’HIER' : 'REPORTÉ') + '</div>' : '') + (tk.client ? '<div class="ttag">' + esc(tk.client) + '</div>' : '');
   return s ? '<div>' + s + '</div>' : '';
 }
 function renderPlanning(){
