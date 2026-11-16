@@ -273,8 +273,9 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tdet-ok button{width:100%;height:84px;font-size:30px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
 /* compteur de sous-tâches à droite de la carte (vidéos du projet / modifs) */
-.tcount{flex-shrink:0;margin-left:14px;min-width:64px;height:40px;line-height:40px;padding:0 12px;border-radius:20px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8);font-size:21px;font-weight:700;text-align:center}
-.tcount.ok{background:rgba(74,222,128,.18);color:#4ade80}
+.tcount{flex-shrink:0;margin-left:auto;padding:0 18px;min-width:86px;height:52px;line-height:52px;border-radius:26px;color:#111;font-size:26px;font-weight:800;text-align:center;white-space:nowrap}
+.tcount small{font-size:19px;font-weight:700;opacity:.7}
+.on .tcount{opacity:.5}
 .tnotes{font-size:20px;color:rgba(255,255,255,.6);margin:0 0 16px}
 .tchk{cursor:pointer}
 .t-act .sa-del{background:#A78BFA;border-color:#A78BFA;color:#111}
@@ -1545,7 +1546,9 @@ function subsOf(tk){
 function subCount(tk){
   var l = subsOf(tk), n = 0; if (!l.length) return '';
   for (var i = 0; i < l.length; i++) if (l[i].done) n++;
-  return '<div class="tcount num' + (n === l.length ? ' ok' : '') + '">' + n + '/' + l.length + '</div>';
+  /* pastille : violet au départ, vire au vert à mesure que les sous-tâches sont faites */
+  var f = n / l.length, r = Math.round(167 + (74 - 167) * f), g = Math.round(139 + (222 - 139) * f), b = Math.round(250 + (128 - 250) * f);
+  return '<div class="tcount num" style="background:rgb(' + r + ',' + g + ',' + b + ')">' + n + '<small>/' + l.length + '</small></div>';
 }
 function splitTask(tk){
   var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
