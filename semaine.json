@@ -1,6 +1,6 @@
 {
- "updated": "lundi 16 nov. à 15h49",
- "trello": "lundi 16 nov. à 15h49",
+ "updated": "lundi 16 nov. à 15h55",
+ "trello": "lundi 16 nov. à 15h55",
  "whatsapp": "lundi 16 nov. à 12h55",
  "days": [
   {
@@ -115,15 +115,15 @@
    "jour": "Mardi 17 novembre",
    "tasks": [
     {
-     "id": "nuance-tournage",
-     "client": "Zack",
-     "text": "Nuance Audio : tournage Sophie Davant",
+     "id": "ensemble-solum-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Solum : faire la V1",
      "done": false
     },
     {
-     "id": "nuance-tournage-ssd",
-     "client": "Zack",
-     "text": "Nuance Audio : rushs + photos → SSD",
+     "id": "citadium-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Pop up Citadium : faire la V1",
      "done": false
     }
    ]
@@ -196,24 +196,6 @@
      "client": "Benito",
      "text": "Benito : rushs + photos → SSD",
      "done": false
-    },
-    {
-     "id": "citadium-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Pop up Citadium : faire la V1",
-     "done": false
-    },
-    {
-     "id": "nuance-v1",
-     "client": "Zack",
-     "text": "Nuance Audio : faire la V1",
-     "done": false
-    },
-    {
-     "id": "ensemble-solum-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Solum : faire la V1",
-     "done": false
     }
    ]
   },
@@ -231,6 +213,38 @@
    "date": "2026-11-23",
    "jour": "Lundi 23 novembre",
    "tasks": []
+  },
+  {
+   "date": "2026-11-24",
+   "jour": "Mardi 24 novembre",
+   "tasks": [
+    {
+     "id": "nuance-tournage",
+     "client": "Zack",
+     "text": "Nuance Audio : tournage Sophie Davant",
+     "done": false,
+     "notes": "Décalé du 17"
+    },
+    {
+     "id": "nuance-tournage-ssd",
+     "client": "Zack",
+     "text": "Nuance Audio : rushs + photos → SSD",
+     "done": false,
+     "notes": "Décalé du 17"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-01",
+   "jour": "Mardi 1 décembre",
+   "tasks": [
+    {
+     "id": "nuance-v1",
+     "client": "Zack",
+     "text": "Nuance Audio : faire la V1",
+     "done": false
+    }
+   ]
   }
  ],
  "supprimes": [
