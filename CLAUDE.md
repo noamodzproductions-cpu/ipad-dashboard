@@ -16,8 +16,8 @@ Avant toute modif visuelle, respecter le style de accueil-bento.html et les cont
 - Écran `materiel` (LISTE, 2 colonnes) : à gauche « ce que je prends » (cocher les appareils du tournage, `data.matPris`), à droite « à vérifier » = accessoires des appareils cochés, groupés par appareil (`data.matCheck`), « Tout est prêt ✓ » quand tout est coché. Bouton « Modifier » : toucher un appareil = ses accessoires (ajouter DANS l'appareil, ✕ retirer), renommer, supprimer ; « + Appareil ». « Nouveau tournage » = tout remettre à zéro. Données sur l'iPad seulement (incluses dans l'export).
 
 ## Listes (page 2 de l'accueil, à côté de Matériel)
-- Widget « Listes » (300×280) → écran `listes` (2 colonnes comme Matériel) : à gauche les listes, à droite le contenu. « + Liste » (nom + type « À cocher » ou « Avec prix »), « Modifier » (renommer, supprimer la liste).
-- Liste à cocher : case + ✕ pour retirer. Liste avec prix (ex. « Abonnements », créée par défaut avec « Notes ») : nom + prix + « / mois » ou « / an », ✕ pour retirer, toucher = fenêtre (Annuler · Abonnement · OK) pour corriger nom/prix/période ou supprimer ; en haut TOTAL PAR MOIS (annuel ÷ 12) + « soit X € par an ». Bandeau Annuler après un retrait.
+- Widget « Listes » (300×280) → écran `listes` FAÇON FACTURES : en-tête = nom de la liste + ⚙ (renommer / supprimer la liste) + « + » (ajouter, fenêtre façon iOS Annuler · … · OK, Entrée = OK) ; onglets ronds des listes + « + Liste » (nom + type « À cocher » / « Avec prix ») ; une carte par élément ; GLISSER à gauche = « Modifier » / « Supprimer » (bandeau Annuler) ; toucher = Modifier.
+- Liste avec prix (« Abonnements », créée par défaut avec « Notes ») : cases « Par mois » (annuel ÷ 12), « Par an », « Abonnements », « Le plus cher » ; cartes triées du plus cher au moins cher : nom + prix « / mois » ou « / an », barre violette (part par rapport au plus cher), ligne « Chaque mois · X € par an · N % du total ». Liste à cocher : case (vert quand coché) + texte, cochés en bas grisés.
 - Données `data.listes` = [{id, nom, prix, items:[{id, t, p, an, ok}]}], sur l'iPad seulement (incluses dans l'export).
 
 ## Suivi des factures (`data/factures.json`)

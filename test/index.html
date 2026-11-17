@@ -125,22 +125,20 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:230px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 .fc-act button{height:76px;font-size:21px;padding:0 16px;white-space:nowrap}
 .fc-act button + button{margin-left:12px}
-/* Listes (notes, abonnements) */
+/* Listes (façon Factures) */
 .widgets2 .wsmall + .wsmall{margin-left:18px}
-.lrow{display:flex;align-items:center;margin-bottom:10px}
-.lrow .mchk{margin-right:12px}
-.lit{flex:1;min-width:0;display:flex;align-items:center;text-align:left;height:84px;font-size:28px;padding:0 20px;border-radius:20px;margin-right:12px}
-.lit .ln{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lit .lp{flex-shrink:0;margin-left:16px;font-weight:700}
-.lit .lp small{font-size:18px;font-weight:500;opacity:.6}
-.ltot{padding:18px 22px;border-radius:22px;margin:6px 0 16px;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.4)}
-.ltot b{display:block;font-size:46px;font-weight:800}
-.ltot span{font-size:20px;color:rgba(255,255,255,.7)}
-.ladd{display:flex;align-items:center;margin-top:16px}
-.ladd input{flex:1;min-width:0;margin-right:12px}
-.ladd button{flex-shrink:0;margin-right:12px}
-.ladd button:last-child{margin-right:0}
-.lper{min-width:110px}
+.ltabs{flex-shrink:0;margin-top:12px;white-space:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ltabs button{height:70px;font-size:24px;padding:0 26px;border-radius:35px;margin-right:12px}
+.ltabs .ltab-add{background:transparent;color:rgba(255,255,255,.7)}
+.lcard{border-left:0}
+.lcard .fc-act{width:320px}
+.lcard.open .fc-in{-webkit-transform:translate3d(-320px,0,0);transform:translate3d(-320px,0,0)}
+.lcard .fc-act button{font-size:22px;padding:0 20px}
+.tot-v{overflow:hidden;text-overflow:ellipsis}
+.lcard .fc-v small{font-size:20px;font-weight:500;opacity:.6}
+.lcard .fbar{margin:12px 0 10px}
+.lcard .fc-hist{margin-top:0}
+.lnote{margin-left:20px;white-space:normal}
 /* Matériel */
 .mcard{min-height:170px}
 .mc-n{font-size:40px;font-weight:700;margin:8px 0}
@@ -1058,63 +1056,69 @@ function matName(title, val, act, arg){
 }
 function trimV(id){ var e = $(id); return e ? e.value.replace(/^\s+|\s+$/g, '') : ''; }
 
-/* ---------- Listes : notes à cocher, ou listes avec prix (abonnements → total par mois) ---------- */
-var lSel = null, lPer = false; /* lPer = l'abonnement qu'on ajoute est annuel */
+/* ---------- Listes : façon Factures — onglets, cases de total, une carte par élément, glisser à gauche ---------- */
+var lSel = null;
 function lCur(){ var L = data.listes, i; for (i = 0; i < L.length; i++) if (L[i].id === lSel) return L[i]; lSel = L.length ? L[0].id : null; return L[0] || null; }
 function lFindItem(l, id){ for (var i = 0; i < l.items.length; i++) if (l.items[i].id === id) return i; return -1; }
 function prixTxt(n){ var r = Math.round(n * 100) / 100, s = (r % 1 ? r.toFixed(2) : String(r)).replace('.', ','); return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €'; }
 function prixVal(v){ var n = parseFloat(String(v || '').replace(/\s/g, '').replace(',', '.').replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; }
+function lMois(it){ return it.an ? it.p / 12 : it.p; }
+function ltot(l, v){ return '<div class="glass tot"><div class="tot-l">' + l + '</div><div class="tot-v num">' + v + '</div></div>'; }
 function renderListes(){
-  var L = data.listes, l = lCur(), i, it, h;
-  var right = '<button data-act="lnew">+ Liste</button>' + (l ? '<button data-act="lmod">Modifier</button>' : '');
-  var sub = l ? (l.prix ? l.items.length + ' abonnement' + (l.items.length > 1 ? 's' : '') : l.items.length + ' élément' + (l.items.length > 1 ? 's' : '')) : 'Crée ta première liste';
-  h = hdr('Listes', sub, right) + '<div class="content mat"><div class="glass mat-l">';
-  for (i = 0; i < L.length; i++)
-    h += '<button class="msel' + (l && L[i].id === l.id ? ' on' : '') + '" data-act="lsel" data-arg="' + esc(L[i].id) + '">' + esc(L[i].nom) + '</button>';
-  h += '</div><div class="glass mat-r">';
-  if (!l) h += '<div class="mhint">Touche « + Liste » pour commencer.</div>';
-  else {
-    if (l.prix){
-      var m = 0;
-      for (i = 0; i < l.items.length; i++) m += l.items[i].an ? l.items[i].p / 12 : l.items[i].p;
-      h += '<div class="ltot"><b class="num">' + prixTxt(m) + ' <span>/ mois</span></b><span class="num">soit ' + prixTxt(m * 12) + ' par an</span></div>';
-    }
-    if (!l.items.length) h += '<div class="mhint" style="padding:24px 10px">' + (l.prix ? 'Ajoute ton premier abonnement ci-dessous.' : 'Liste vide : écris en dessous.') + '</div>';
-    for (i = 0; i < l.items.length; i++){
-      it = l.items[i];
-      if (l.prix) h += '<div class="lrow"><button class="lit" data-act="litem" data-arg="' + esc(it.id) + '"><span class="ln">' + esc(it.t) + '</span><span class="lp num">' + prixTxt(it.p) + '<small> / ' + (it.an ? 'an' : 'mois') + '</small></span></button>' +
-        '<button class="xbtn" data-act="ldel" data-arg="' + esc(it.id) + '" aria-label="Retirer">✕</button></div>';
-      else h += '<div class="lrow"><button class="mchk' + (it.ok ? ' on' : '') + '" data-act="ltog" data-arg="' + esc(it.id) + '"><span class="tchk">' + (it.ok ? '✓' : '') + '</span>' + esc(it.t) + '</button>' +
-        '<button class="xbtn" data-act="ldel" data-arg="' + esc(it.id) + '" aria-label="Retirer">✕</button></div>';
-    }
-    h += l.prix ? '<div class="ladd"><input type="text" id="l-new" placeholder="Nouvel abonnement (ex. Netflix)" autocomplete="off" style="margin-right:0"></div>' +
-        '<div class="ladd" style="margin-top:10px"><input type="text" class="num" id="l-prix" inputmode="decimal" placeholder="Prix en €" autocomplete="off"><button class="lper" data-act="lper">/ ' + (lPer ? 'an' : 'mois') + '</button><button class="white" data-act="ladd">Ajouter</button></div>'
-      : '<div class="ladd"><input type="text" id="l-new" placeholder="Écrire…" autocomplete="off"><button class="white" data-act="ladd">Ajouter</button></div>';
+  var L = data.listes, l = lCur(), i, it, h, m = 0, max = 0, rows;
+  var right = (l ? '<button class="rbtn wkbtn" data-act="lmod" aria-label="Modifier la liste">' + ico(IC_GEAR) + '</button><button class="rbtn" data-act="lnewit" aria-label="Ajouter">' + ico(IC.plus) + '</button>' : '');
+  h = hdr(l ? esc(l.nom) : 'Listes', l ? (l.prix ? l.items.length + ' abonnement' + (l.items.length > 1 ? 's' : '') : l.items.length + ' élément' + (l.items.length > 1 ? 's' : '')) : 'Crée ta première liste', right);
+  h += '<div class="ltabs">';
+  for (i = 0; i < L.length; i++) h += '<button class="' + (l && L[i].id === l.id ? 'white' : '') + '" data-act="lsel" data-arg="' + esc(L[i].id) + '">' + esc(L[i].nom) + '</button>';
+  h += '<button class="ltab-add" data-act="lnew">+ Liste</button></div>';
+  if (l && l.prix){
+    for (i = 0; i < l.items.length; i++){ m += lMois(l.items[i]); if (lMois(l.items[i]) > max) max = lMois(l.items[i]); }
+    var top = null; for (i = 0; i < l.items.length; i++) if (!top || lMois(l.items[i]) > lMois(top)) top = l.items[i];
+    h += '<div class="tots ftots row">' + ltot('Par mois', prixTxt(m)) + ltot('Par an', prixTxt(m * 12)) + ltot('Abonnements', l.items.length) + ltot('Le plus cher', top ? esc(top.t) : '—') + '</div>';
   }
-  h += '</div></div>';
-  var old = document.querySelector('#s-listes .mat-r'), sc = old ? old.scrollTop : 0;
+  h += '<div class="content">';
+  if (!l) h += '<div class="empty">Touche « + Liste » pour commencer.</div>';
+  else if (!l.items.length) h += '<div class="empty">' + (l.prix ? 'Aucun abonnement.<br>Touche + pour en ajouter un.' : 'Liste vide.<br>Touche + pour écrire.') + '</div>';
+  else {
+    rows = l.items.slice();
+    if (l.prix) rows.sort(function(a, b){ return lMois(b) - lMois(a); });
+    else rows.sort(function(a, b){ return (a.ok ? 1 : 0) - (b.ok ? 1 : 0); });
+    for (i = 0; i < rows.length; i++){
+      it = rows[i];
+      var act = '<div class="fc-act"><button class="white" data-act="litem" data-arg="' + esc(it.id) + '">Modifier</button><button class="vio" data-act="ldel" data-arg="' + esc(it.id) + '">Supprimer</button></div>';
+      if (l.prix){
+        var pm = lMois(it), fill = max ? Math.max(4, Math.round(pm / max * 100)) : 0;
+        h += '<div class="glass fcard lcard" data-fid="' + esc(it.id) + '"><div class="fc-in" data-act="litem" data-arg="' + esc(it.id) + '">' +
+          '<div class="fc-top"><div class="fc-n grow">' + esc(it.t) + '</div><div class="fc-v num">' + prixTxt(it.p) + '<small> / ' + (it.an ? 'an' : 'mois') + '</small></div></div>' +
+          '<div class="fbar"><i style="width:' + fill + '%;background:#A78BFA"></i></div>' +
+          '<div class="fc-hist num">' + (it.an ? 'Chaque année · soit ' + prixTxt(pm) + ' / mois' : 'Chaque mois · ' + prixTxt(pm * 12) + ' par an') + (m ? ' · ' + Math.round(pm / m * 100) + ' % du total' : '') + '</div>' +
+          '</div>' + act + '</div>';
+      } else {
+        h += '<div class="glass fcard lcard' + (it.ok ? ' paid' : '') + '" data-fid="' + esc(it.id) + '"><div class="fc-in"><div class="fc-top">' +
+          '<button class="fbox' + (it.ok ? ' on p' : '') + '" data-act="ltog" data-arg="' + esc(it.id) + '"><i>' + (it.ok ? '✓' : '') + '</i></button>' +
+          '<div class="fc-n grow lnote" data-act="litem" data-arg="' + esc(it.id) + '">' + esc(it.t) + '</div></div></div>' + act + '</div>';
+      }
+    }
+  }
+  h += '</div>';
+  var old = document.querySelector('#s-listes .content'), sc = old ? old.scrollTop : 0;
   $('s-listes').innerHTML = h;
-  var nr = document.querySelector('#s-listes .mat-r'); if (nr && old) nr.scrollTop = sc;
+  var nr = document.querySelector('#s-listes .content'); if (nr && old) nr.scrollTop = sc;
 }
-function lAdd(){
-  var l = lCur(), t = trimV('l-new'); if (!l) return;
-  if (!t){ $('l-new').focus(); return; }
-  var it = {id:uid(), t:t};
-  if (l.prix){ it.p = prixVal($('l-prix').value); it.an = lPer; if (!it.p){ $('l-prix').style.borderColor = '#A78BFA'; $('l-prix').focus(); return; } }
-  else it.ok = false;
-  l.items.push(it); lPer = false; save(); renderListes();
-  var nr = document.querySelector('#s-listes .mat-r'); if (nr) nr.scrollTop = 99999;
-  try { $('l-new').focus(); } catch(e){}
-}
+/* fenêtre façon iOS : ajouter (id vide) ou modifier un élément */
 function lItemSheet(id){
-  var l = lCur(), k = l ? lFindItem(l, id) : -1; if (k < 0) return;
-  var it = l.items[k];
-  openModal({kind:'litem', id:id, an:!!it.an},
-    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Abonnement</div><button class="lnk b" data-act="litok">OK</button></div>' +
-    '<input type="text" id="li-t" value="' + esc(it.t) + '" style="width:100%">' +
-    '<div class="ladd" style="margin-top:18px"><input type="text" class="num" id="li-p" inputmode="decimal" value="' + esc(String(it.p).replace('.', ',')) + '"><button class="lper" id="li-per" data-act="liper">/ ' + (it.an ? 'an' : 'mois') + '</button></div>' +
-    '<button class="vio" data-act="ldel" data-arg="' + esc(id) + '" style="width:100%;margin-top:26px">Supprimer</button>');
+  var l = lCur(); if (!l) return;
+  var k = id ? lFindItem(l, id) : -1, it = k >= 0 ? l.items[k] : null;
+  if (id && !it) return;
+  closeLSwiped();
+  openModal({kind:'litem', id:id || '', an:it ? !!it.an : false},
+    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">' + (it ? 'Modifier' : (l.prix ? 'Nouvel abonnement' : 'Ajouter')) + '</div><button class="lnk b" data-act="litok">OK</button></div>' +
+    '<input type="text" id="li-t" value="' + esc(it ? it.t : '') + '" placeholder="' + (l.prix ? 'Nom (ex. Netflix)' : 'Écrire…') + '" autocomplete="off" style="width:100%">' +
+    (l.prix ? '<div class="row" style="margin-top:18px;align-items:center"><input type="text" class="num" id="li-p" inputmode="decimal" placeholder="Prix en €" value="' + (it ? esc(String(it.p).replace('.', ',')) : '') + '" autocomplete="off" style="flex:1;min-width:0;margin-right:14px">' +
+      '<button class="' + (it && it.an ? '' : 'white') + '" id="li-m" data-act="liper" data-arg="0">/ mois</button><button class="' + (it && it.an ? 'white' : '') + '" id="li-a" data-act="liper" data-arg="1" style="margin-left:12px">/ an</button></div>' : ''));
+  if (!it) try { $('li-t').focus(); } catch(e){}
 }
+function closeLSwiped(){ var o = document.querySelectorAll('#s-listes .fcard.open'), n = o.length; for (var i = 0; i < n; i++) o[i].classList.remove('open'); return n > 0; }
 function lListSheet(isNew){
   var l = isNew ? null : lCur();
   openModal({kind:'llist', isNew:isNew, prix:l ? !!l.prix : true},
@@ -2211,21 +2215,23 @@ function handle(act, arg){
       closeModal(); facSchedule(); renderFactures(); return;
 
     case 'lsel': lSel = arg; renderListes(); return;
-    case 'lper': lPer = !lPer; var lpb = document.querySelector('#s-listes .lper'); if (lpb) lpb.textContent = '/ ' + (lPer ? 'an' : 'mois'); return;
-    case 'ladd': lAdd(); return;
-    case 'ltog': var lt = lCur(), lk = lt ? lFindItem(lt, arg) : -1; if (lk < 0) return; lt.items[lk].ok = !lt.items[lk].ok; save(); renderListes(); return;
+    case 'lnewit': lItemSheet(''); return;
+    case 'ltog': if (closeLSwiped()) return; var lt = lCur(), lk = lt ? lFindItem(lt, arg) : -1; if (lk < 0) return; lt.items[lk].ok = !lt.items[lk].ok; save(); renderListes(); return;
     case 'litem': lItemSheet(arg); return;
-    case 'liper': if (!modal) return; modal.an = !modal.an; $('li-per').textContent = '/ ' + (modal.an ? 'an' : 'mois'); return;
+    case 'liper': if (!modal) return; modal.an = arg === '1'; $('li-m').className = modal.an ? '' : 'white'; $('li-a').className = modal.an ? 'white' : ''; return;
     case 'litok':
-      var li = lCur(), lj = li && modal ? lFindItem(li, modal.id) : -1; if (lj < 0) return;
-      var lnt = trimV('li-t'), lnp = prixVal($('li-p').value);
-      if (!lnt || !lnp) return;
-      li.items[lj].t = lnt; li.items[lj].p = lnp; li.items[lj].an = !!modal.an; save(); closeModal(); renderListes(); return;
+      var li = lCur(); if (!li || !modal) return;
+      var lnt = trimV('li-t'), lnp = li.prix ? prixVal($('li-p').value) : 0;
+      if (!lnt){ $('li-t').style.borderColor = '#A78BFA'; return; }
+      if (li.prix && !lnp){ $('li-p').style.borderColor = '#A78BFA'; return; }
+      if (modal.id){ var lj = lFindItem(li, modal.id); if (lj < 0) return; li.items[lj].t = lnt; if (li.prix){ li.items[lj].p = lnp; li.items[lj].an = !!modal.an; } }
+      else li.items.push(li.prix ? {id:uid(), t:lnt, p:lnp, an:!!modal.an} : {id:uid(), t:lnt, ok:false});
+      save(); closeModal(); renderListes(); return;
     case 'ldel':
       var ld = lCur(), lx2 = ld ? lFindItem(ld, arg) : -1; if (lx2 < 0) return;
       var lcopy = ld.items[lx2];
       ld.items.splice(lx2, 1); save(); closeModal(); renderListes();
-      showToast('« ' + lcopy.t + ' » retiré', function(){ ld.items.splice(Math.min(lx2, ld.items.length), 0, lcopy); save(); if (current === 'listes') renderListes(); });
+      showToast('« ' + lcopy.t + ' » supprimé', function(){ ld.items.splice(Math.min(lx2, ld.items.length), 0, lcopy); save(); if (current === 'listes') renderListes(); });
       return;
     case 'lnew': lListSheet(true); return;
     case 'lmod': lListSheet(false); return;
@@ -2425,7 +2431,7 @@ document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-ttxt' && modal && modal.kind === 'tadd'){ e.preventDefault(); handle('tasave', ''); } });
-document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && (e.target.id === 'l-new' || e.target.id === 'l-prix') && current === 'listes'){ e.preventDefault(); if (e.target.id === 'l-new' && lCur() && lCur().prix && !trimV('l-prix')) $('l-prix').focus(); else lAdd(); } });
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && (e.target.id === 'li-t' || e.target.id === 'li-p') && modal && modal.kind === 'litem'){ e.preventDefault(); if (e.target.id === 'li-t' && $('li-p') && !trimV('li-p')) $('li-p').focus(); else handle('litok', ''); } });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
 /* factures : date d'envoi / de dernière relance choisies au calendrier */
@@ -2444,8 +2450,8 @@ function swEnd(x, y){
   var dx = x - sw0.x, dy = y - sw0.y, f = sw0.fid; sw0 = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
   if (current === 'home'){ if (sw0m) { setHomePage(dx < 0 ? 1 : 0); lpSwallowUntil = Date.now() + 400; } return; }
-  if (current === 'factures' && f){
-    var all = document.querySelectorAll('#s-factures .fcard.open');
+  if ((current === 'factures' || current === 'listes') && f){
+    var all = document.querySelectorAll('#s-' + current + ' .fcard.open');
     for (var i = 0; i < all.length; i++) if (all[i] !== f) all[i].classList.remove('open');
     f.classList.toggle('open', dx < 0); lpSwallowUntil = Date.now() + 400;
   }
