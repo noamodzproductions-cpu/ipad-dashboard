@@ -125,6 +125,22 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:230px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 .fc-act button{height:76px;font-size:21px;padding:0 16px;white-space:nowrap}
 .fc-act button + button{margin-left:12px}
+/* Listes (notes, abonnements) */
+.widgets2 .wsmall + .wsmall{margin-left:18px}
+.lrow{display:flex;align-items:center;margin-bottom:10px}
+.lrow .mchk{margin-right:12px}
+.lit{flex:1;min-width:0;display:flex;align-items:center;text-align:left;height:84px;font-size:28px;padding:0 20px;border-radius:20px;margin-right:12px}
+.lit .ln{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lit .lp{flex-shrink:0;margin-left:16px;font-weight:700}
+.lit .lp small{font-size:18px;font-weight:500;opacity:.6}
+.ltot{padding:18px 22px;border-radius:22px;margin:6px 0 16px;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.4)}
+.ltot b{display:block;font-size:46px;font-weight:800}
+.ltot span{font-size:20px;color:rgba(255,255,255,.7)}
+.ladd{display:flex;align-items:center;margin-top:16px}
+.ladd input{flex:1;min-width:0;margin-right:12px}
+.ladd button{flex-shrink:0;margin-right:12px}
+.ladd button:last-child{margin-right:0}
+.lper{min-width:110px}
 /* Matériel */
 .mcard{min-height:170px}
 .mc-n{font-size:40px;font-weight:700;margin:8px 0}
@@ -381,6 +397,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-taches" class="screen"></section>
 <section id="s-factures" class="screen"></section>
 <section id="s-materiel" class="screen"></section>
+<section id="s-listes" class="screen"></section>
 <section id="s-planning" class="screen"></section>
 
 <div id="modal" class="overlay"></div>
@@ -555,6 +572,7 @@ var IC = {
   check:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 9l2 2 4-4M8 15h8"/>',
   fact:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
 };
@@ -625,6 +643,7 @@ function normalize(d){
   if (!d.facEtat.delais) d.facEtat.delais = {};
   if (!d.facEtat.prochaine) d.facEtat.prochaine = {};
   if (!d.facEtat.envoi) d.facEtat.envoi = {};
+  if (!(d.listes instanceof Array)) d.listes = [{id:'abos', nom:'Abonnements', prix:true, items:[]}, {id:'notes', nom:'Notes', prix:false, items:[]}];
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
     {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
@@ -672,12 +691,13 @@ function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
   if (name === 'reglages' && current !== 'reglages') regPage = '';
   current = name;
-  var ids = ['home','devis','projets','reglages','taches','factures','materiel','planning'];
+  var ids = ['home','devis','projets','reglages','taches','factures','materiel','planning','listes'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
   if (name === 'home') renderHome();
   if (name === 'devis') renderDevis();
   if (name === 'factures'){ renderFactures(); loadFactures(); }
   if (name === 'materiel'){ matEdit = false; renderMateriel(); }
+  if (name === 'listes') renderListes();
   if (name === 'planning'){ renderPlanning(); loadTasks(function(){ if (current === 'planning') renderPlanning(); }); }
   if (name === 'projets') renderProjets();
   if (name === 'reglages') renderReglages();
@@ -731,7 +751,8 @@ function renderHome(){
       '<div class="glass widget" data-act="go" data-arg="taches"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
     '</div><div class="br-bot"><div class="glass widget" id="hm-card" data-act="music"><div class="wtile" id="hm-tile">' + ico(IC.music) + '</div><div class="wname">Musique</div></div></div></div>';
   $('widgets').innerHTML = h;
-  $('widgets2').innerHTML = '<div class="glass widget wsmall" data-act="go" data-arg="materiel"><div class="wtile">' + ico(IC.cam) + '</div>' + chev + '<div class="wname">Matériel</div></div>';
+  $('widgets2').innerHTML = '<div class="glass widget wsmall" data-act="go" data-arg="materiel"><div class="wtile">' + ico(IC.cam) + '</div>' + chev + '<div class="wname">Matériel</div></div>' +
+    '<div class="glass widget wsmall" data-act="go" data-arg="listes"><div class="wtile">' + ico(IC.list) + '</div>' + chev + '<div class="wname">Listes</div></div>';
   setHomePage(homePg);
   alignGlass($('s-home'));
   renderFactures();
@@ -1036,6 +1057,73 @@ function matName(title, val, act, arg){
     '<div class="row mbtns" style="margin-top:24px"><button data-act="mfin">Annuler</button><button class="white" data-act="' + act + '" data-arg="' + esc(arg || '') + '">Valider</button></div>');
 }
 function trimV(id){ var e = $(id); return e ? e.value.replace(/^\s+|\s+$/g, '') : ''; }
+
+/* ---------- Listes : notes à cocher, ou listes avec prix (abonnements → total par mois) ---------- */
+var lSel = null, lPer = false; /* lPer = l'abonnement qu'on ajoute est annuel */
+function lCur(){ var L = data.listes, i; for (i = 0; i < L.length; i++) if (L[i].id === lSel) return L[i]; lSel = L.length ? L[0].id : null; return L[0] || null; }
+function lFindItem(l, id){ for (var i = 0; i < l.items.length; i++) if (l.items[i].id === id) return i; return -1; }
+function prixTxt(n){ var r = Math.round(n * 100) / 100, s = (r % 1 ? r.toFixed(2) : String(r)).replace('.', ','); return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €'; }
+function prixVal(v){ var n = parseFloat(String(v || '').replace(/\s/g, '').replace(',', '.').replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; }
+function renderListes(){
+  var L = data.listes, l = lCur(), i, it, h;
+  var right = '<button data-act="lnew">+ Liste</button>' + (l ? '<button data-act="lmod">Modifier</button>' : '');
+  var sub = l ? (l.prix ? l.items.length + ' abonnement' + (l.items.length > 1 ? 's' : '') : l.items.length + ' élément' + (l.items.length > 1 ? 's' : '')) : 'Crée ta première liste';
+  h = hdr('Listes', sub, right) + '<div class="content mat"><div class="glass mat-l">';
+  for (i = 0; i < L.length; i++)
+    h += '<button class="msel' + (l && L[i].id === l.id ? ' on' : '') + '" data-act="lsel" data-arg="' + esc(L[i].id) + '">' + esc(L[i].nom) + '</button>';
+  h += '</div><div class="glass mat-r">';
+  if (!l) h += '<div class="mhint">Touche « + Liste » pour commencer.</div>';
+  else {
+    if (l.prix){
+      var m = 0;
+      for (i = 0; i < l.items.length; i++) m += l.items[i].an ? l.items[i].p / 12 : l.items[i].p;
+      h += '<div class="ltot"><b class="num">' + prixTxt(m) + ' <span>/ mois</span></b><span class="num">soit ' + prixTxt(m * 12) + ' par an</span></div>';
+    }
+    if (!l.items.length) h += '<div class="mhint" style="padding:24px 10px">' + (l.prix ? 'Ajoute ton premier abonnement ci-dessous.' : 'Liste vide : écris en dessous.') + '</div>';
+    for (i = 0; i < l.items.length; i++){
+      it = l.items[i];
+      if (l.prix) h += '<div class="lrow"><button class="lit" data-act="litem" data-arg="' + esc(it.id) + '"><span class="ln">' + esc(it.t) + '</span><span class="lp num">' + prixTxt(it.p) + '<small> / ' + (it.an ? 'an' : 'mois') + '</small></span></button>' +
+        '<button class="xbtn" data-act="ldel" data-arg="' + esc(it.id) + '" aria-label="Retirer">✕</button></div>';
+      else h += '<div class="lrow"><button class="mchk' + (it.ok ? ' on' : '') + '" data-act="ltog" data-arg="' + esc(it.id) + '"><span class="tchk">' + (it.ok ? '✓' : '') + '</span>' + esc(it.t) + '</button>' +
+        '<button class="xbtn" data-act="ldel" data-arg="' + esc(it.id) + '" aria-label="Retirer">✕</button></div>';
+    }
+    h += l.prix ? '<div class="ladd"><input type="text" id="l-new" placeholder="Nouvel abonnement (ex. Netflix)" autocomplete="off" style="margin-right:0"></div>' +
+        '<div class="ladd" style="margin-top:10px"><input type="text" class="num" id="l-prix" inputmode="decimal" placeholder="Prix en €" autocomplete="off"><button class="lper" data-act="lper">/ ' + (lPer ? 'an' : 'mois') + '</button><button class="white" data-act="ladd">Ajouter</button></div>'
+      : '<div class="ladd"><input type="text" id="l-new" placeholder="Écrire…" autocomplete="off"><button class="white" data-act="ladd">Ajouter</button></div>';
+  }
+  h += '</div></div>';
+  var old = document.querySelector('#s-listes .mat-r'), sc = old ? old.scrollTop : 0;
+  $('s-listes').innerHTML = h;
+  var nr = document.querySelector('#s-listes .mat-r'); if (nr && old) nr.scrollTop = sc;
+}
+function lAdd(){
+  var l = lCur(), t = trimV('l-new'); if (!l) return;
+  if (!t){ $('l-new').focus(); return; }
+  var it = {id:uid(), t:t};
+  if (l.prix){ it.p = prixVal($('l-prix').value); it.an = lPer; if (!it.p){ $('l-prix').style.borderColor = '#A78BFA'; $('l-prix').focus(); return; } }
+  else it.ok = false;
+  l.items.push(it); lPer = false; save(); renderListes();
+  var nr = document.querySelector('#s-listes .mat-r'); if (nr) nr.scrollTop = 99999;
+  try { $('l-new').focus(); } catch(e){}
+}
+function lItemSheet(id){
+  var l = lCur(), k = l ? lFindItem(l, id) : -1; if (k < 0) return;
+  var it = l.items[k];
+  openModal({kind:'litem', id:id, an:!!it.an},
+    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Abonnement</div><button class="lnk b" data-act="litok">OK</button></div>' +
+    '<input type="text" id="li-t" value="' + esc(it.t) + '" style="width:100%">' +
+    '<div class="ladd" style="margin-top:18px"><input type="text" class="num" id="li-p" inputmode="decimal" value="' + esc(String(it.p).replace('.', ',')) + '"><button class="lper" id="li-per" data-act="liper">/ ' + (it.an ? 'an' : 'mois') + '</button></div>' +
+    '<button class="vio" data-act="ldel" data-arg="' + esc(id) + '" style="width:100%;margin-top:26px">Supprimer</button>');
+}
+function lListSheet(isNew){
+  var l = isNew ? null : lCur();
+  openModal({kind:'llist', isNew:isNew, prix:l ? !!l.prix : true},
+    '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">' + (isNew ? 'Nouvelle liste' : 'Modifier la liste') + '</div><button class="lnk b" data-act="llok">OK</button></div>' +
+    '<input type="text" id="ll-n" value="' + esc(l ? l.nom : '') + '" placeholder="Nom de la liste" autocomplete="off" style="width:100%">' +
+    (isNew ? '<div class="row" style="margin-top:18px"><button class="grow" id="ll-t0" data-act="lltype" data-arg="0">À cocher</button><button class="grow white" id="ll-t1" data-act="lltype" data-arg="1" style="margin-left:14px">Avec prix</button></div>'
+           : '<button class="vio" data-act="lldel" style="width:100%;margin-top:26px">Supprimer la liste</button>'));
+  if (isNew) try { $('ll-n').focus(); } catch(e){}
+}
 
 /* ---------- Devis ---------- */
 function stepper(label, value, act, arg){
@@ -2122,6 +2210,36 @@ function handle(act, arg){
       if (FE.prochaine) delete FE.prochaine[fid];
       closeModal(); facSchedule(); renderFactures(); return;
 
+    case 'lsel': lSel = arg; renderListes(); return;
+    case 'lper': lPer = !lPer; var lpb = document.querySelector('#s-listes .lper'); if (lpb) lpb.textContent = '/ ' + (lPer ? 'an' : 'mois'); return;
+    case 'ladd': lAdd(); return;
+    case 'ltog': var lt = lCur(), lk = lt ? lFindItem(lt, arg) : -1; if (lk < 0) return; lt.items[lk].ok = !lt.items[lk].ok; save(); renderListes(); return;
+    case 'litem': lItemSheet(arg); return;
+    case 'liper': if (!modal) return; modal.an = !modal.an; $('li-per').textContent = '/ ' + (modal.an ? 'an' : 'mois'); return;
+    case 'litok':
+      var li = lCur(), lj = li && modal ? lFindItem(li, modal.id) : -1; if (lj < 0) return;
+      var lnt = trimV('li-t'), lnp = prixVal($('li-p').value);
+      if (!lnt || !lnp) return;
+      li.items[lj].t = lnt; li.items[lj].p = lnp; li.items[lj].an = !!modal.an; save(); closeModal(); renderListes(); return;
+    case 'ldel':
+      var ld = lCur(), lx2 = ld ? lFindItem(ld, arg) : -1; if (lx2 < 0) return;
+      var lcopy = ld.items[lx2];
+      ld.items.splice(lx2, 1); save(); closeModal(); renderListes();
+      showToast('« ' + lcopy.t + ' » retiré', function(){ ld.items.splice(Math.min(lx2, ld.items.length), 0, lcopy); save(); if (current === 'listes') renderListes(); });
+      return;
+    case 'lnew': lListSheet(true); return;
+    case 'lmod': lListSheet(false); return;
+    case 'lltype': if (!modal) return; modal.prix = arg === '1'; $('ll-t0').className = 'grow' + (modal.prix ? '' : ' white'); $('ll-t1').className = 'grow' + (modal.prix ? ' white' : ''); return;
+    case 'llok':
+      var lnn = trimV('ll-n'); if (!lnn){ $('ll-n').style.borderColor = '#A78BFA'; return; }
+      if (modal.isNew){ var nl = {id:uid(), nom:lnn, prix:!!modal.prix, items:[]}; data.listes.push(nl); lSel = nl.id; }
+      else lCur().nom = lnn;
+      save(); closeModal(); renderListes(); return;
+    case 'lldel':
+      var lr = lCur(); if (!lr) return;
+      askConfirm('Supprimer la liste « ' + lr.nom + ' » et tout ce qu’elle contient ?', 'Supprimer', function(){
+        data.listes.splice(data.listes.indexOf(lr), 1); lSel = null; save(); closeModal(); renderListes(); });
+      return;
     case 'mopen': matOpen(arg); return;
     case 'mpris': data.matPris[arg] = !data.matPris[arg]; if (!data.matPris[arg]) delete data.matPris[arg]; save(); renderMateriel(); return;
     case 'mtog': data.matCheck[arg] = !data.matCheck[arg]; if (!data.matCheck[arg]) delete data.matCheck[arg]; save(); renderMateriel(); return;
@@ -2307,6 +2425,7 @@ document.addEventListener('mouseup', lpEnd);
 document.addEventListener('contextmenu', function(e){ if (closestAttr(e.target, 'data-lp')) e.preventDefault(); });
 document.addEventListener('keydown', markActivity);
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-ttxt' && modal && modal.kind === 'tadd'){ e.preventDefault(); handle('tasave', ''); } });
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && (e.target.id === 'l-new' || e.target.id === 'l-prix') && current === 'listes'){ e.preventDefault(); if (e.target.id === 'l-new' && lCur() && lCur().prix && !trimV('l-prix')) $('l-prix').focus(); else lAdd(); } });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
 /* factures : date d'envoi / de dernière relance choisies au calendrier */
@@ -2386,7 +2505,7 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 load();
 var reopen = null;
 try { reopen = window.localStorage.getItem('noamdash-reopen'); window.localStorage.removeItem('noamdash-reopen'); } catch(e){}
-go(['taches','reglages','factures','materiel','devis','planning'].indexOf(reopen) >= 0 ? reopen : 'home');
+go(['taches','reglages','factures','materiel','devis','planning','listes'].indexOf(reopen) >= 0 ? reopen : 'home');
 loadTasks(null);
 loadFactures();
 setInterval(tick, 500);
