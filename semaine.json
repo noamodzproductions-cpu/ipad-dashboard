@@ -1,6 +1,6 @@
 {
- "updated": "mercredi 18 nov. à 15h05",
- "trello": "mercredi 18 nov. à 15h05",
+ "updated": "mercredi 18 nov. à 19h57",
+ "trello": "mercredi 18 nov. à 19h57",
  "whatsapp": "mercredi 18 nov. à 15h05",
  "days": [
   {
@@ -11,7 +11,7 @@
      "id": "xuannam-appel-montage",
      "client": "Xuan-nam",
      "text": "15h30 · Xuan-nam : appel nouveau montage",
-     "done": false
+     "done": true
     },
     {
      "id": "curve-photos-toutes",
@@ -35,6 +35,42 @@
      "text": "Ensemble Kermes : faire la V1 the last race",
      "done": false,
      "prio": 3
+    },
+    {
+     "id": "citadium-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Pop up Citadium : faire la V1",
+     "done": false,
+     "prio": 3
+    },
+    {
+     "id": "laduree-halloween",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween (octobre) : V1 des vidéos",
+     "done": false,
+     "prio": 3,
+     "sous": [
+      {
+       "id": "laduree-halloween-v1-stopmotion",
+       "text": "Stop motion club",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-v1-macarons",
+       "text": "Duplicat macarons",
+       "done": false
+      },
+      {
+       "id": "laduree-halloween-v1-carte",
+       "text": "Carte mode Halloween",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-3",
+       "text": "Marie-Antoinette plan large",
+       "done": true
+      }
+     ]
     },
     {
      "id": "cmc-evasion",
@@ -118,40 +154,6 @@
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
      "done": false
-    },
-    {
-     "id": "citadium-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Pop up Citadium : faire la V1",
-     "done": false
-    },
-    {
-     "id": "laduree-halloween",
-     "client": "Ladurée",
-     "text": "Ladurée Halloween (octobre) : V1 des vidéos",
-     "done": false,
-     "sous": [
-      {
-       "id": "laduree-halloween-v1-stopmotion",
-       "text": "Stop motion club",
-       "done": true
-      },
-      {
-       "id": "laduree-halloween-v1-macarons",
-       "text": "Duplicat macarons",
-       "done": false
-      },
-      {
-       "id": "laduree-halloween-v1-carte",
-       "text": "Carte mode Halloween",
-       "done": true
-      },
-      {
-       "id": "laduree-halloween-3",
-       "text": "Marie-Antoinette plan large",
-       "done": true
-      }
-     ]
     }
    ]
   },
@@ -170,6 +172,12 @@
      "id": "mich-masterclass-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
+     "done": false
+    },
+    {
+     "id": "theia-v1",
+     "client": "Xuan-nam",
+     "text": "Cercle de Théia : faire la V1",
      "done": false
     }
    ]

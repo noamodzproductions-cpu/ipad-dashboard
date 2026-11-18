@@ -1,6 +1,6 @@
 {
  "lu_le": "2026-11-14",
- "trello_vu": "2026-11-18T15:05",
+ "trello_vu": "2026-11-18T19:57",
  "projets": [
   {
    "carte_id": "6aedf942b19fe58afdb7b249",
@@ -211,6 +211,20 @@
     {
      "nom": "vidéo",
      "etat": "V1 envoyée"
+    }
+   ]
+  },
+  {
+   "carte_id": "6afdb912e1c2ba205f3e22c5",
+   "projet": "Cercle de Théia",
+   "liste": "🎬 En production",
+   "tournage": "2026-11-17",
+   "deadline": "2026-11-24",
+   "modif": "2026-11-18T14:46:53.745Z",
+   "videos": [
+    {
+     "nom": "forum Femmes & Industrie",
+     "etat": "à faire"
     }
    ]
   }
