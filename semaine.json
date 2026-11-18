@@ -1,11 +1,11 @@
 {
- "updated": "mardi 17 nov. à 20h01",
- "trello": "mardi 17 nov. à 20h01",
+ "updated": "mercredi 18 nov. à 11h58",
+ "trello": "mercredi 18 nov. à 11h58",
  "whatsapp": "lundi 16 nov. à 12h55",
  "days": [
   {
-   "date": "2026-11-17",
-   "jour": "Mardi 17 novembre",
+   "date": "2026-11-18",
+   "jour": "Mercredi 18 novembre",
    "tasks": [
     {
      "id": "curve-photos-toutes",
@@ -29,13 +29,6 @@
      "text": "Ensemble Kermes : faire la V1 the last race",
      "done": false,
      "prio": 3
-    },
-    {
-     "id": "theia-v1",
-     "client": "Théia",
-     "text": "Le Cercle de Théia : faire la V1",
-     "done": false,
-     "prio": 2
     },
     {
      "id": "cmc-evasion",
@@ -117,13 +110,7 @@
      "client": "Ensemble",
      "text": "Ensemble Pop up Citadium : faire la V1",
      "done": false
-    }
-   ]
-  },
-  {
-   "date": "2026-11-18",
-   "jour": "Mercredi 18 novembre",
-   "tasks": [
+    },
     {
      "id": "laduree-halloween",
      "client": "Ladurée",
@@ -225,6 +212,11 @@
      "notes": "Décalé du 17"
     }
    ]
+  },
+  {
+   "date": "2026-11-25",
+   "jour": "Mercredi 25 novembre",
+   "tasks": []
   },
   {
    "date": "2026-12-01",
