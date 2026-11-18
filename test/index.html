@@ -725,7 +725,8 @@ function tick(){
   if ((current === 'taches' || current === 'planning') && Date.now() - tasksLoadedAt > (ghToken() ? 60000 : 300000)) loadTasks(function(){ if (current === 'taches') renderTaches(); if (current === 'planning') renderPlanning(); });
   if (Date.now() - lastActivity > IDLE_MS){
     lastActivity = Date.now();
-    if (current !== 'home' || modalOpen() || confirmOpen()){
+    /* Projets / Planning : on reste dessus (pas de retour auto à l'accueil) */
+    if (current !== 'taches' && current !== 'planning' && (current !== 'home' || modalOpen() || confirmOpen())){
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       closeModal(); closeConfirm();
       homePg = 0;
@@ -1688,6 +1689,11 @@ function splitTask(tk){
 function openTaskDetail(id){
   var tk = findTask(id); if (!tk) return;
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || ''), l = subsOf(tk), sp = splitTask(tk), i, h;
+  /* modifs faites rangées en bas ; juste après un appui, l'ordre reste figé un instant (le double-appui vise la bonne ligne) */
+  var fz = window.__subFrz && window.__subFrz.id === id && window.__subFrz.ord, rk = {};
+  for (i = 0; i < l.length; i++) rk[l[i].id] = fz ? (fz.indexOf(l[i].id) < 0 ? 1e4 + i : fz.indexOf(l[i].id)) : (l[i].done ? 1e4 : 0) + i;
+  l.sort(function(x, y){ return rk[x.id] - rk[y.id]; });
+  window.__subLast = {id:id, ord:l.map(function(x){ return x.id; })};
   h = tagsHtml(tk, urg && !on) + (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
     '<div class="tdet-t" data-act="tren" data-arg="' + esc(id) + '">' + esc(cap(sp.act)) + '</div>' +
     (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
@@ -2085,10 +2091,10 @@ function handle(act, arg){
     case 'tsub':
       /* double-appui sur une modif = la corriger sur place (le 1er appui est annulé) */
       if (window.__sub && window.__sub.a === arg && Date.now() - window.__sub.t < 380){
-        var prev = window.__sub; window.__sub = null;
+        var prev = window.__sub; window.__sub = null; clearTimeout(window.__subTm);
         a = arg.split('|'); var tsx = tSubOf(a[0]);
         if (prev.had) tsx.chk[a[1]] = prev.was; else delete tsx.chk[a[1]];
-        save(); openTaskDetail(a[0]);
+        save(); openTaskDetail(a[0]); window.__subFrz = null;
         var bt = document.querySelector('#modal [data-act="tsub"][data-arg="' + arg + '"]'); if (!bt) return;
         var row = bt.parentNode, cur = null, lst = subsOf(findTask(a[0]) || {id:a[0]});
         for (i = 0; i < lst.length; i++) if (lst[i].id === a[1]) cur = lst[i];
@@ -2103,7 +2109,10 @@ function handle(act, arg){
       var sd = null; for (i = 0; i < stc.length; i++) if (stc[i].id === a[1]) sd = stc[i];
       window.__sub = {a:arg, t:Date.now(), had:ts.chk.hasOwnProperty(a[1]), was:ts.chk[a[1]]};
       if (sd){ ts.chk[a[1]] = !sd.done; save(); }
+      window.__subFrz = {id:a[0], ord:window.__subLast && window.__subLast.id === a[0] ? window.__subLast.ord : null};
       openTaskDetail(a[0]); renderTaches();
+      clearTimeout(window.__subTm);
+      window.__subTm = setTimeout(function(){ window.__subFrz = null; if (modal && modal.kind === 'tdet' && modal.id === a[0] && !window.__inlFin) openTaskDetail(a[0]); }, 420);
       /* toutes les modifs cochées = tâche validée */
       var tka = findTask(a[0]), all = subsOf(tka || {id:a[0]}), okAll = all.length > 0;
       for (i = 0; i < all.length; i++) if (!all[i].done) okAll = false;
