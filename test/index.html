@@ -155,6 +155,17 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .mchk.on{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5)}
 .mchk.on .tchk{background:#4ade80;border-color:#4ade80}
 .mrow2{margin-bottom:12px}
+/* fiche : modifs = glisser à gauche (Modifier / Supprimer), appui long = déplacer */
+#modal .scard{position:relative;margin-bottom:12px;border:0;border-radius:20px;overflow:hidden;background:#000}
+#modal .scard .fc-in{padding:0;background:#000;border-radius:20px}
+#modal .scard .mchk{width:100%;background:#1c1c1e}
+#modal .scard .mchk.on{background:#183824}
+#modal .scard .fc-act{width:300px;background:#000}
+#modal .scard.open .fc-in{-webkit-transform:translate3d(-300px,0,0);transform:translate3d(-300px,0,0)}
+#modal .scard .fc-act button{height:70px;font-size:22px;padding:0 20px}
+#modal .scard.drag{z-index:5;opacity:.85}
+#modal .scard.drag .fc-in{transition:none}
+#modal .scard.mv{transition:transform .18s}
 .mat{display:flex;overflow:hidden}
 .mat-l{width:380px;flex-shrink:0;margin-right:18px;padding:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .mat-r{flex:1;min-width:0;padding:6px 18px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -1672,7 +1683,10 @@ function subsOf(tk){
   var out = [], s = data.tSub[tk.id] || {add:[], chk:{}}, i, x, l = tk.sous instanceof Array ? tk.sous : [], tx = s.txt || {};
   for (i = 0; i < l.length; i++){ x = l[i]; out.push({id:x.id || ('s' + i), text:tx[x.id || ('s' + i)] || x.text || x.t || '', done:(s.chk || {}).hasOwnProperty(x.id || ('s' + i)) ? !!s.chk[x.id || ('s' + i)] : !!x.done, mine:false}); }
   for (i = 0; i < (s.add || []).length; i++){ x = s.add[i]; out.push({id:x.id, text:x.text, done:!!(s.chk || {})[x.id], mine:true}); }
-  return out;
+  var del = s.del || {}, ord = s.ord || [], res = [];
+  for (i = 0; i < out.length; i++) if (!del[out[i].id]){ out[i].k = ord.indexOf(out[i].id) < 0 ? 1e3 + i : ord.indexOf(out[i].id); res.push(out[i]); }
+  res.sort(function(a, b){ return a.k - b.k; });
+  return res;
 }
 function subCount(tk){
   var l = subsOf(tk), n = 0; if (!l.length) return '';
@@ -1699,13 +1713,67 @@ function openTaskDetail(id){
     (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
   for (i = 0; i < l.length; i++){
     var s = l[i], arg = esc(id + '|' + s.id);
-    h += '<div class="row mrow2"><button class="mchk' + (s.done ? ' on' : '') + '" data-act="tsub" data-arg="' + arg + '"><span class="tchk">' + (s.done ? '✓' : '') + '</span>' + esc(s.text) + '</button>' +
-      (s.mine ? '<button class="xbtn" data-act="tsubdel" data-arg="' + arg + '">✕</button>' : '') + '</div>';
+    h += '<div class="fcard scard" data-fid="s" data-sid="' + esc(s.id) + '"><div class="fc-in"><button class="mchk' + (s.done ? ' on' : '') + '" data-act="tsub" data-arg="' + arg + '"><span class="tchk">' + (s.done ? '✓' : '') + '</span>' + esc(s.text) + '</button></div>' +
+      '<div class="fc-act"><button class="white" data-act="tsubed" data-arg="' + arg + '">Modifier</button><button class="vio" data-act="tsubdel" data-arg="' + arg + '" style="margin-left:12px">Supprimer</button></div></div>';
   }
   h += '<div class="row mrow2"><input type="text" id="m-sub" placeholder="+ Ajouter une modif" style="flex:1"><button class="white" data-act="tsubadd" data-arg="' + esc(id) + '" style="margin-left:12px">Ajouter</button></div>' +
     '<div class="tdet-ok"><button class="white" data-act="mfin2">OK</button></div>';
   openModal({kind:'tdet', id:id}, h);
 }
+/* corriger une modif sur place (toutes, même celles de la routine) */
+function subEdit(arg){
+  var a = arg.split('|'), tsx = tSubOf(a[0]), i, cur = null, lst = subsOf(findTask(a[0]) || {id:a[0]});
+  var bt = document.querySelector('#modal [data-act="tsub"][data-arg="' + arg + '"]'); if (!bt) return;
+  for (i = 0; i < lst.length; i++) if (lst[i].id === a[1]) cur = lst[i];
+  if (!cur) return;
+  inlineEdit(bt.parentNode, cur.text, function(v){
+    if (v){ if (cur.mine){ for (var q = 0; q < tsx.add.length; q++) if (tsx.add[q].id === a[1]) tsx.add[q].text = v; } else { if (!tsx.txt) tsx.txt = {}; tsx.txt[a[1]] = v; } save(); }
+    openTaskDetail(a[0]); renderTaches();
+  });
+}
+/* fiche : appui long (420 ms) sur une modif = elle suit le doigt ; lâcher = nouvel ordre (data.tSub[id].ord) */
+var sd = null;
+function sdStart(t, x, y){
+  sd = null; if (!modal || modal.kind !== 'tdet') return;
+  var c = t; while (c && c !== document && !(c.className && /\bscard\b/.test(c.className))) c = c.parentNode;
+  if (!c || c === document || /\bopen\b/.test(c.className)) return;
+  sd = {el:c, x:x, y:y, on:false};
+  sd.tm = setTimeout(function(){
+    if (!sd) return; sd.on = true; window.__sub = null; c.classList.add('drag');
+    var rows = document.querySelectorAll('#modal .scard'); sd.rows = []; sd.mids = [];
+    for (var i = 0; i < rows.length; i++){ var r = rows[i].getBoundingClientRect(); sd.rows.push(rows[i]); sd.mids.push(r.top + r.height / 2); if (rows[i] === c){ sd.i = i; sd.h = r.height + 12; } }
+    sd.to = sd.i;
+  }, 420);
+}
+function sdMove(x, y, e){
+  if (!sd) return;
+  if (!sd.on){ if (Math.abs(x - sd.x) > 12 || Math.abs(y - sd.y) > 12){ clearTimeout(sd.tm); sd = null; } return; }
+  if (e && e.cancelable) e.preventDefault();
+  var dy = y - sd.y, i, to = sd.i, my = sd.mids[sd.i] + dy;
+  sd.el.style.webkitTransform = sd.el.style.transform = 'translate3d(0,' + dy + 'px,0)';
+  for (i = 0; i < sd.mids.length; i++){ if (i < sd.i && my < sd.mids[i] && to === sd.i) to = i; if (i > sd.i && my > sd.mids[i]) to = i; }
+  sd.to = to;
+  for (i = 0; i < sd.rows.length; i++){
+    if (i === sd.i) continue;
+    var off = (i >= to && i < sd.i) ? sd.h : (i <= to && i > sd.i) ? -sd.h : 0;
+    sd.rows[i].classList.add('mv'); sd.rows[i].style.webkitTransform = sd.rows[i].style.transform = off ? 'translate3d(0,' + off + 'px,0)' : '';
+  }
+}
+function sdEnd(){
+  if (!sd) return; var d = sd; sd = null; clearTimeout(d.tm); if (!d.on) return;
+  lpSwallowUntil = Date.now() + 500;
+  var ids = [], i; for (i = 0; i < d.rows.length; i++) ids.push(d.rows[i].getAttribute('data-sid'));
+  var m = ids.splice(d.i, 1)[0]; ids.splice(d.to, 0, m);
+  var tid = modal && modal.id; if (!tid) return;
+  tSubOf(tid).ord = ids; save(); window.__subFrz = null; openTaskDetail(tid); renderTaches();
+}
+document.addEventListener('touchstart', function(e){ var t = e.touches[0]; sdStart(e.target, t.clientX, t.clientY); }, {passive:true});
+document.addEventListener('touchmove', function(e){ var t = e.touches[0]; sdMove(t.clientX, t.clientY, e); }, {passive:false});
+document.addEventListener('touchend', sdEnd, {passive:true});
+document.addEventListener('touchcancel', sdEnd, {passive:true});
+document.addEventListener('mousedown', function(e){ sdStart(e.target, e.clientX, e.clientY); });
+document.addEventListener('mousemove', function(e){ if (e.buttons) sdMove(e.clientX, e.clientY, e); });
+document.addEventListener('mouseup', sdEnd);
 /* édition sur place : l'élément devient un champ texte ; Entrée ou sortie du champ = enregistrer */
 function inlineEdit(el, val, onSave){
   el.innerHTML = '<input type="text" class="inl" value="' + esc(val) + '">';
@@ -2089,21 +2157,16 @@ function handle(act, arg){
       });
       return;
     case 'tsub':
+      /* ligne ouverte (glissée) : un appui la referme seulement */
+      var opn = document.querySelectorAll('#modal .scard.open');
+      if (opn.length){ for (i = 0; i < opn.length; i++) opn[i].classList.remove('open'); return; }
       /* double-appui sur une modif = la corriger sur place (le 1er appui est annulé) */
       if (window.__sub && window.__sub.a === arg && Date.now() - window.__sub.t < 380){
         var prev = window.__sub; window.__sub = null; clearTimeout(window.__subTm);
         a = arg.split('|'); var tsx = tSubOf(a[0]);
         if (prev.had) tsx.chk[a[1]] = prev.was; else delete tsx.chk[a[1]];
         save(); openTaskDetail(a[0]); window.__subFrz = null;
-        var bt = document.querySelector('#modal [data-act="tsub"][data-arg="' + arg + '"]'); if (!bt) return;
-        var row = bt.parentNode, cur = null, lst = subsOf(findTask(a[0]) || {id:a[0]});
-        for (i = 0; i < lst.length; i++) if (lst[i].id === a[1]) cur = lst[i];
-        if (!cur) return;
-        inlineEdit(row, cur.text, function(v){
-          if (v){ if (cur.mine){ for (var q = 0; q < tsx.add.length; q++) if (tsx.add[q].id === a[1]) tsx.add[q].text = v; } else { if (!tsx.txt) tsx.txt = {}; tsx.txt[a[1]] = v; } save(); }
-          openTaskDetail(a[0]); renderTaches();
-        });
-        return;
+        subEdit(arg); return;
       }
       a = arg.split('|'); var ts = tSubOf(a[0]); var stc = subsOf(findTask(a[0]) || {id:a[0]});
       var sd = null; for (i = 0; i < stc.length; i++) if (stc[i].id === a[1]) sd = stc[i];
@@ -2121,10 +2184,13 @@ function handle(act, arg){
     case 'tsubadd':
       var sv = trimV('m-sub'); if (!sv) return;
       tSubOf(arg).add.push({id:'n' + uid(), text:sv}); save(); openTaskDetail(arg); renderTaches(); return;
+    case 'tsubed': openTaskDetail(arg.split('|')[0]); subEdit(arg); return;
     case 'tsubdel':
-      a = arg.split('|'); var tsd = tSubOf(a[0]);
-      for (i = tsd.add.length - 1; i >= 0; i--) if (tsd.add[i].id === a[1]) tsd.add.splice(i, 1);
-      delete tsd.chk[a[1]]; save(); openTaskDetail(a[0]); renderTaches(); return;
+      /* toutes les modifs se suppriment (même celles écrites par la routine) ; bandeau Annuler */
+      a = arg.split('|'); var tsd = tSubOf(a[0]), tdel = a[1];
+      if (!tsd.del) tsd.del = {}; tsd.del[tdel] = 1; save(); openTaskDetail(a[0]); renderTaches();
+      showToast('Modif supprimée', function(){ delete tSubOf(a[0]).del[tdel]; save(); if (modal && modal.kind === 'tdet' && modal.id === a[0]) openTaskDetail(a[0]); renderTaches(); });
+      return;
     case 'tdetdone': closeModal(); handle('tdone', arg); return;
     case 'tdetedit': closeModal(); openTaskEdit(arg); return;
     case 'tesave':
@@ -2449,6 +2515,13 @@ document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.targ
 var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
 function swEnd(x, y){
+  if (sw0 && modal && modal.kind === 'tdet' && sw0.fid && Date.now() > lpSwallowUntil){
+    var mdx = x - sw0.x, mdy = y - sw0.y, mf = sw0.fid; sw0 = null;
+    if (Math.abs(mdx) < 60 || Math.abs(mdx) < Math.abs(mdy) * 1.5) return;
+    var mo = document.querySelectorAll('#modal .scard.open');
+    for (var mi = 0; mi < mo.length; mi++) if (mo[mi] !== mf) mo[mi].classList.remove('open');
+    mf.classList.toggle('open', mdx < 0); lpSwallowUntil = Date.now() + 400; return;
+  }
   if (!sw0 || modalOpen() || confirmOpen()){ sw0 = null; return; }
   var dx = x - sw0.x, dy = y - sw0.y, f = sw0.fid; sw0 = null;
   if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
