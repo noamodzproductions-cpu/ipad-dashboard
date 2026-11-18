@@ -1,12 +1,18 @@
 {
- "updated": "mercredi 18 nov. à 12h56",
- "trello": "mercredi 18 nov. à 12h56",
- "whatsapp": "lundi 16 nov. à 12h55",
+ "updated": "mercredi 18 nov. à 15h05",
+ "trello": "mercredi 18 nov. à 15h05",
+ "whatsapp": "mercredi 18 nov. à 15h05",
  "days": [
   {
    "date": "2026-11-18",
    "jour": "Mercredi 18 novembre",
    "tasks": [
+    {
+     "id": "xuannam-appel-montage",
+     "client": "Xuan-nam",
+     "text": "15h30 · Xuan-nam : appel nouveau montage",
+     "done": false
+    },
     {
      "id": "curve-photos-toutes",
      "client": "Kurv Studio",
@@ -62,6 +68,14 @@
      "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
      "done": false,
      "notes": "Vidéos du 13/10 introuvables",
+     "prio": 1
+    },
+    {
+     "id": "mich-mail-damien",
+     "client": "Michalak",
+     "text": "Michalak : répondre au mail de Damien",
+     "done": false,
+     "notes": "Questions + inspis, avant 10h demain",
      "prio": 1
     },
     {
@@ -149,7 +163,8 @@
      "id": "mich-masterclass-tournage",
      "client": "Michalak",
      "text": "Michalak : tournage masterclass",
-     "done": false
+     "done": false,
+     "notes": "10h, Damien/Voile/Nuage + packshots Noël"
     },
     {
      "id": "mich-masterclass-tournage-ssd",
@@ -217,6 +232,38 @@
    "date": "2026-11-25",
    "jour": "Mercredi 25 novembre",
    "tasks": []
+  },
+  {
+   "date": "2026-11-26",
+   "jour": "Jeudi 26 novembre",
+   "tasks": [
+    {
+     "id": "mich-noel-tournage",
+     "client": "Michalak",
+     "text": "Michalak : tournage collection de Noël",
+     "done": false,
+     "notes": "Bûches, pâtisserie, plaquette chocolat"
+    },
+    {
+     "id": "mich-noel-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false
+    }
+   ]
+  },
+  {
+   "date": "2026-11-27",
+   "jour": "Vendredi 27 novembre",
+   "tasks": [
+    {
+     "id": "mich-noel-v1",
+     "client": "Michalak",
+     "text": "Michalak : faire la V1 collection de Noël",
+     "done": false,
+     "notes": "Deadline demandée dim. 29"
+    }
+   ]
   },
   {
    "date": "2026-12-01",
