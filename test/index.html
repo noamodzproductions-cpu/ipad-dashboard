@@ -121,6 +121,25 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fi-l{font-size:24px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .fi-v{font-weight:600;text-align:right}
 .frg{align-items:center;margin-bottom:16px}
+/* fenêtre Réglages d'une facture : lignes compactes, libellé à gauche, réglage à droite */
+.rgl-h{display:flex;align-items:baseline;margin:0 0 10px}
+.rgl-h b{flex:1;font-size:32px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rgl-h span{font-size:26px;color:rgba(255,255,255,.55);margin-left:16px}
+.rgl{display:flex;align-items:center;min-height:90px;border-bottom:1px solid rgba(255,255,255,.08)}
+.rgl-l{flex:1;font-size:26px;font-weight:600}
+.rgl-l span{display:block;font-size:19px;font-weight:400;color:rgba(255,255,255,.5);margin-top:3px}
+.rgl .stp-l{display:none}
+.rgl .sb{width:70px;height:70px;font-size:38px}
+.rgl .sv{min-width:96px;font-size:30px}
+.rgd{width:210px;font-size:22px;height:70px}
+.rgl.small{min-height:80px;border-bottom:0}
+.rgl.small .rgl-l{font-size:22px;color:rgba(255,255,255,.75)}
+.rgl.small .sv{min-width:86px;font-size:22px}
+.rgl.small .rgd{width:215px;margin-right:10px}
+.rgl-add{background:none;border:0;padding:0;font-size:21px;font-weight:600;color:rgba(255,255,255,.5)}
+.rgl-x{width:70px;padding:0;margin-left:8px;background:none;border:0;color:rgba(255,255,255,.5);font-size:24px}
+.rgl-next{font-size:22px;color:rgba(255,255,255,.6);margin:14px 0 18px}
+.rgl-next b{color:#fff;margin-left:8px}
 .frg-v{font-size:24px;font-weight:600;margin-top:4px}
 .fc-act{position:absolute;z-index:0;top:0;right:0;bottom:0;width:230px;display:flex;align-items:center;justify-content:center;background:#2a2a2e}
 .fc-act button{height:76px;font-size:21px;padding:0 16px;white-space:nowrap}
@@ -665,6 +684,7 @@ function normalize(d){
   if (!d.facEtat.delais) d.facEtat.delais = {};
   if (!d.facEtat.prochaine) d.facEtat.prochaine = {};
   if (!d.facEtat.envoi) d.facEtat.envoi = {};
+  if (!d.facEtat.promis) d.facEtat.promis = {};
   if (!(d.listes instanceof Array)) d.listes = [{id:'abos', nom:'Abonnements', prix:true, items:[]}, {id:'notes', nom:'Notes', prix:false, items:[]}];
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
@@ -856,7 +876,7 @@ function facPull(){
     if (!ok || !j || !j.content || data.facDirty) return;
     try {
       var e = JSON.parse(b64dec(j.content));
-      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}, prochaine:e.prochaine || {}, envoi:e.envoi || {}};
+      data.facEtat = {relances:e.relances || {}, payes:e.payes || {}, encaisses:e.encaisses || {}, delais:e.delais || {}, prochaine:e.prochaine || {}, envoi:e.envoi || {}, promis:e.promis || {}};
       facPurge(); save(); renderFactures();
     } catch(er){}
   });
@@ -921,6 +941,7 @@ function facRelance(id){
   if (!E.relances[id]) E.relances[id] = [];
   E.relances[id].push(Date.now());
   if (E.prochaine) delete E.prochaine[id]; /* après une relance, le rythme normal reprend */
+  if (E.promis) delete E.promis[id];
   facSchedule(); renderFactures();
   showToast(r.projet + ' · relancé', function(){ facUnrelance(id); });
 }
@@ -974,7 +995,7 @@ function renderFactures(){
     var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · envoyée le ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : '');
+    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · envoyée le ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.promis || {})[r.id] ? ' · promis le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime() - 86400000) : ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : ''));
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
     var bad = !r.paye && r.days >= 30;
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
@@ -1015,26 +1036,33 @@ function facRelList(id, last, nb, envAgo){
 function fnbSync(){ if (!modal) return; if (modal.ago === null) modal.nb = 0; else if (!modal.nb) modal.nb = 1; }
 function facDelai(id, st){
   var r = facRow(id); if (!r) return;
-  var E = data.facEtat, rels = E.relances[id] || [], today = dayStart(new Date());
+  var E = data.facEtat, rels = E.relances[id] || [], today = dayStart(new Date()), pm = (E.promis || {})[id];
   if (!st){
     var last = rels.length ? num(rels[rels.length - 1]) : 0;
     st = {kind:'fdelai', id:id, env:Math.max(0, Math.round((today - dayStart(new Date(r.entree))) / 86400000)), chEnv:false,
-      ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false, nb:rels.length};
+      ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false, nb:rels.length,
+      pro:pm && parseIso(pm.d) ? dayStart(parseIso(pm.d)) : null, proW:pm ? Math.max(0, Math.round(num(pm.w))) : 2};
   }
   var envD = today - st.env * 86400000, base = st.ago === null ? envD : Math.max(envD, today - st.ago * 86400000);
   var nx = new Date(base); nx.setDate(nx.getDate() + st.every);
+  /* paiement promis : relance le lendemain du jour promis */
+  var payD = null;
+  if (st.pro !== null){ payD = new Date(st.pro); payD.setDate(payD.getDate() + st.proW * 7); nx = new Date(payD); nx.setDate(nx.getDate() + 1); }
   var left = Math.round((dayStart(nx) - today) / 86400000);
-  function dt(ms){ return cap(JOURS[new Date(ms).getDay()]) + ' ' + dCourt(ms); }
-  openModal(st, '<div class="mtitle">' + esc(r.projet) + '</div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Facture envoyée</div><div class="frg-v">' + cap(agoTxt(st.env)) + '</div></div>' +
-      '<input class="dinput" type="date" id="f-env" max="' + isoDate(new Date()) + '" value="' + isoDate(new Date(envD)) + '"></div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Dernière relance</div><div class="frg-v">' + (st.ago === null ? 'Jamais' : cap(agoTxt(st.ago))) + '</div></div>' +
-      (st.ago === null ? '' : '<button data-act="flaset" data-arg="none" style="margin-right:12px">Jamais</button>') +
-      '<input class="dinput" type="date" id="f-rel" max="' + isoDate(new Date()) + '" value="' + (st.ago === null ? '' : isoDate(new Date(today - st.ago * 86400000))) + '"></div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Nombre de relances</div><div class="frg-v">' + (st.nb ? 'Relancé ' + st.nb + '×' : 'Jamais relancé') + '</div></div>' + stepper('', st.nb + '×', 'fnb', 'x') + '</div>' +
-    '<div class="row frg"><div class="grow"><div class="dh">Relancer tous les</div><div class="frg-v">' + st.every + ' jours</div></div>' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
-    '<div class="mprev" style="font-size:28px;margin:16px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
-    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>');
+  function dt(ms){ return cap(JOURS[new Date(ms).getDay()]).slice(0, 3) + '. ' + dCourt(ms); }
+  function row(lab, sub, ctl, cls){ return '<div class="rgl' + (cls ? ' ' + cls : '') + '"><div class="rgl-l">' + lab + (sub ? '<span>' + sub + '</span>' : '') + '</div>' + ctl + '</div>'; }
+  function date(idx, ms, max){ return '<input class="dinput rgd" type="date" id="' + idx + '"' + (max ? ' max="' + isoDate(new Date()) + '"' : '') + ' value="' + (ms === null ? '' : isoDate(new Date(ms))) + '">'; }
+  var h = '<div class="rgl-h"><b>' + esc(r.projet) + '</b><span class="num">' + eur(r.reste) + '</span></div>' +
+    row('Envoyée', agoTxt(st.env), date('f-env', envD, true)) +
+    row('Relances', st.nb ? '' : 'jamais', stepper('', st.nb + '×', 'fnb', 'x')) +
+    (st.nb ? row('Dernière', agoTxt(st.ago), date('f-rel', today - st.ago * 86400000, true)) : '') +
+    row('Rythme', 'tous les…', stepper('', st.every + ' j', 'fev', 'x'));
+  if (st.pro === null) h += '<div class="rgl small"><button class="rgl-add" data-act="fpro" data-arg="on">+ Paiement promis</button></div>';
+  else h += row('Promis le', 'payer ' + (st.proW ? 'dans ' + st.proW + ' sem.' : 'ce jour-là') + ' → ' + dt(payD.getTime()), date('f-pro', st.pro, false) + stepper('', st.proW ? st.proW + ' sem' : '—', 'fprow', 'x') +
+    '<button class="rgl-x" data-act="fpro" data-arg="off" aria-label="Enlever">✕</button>', 'small');
+  h += '<div class="rgl-next">Prochaine relance <b>' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' · dans ' + left + ' j') + '</b></div>' +
+    '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>';
+  openModal(st, h);
 }
 
 /* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
@@ -2331,6 +2359,8 @@ function handle(act, arg){
       return;
     case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; fnbSync(); facDelai(modal.id, modal); } return;
     /* nombre de relances déjà faites : 0 = jamais ; passer de 0 à 1 = relancé aujourd'hui */
+    case 'fpro': if (modal && modal.kind === 'fdelai'){ modal.pro = arg === 'on' ? dayStart(new Date()) : null; modal.proCh = true; facDelai(modal.id, modal); } return;
+    case 'fprow': if (modal && modal.kind === 'fdelai'){ modal.proW = Math.max(0, Math.min(12, modal.proW + (+arg.split(':')[1]))); modal.proCh = true; facDelai(modal.id, modal); } return;
     case 'fnb':
       if (modal && modal.kind === 'fdelai'){
         modal.nb = Math.max(0, Math.min(20, modal.nb + (+arg.split(':')[1])));
@@ -2357,7 +2387,12 @@ function handle(act, arg){
         if (fr && dayStart(new Date(ets)) === dayStart(new Date(fr.ent))) delete FE.envoi[fid]; else FE.envoi[fid] = ets;
       }
       if (modal.every === RELANCE_J) delete FE.delais[fid]; else FE.delais[fid] = modal.every;
-      if (FE.prochaine) delete FE.prochaine[fid];
+      if (!FE.promis) FE.promis = {};
+      if (!FE.prochaine) FE.prochaine = {};
+      if (modal.pro !== null){
+        var pd = new Date(modal.pro); pd.setDate(pd.getDate() + modal.proW * 7 + 1);
+        FE.promis[fid] = {d:isoDate(new Date(modal.pro)), w:modal.proW}; FE.prochaine[fid] = isoDate(pd);
+      } else { delete FE.promis[fid]; delete FE.prochaine[fid]; }
       closeModal(); facSchedule(); renderFactures(); return;
 
     case 'lsel': lSel = arg; renderListes(); return;
@@ -2582,8 +2617,9 @@ document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.targ
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
 /* factures : date d'envoi / de dernière relance choisies au calendrier */
 document.addEventListener('change', function(e){
-  var el = e.target; if (!el || (el.id !== 'f-env' && el.id !== 'f-rel') || !modal || modal.kind !== 'fdelai') return;
+  var el = e.target; if (!el || (el.id !== 'f-env' && el.id !== 'f-rel' && el.id !== 'f-pro') || !modal || modal.kind !== 'fdelai') return;
   var d = parseIso(el.value), n = d ? Math.max(0, Math.round((dayStart(new Date()) - dayStart(d)) / 86400000)) : null;
+  if (el.id === 'f-pro'){ if (d){ modal.pro = dayStart(d); modal.proCh = true; facDelai(modal.id, modal); } return; }
   if (el.id === 'f-env'){ if (n === null) return; modal.env = n; modal.chEnv = true; }
   else { modal.ago = n; modal.changed = true; fnbSync(); }
   facDelai(modal.id, modal);
