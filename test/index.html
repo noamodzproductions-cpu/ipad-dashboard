@@ -24,6 +24,7 @@ button.vio{color:#cbb8ff}
 [data-act]{cursor:pointer}
 input,textarea{font-family:inherit;font-size:28px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.24);border-radius:16px;height:70px;padding:0 16px;-webkit-appearance:none;outline:none}
 input:focus,textarea:focus{border-color:#fff}
+select{font-family:inherit;font-size:24px;font-weight:600;color:#fff;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.24);border-radius:16px;height:70px;padding:0 16px;-webkit-appearance:none;outline:none}
 input::-webkit-input-placeholder{color:rgba(255,255,255,.35)}
 textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font-family:Menlo,monospace}
 .hidden{display:none !important}
@@ -1793,12 +1794,12 @@ function metaRow(tk){
     '<button class="tgb brand" data-act="tbrand" data-arg="' + id + '">' + (tk.client ? esc(tk.client) : '+ Marque') + '</button>';
   return h + '</div>';
 }
-function setMeta(id, part){
+function setMeta(id, part, noOpen){
   var e = tEd().meta, cur = (e[id] && e[id].v) || {}, k;
   for (k in part) if (part.hasOwnProperty(k)) cur[k] = part[k];
   e[id] = {v:cur, at:Date.now()};
   queueEdit({op:'meta', id:id, v:part});
-  refreshTasks(); openTaskDetail(id);
+  refreshTasks(); if (!noOpen) openTaskDetail(id);
 }
 /* fiche de tâche : simple, tout se modifie sur place, un seul bouton OK */
 function openTaskDetail(id){
@@ -1809,7 +1810,7 @@ function openTaskDetail(id){
   for (i = 0; i < l.length; i++) rk[l[i].id] = fz ? (fz.indexOf(l[i].id) < 0 ? 1e4 + i : fz.indexOf(l[i].id)) : (l[i].done ? 1e4 : 0) + i;
   l.sort(function(x, y){ return rk[x.id] - rk[y.id]; });
   window.__subLast = {id:id, ord:l.map(function(x){ return x.id; })};
-  h = metaRow(tk) + (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
+  h = (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
     '<div class="tdet-t" data-act="tren" data-arg="' + esc(id) + '">' + esc(cap(sp.act)) + '</div>' +
     (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
   for (i = 0; i < l.length; i++){
@@ -1892,7 +1893,21 @@ function openTaskEdit(id){
   openModal({kind:'tedit', id:id, text:base, base:base, day:day ? day.date : ''},
     '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">Modifier</div><button class="lnk b" data-act="tesave">OK</button></div>' +
     '<input type="text" id="m-ttxt" data-bind="text" value="' + esc(base) + '" style="width:100%">' +
-    (day ? '<div class="row" style="margin-top:22px;align-items:center"><div class="grow dh">Jour</div><input class="dinput" type="date" id="m-tday" min="' + isoDate(new Date()) + '" max="' + esc(last) + '" value="' + esc(day.date) + '"></div>' : ''));
+    (day ? '<div class="row" style="margin-top:22px;align-items:center"><div class="grow dh">Jour</div><input class="dinput" type="date" id="m-tday" min="' + isoDate(new Date()) + '" max="' + esc(last) + '" value="' + esc(day.date) + '"></div>' : '') +
+    tagSelects(tk));
+}
+/* réglages d'une tâche : étiquette et marque en listes déroulantes (comme la date) */
+function tagNow(tk){ var p = Math.round(num(tk.prio)); return p >= 1 && p <= 3 ? String(p) : (tk.rep && tk.rep < isoDate(new Date()) ? 'rep' : ''); }
+function tagSelects(tk){
+  var cur = tagNow(tk), L = knownClients(), i, o = [['', 'Aucune'], ['1', 'Urgent'], ['2', 'En retard'], ['3', 'Très en retard'], ['rep', 'Reporté']];
+  var h = '<div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Étiquette</div><select class="dinput" id="m-ttag">';
+  for (i = 0; i < o.length; i++) h += '<option value="' + o[i][0] + '"' + (o[i][0] === cur ? ' selected' : '') + '>' + o[i][1] + '</option>';
+  h += '</select></div><div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Marque</div><select class="dinput" id="m-tbrand"><option value="">Aucune</option>';
+  if (tk.client && L.indexOf(tk.client) < 0) L.push(tk.client);
+  for (i = 0; i < L.length; i++) h += '<option value="' + esc(L[i]) + '"' + (L[i] === tk.client ? ' selected' : '') + '>' + esc(L[i]) + '</option>';
+  h += '<option value="__new">Autre marque…</option></select></div>' +
+    '<input type="text" id="m-tbnew" placeholder="Nom de la marque" style="width:100%;margin-top:14px;display:none">';
+  return h;
 }
 
 function openTaskAdd(day){
@@ -2306,12 +2321,18 @@ function handle(act, arg){
       if (!modal) return;
       var tv = (modal.text || '').replace(/^\s+|\s+$/g, '').replace(URG_RE, '');
       if (!tv){ $('m-ttxt').style.borderColor = '#A78BFA'; return; }
-      var tid = modal.id, tb = modal.base, tdo = modal.day, tdn = $('m-tday') ? $('m-tday').value : tdo;
+      var tid = modal.id, tb = modal.base, tdo = modal.day, tdn = $('m-tday') ? $('m-tday').value : tdo, tkx = findTask(tid), tmeta = null;
+      if (tkx && $('m-ttag')){
+        var tgv = $('m-ttag').value, bsel = $('m-tbrand').value, bv2 = bsel === '__new' ? trimV('m-tbnew') : bsel;
+        if (tgv !== tagNow(tkx)){ tmeta = {prio:tgv === 'rep' || !tgv ? 0 : +tgv, rep:tgv === 'rep'}; }
+        if (!(bsel === '__new' && !bv2) && bv2 !== (tkx.client || '')){ tmeta = tmeta || {}; tmeta.client = bv2; }
+      }
       if (tdn && tdn !== tdo && !findDay(data.tasksCache, tdn)){ $('m-tday').style.borderColor = '#A78BFA'; showToast('Ce jour n’est pas dans le planning', null); return; }
       closeModal();
       if (tv !== tb){ tEd().ren[tid] = {v:tv, at:Date.now()}; queueEdit({op:'ren', id:tid, v:tv}); }
       if (tdn && tdn !== tdo){ tEd().mov[tid] = {v:tdn, at:Date.now()}; queueEdit({op:'mov', id:tid, v:tdn}); }
-      refreshTasks(); return;
+      if (tmeta) setMeta(tid, tmeta, true); else refreshTasks();
+      return;
     case 'tadd': closeSwiped(); openTaskAdd(arg); return;
     case 'tasave':
       if (!modal || modal.kind !== 'tadd') return;
@@ -2627,6 +2648,7 @@ document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.targ
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && (e.target.id === 'li-t' || e.target.id === 'li-p') && modal && modal.kind === 'litem'){ e.preventDefault(); if (e.target.id === 'li-t' && $('li-p') && !trimV('li-p')) $('li-p').focus(); else handle('litok', ''); } });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-music'){ e.preventDefault(); e.target.blur(); handle('musave', ''); } });
 document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-music') handle('musave', ''); });
+document.addEventListener('change', function(e){ if (e.target && e.target.id === 'm-tbrand' && $('m-tbnew')){ var nw = e.target.value === '__new'; $('m-tbnew').style.display = nw ? 'block' : 'none'; if (nw) try { $('m-tbnew').focus(); } catch(er){} } });
 /* factures : date d'envoi / de dernière relance choisies au calendrier */
 document.addEventListener('change', function(e){
   var el = e.target; if (!el || (el.id !== 'f-env' && el.id !== 'f-rel' && el.id !== 'f-pro') || !modal || modal.kind !== 'fdelai') return;
