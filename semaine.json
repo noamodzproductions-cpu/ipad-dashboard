@@ -8,19 +8,6 @@
    "jour": "Jeudi 19 novembre",
    "tasks": [
     {
-     "id": "mich-masterclass-tournage",
-     "client": "Michalak",
-     "text": "Michalak : tournage masterclass",
-     "done": true,
-     "notes": "10h, Damien/Voile/Nuage + packshots Noël"
-    },
-    {
-     "id": "mich-masterclass-tournage-ssd",
-     "client": "Michalak",
-     "text": "Michalak : rushs + photos → SSD",
-     "done": false
-    },
-    {
      "id": "cmc-beaute-v2-miye-kj",
      "client": "Marie Claire",
      "text": "Marie Claire Beauté : V2 Miye + KJ Locks",
@@ -71,6 +58,21 @@
    "date": "2026-11-20",
    "jour": "Vendredi 20 novembre",
    "tasks": [
+    {
+     "id": "mich-masterclass-tournage",
+     "client": "Michalak",
+     "text": "Michalak : tournage masterclass",
+     "done": true,
+     "notes": "10h, Damien/Voile/Nuage + packshots Noël",
+     "perso": true
+    },
+    {
+     "id": "mich-masterclass-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false,
+     "perso": true
+    },
     {
      "id": "benito-appart-tournage",
      "client": "Benito",
