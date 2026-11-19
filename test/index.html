@@ -1600,6 +1600,8 @@ function applyOp(w, op){
   } else if (op.op === 'mov'){
     var to = findDay(w, op.v);
     if (!to) return;
+    /* tâche replacée depuis (champ "at" écrit dans semaine.json) : l'ancien déplacement de l'iPad ne compte plus */
+    if (op.at){ for (var q = 0; q < w.days.length; q++) for (var q2 = 0; q2 < w.days[q].tasks.length; q2++){ var tq = w.days[q].tasks[q2]; if (tq.id === op.id && num(tq.at) > op.at) return; } }
     tk = pullTask(w, op.id);
     if (tk){ tk.perso = true; to.tasks.push(tk); }
   } else if (op.op === 'ord') orderDay(findDay(w, op.day), op.ids);
@@ -1631,7 +1633,7 @@ function applyEdits(w){
   for (k in e.del) if (e.del.hasOwnProperty(k)) while (pullTask(w, k)) {}
   if (w.supprimes instanceof Array) for (var i = 0; i < w.supprimes.length; i++) while (pullTask(w, w.supprimes[i])) {}
   for (k in e.ren) if (e.ren.hasOwnProperty(k)) applyOp(w, {op:'ren', id:k, v:e.ren[k].v});
-  for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v});
+  for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v, at:e.mov[k].at});
   for (k in e.ord) if (e.ord.hasOwnProperty(k)) applyOp(w, {op:'ord', day:k, ids:e.ord[k].v});
   rollOver(w);
   for (k in e.meta) if (e.meta.hasOwnProperty(k)) applyOp(w, {op:'meta', id:k, v:e.meta[k].v});

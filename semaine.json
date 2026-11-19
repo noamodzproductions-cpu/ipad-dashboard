@@ -8,59 +8,22 @@
    "jour": "Jeudi 19 novembre",
    "tasks": [
     {
-     "id": "cmc-beaute-v2-miye-kj",
+     "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
-     "text": "Marie Claire Beauté : V2 Miye + KJ Locks",
+     "text": "Grand Café Beauté : V2 Miye",
      "done": false,
      "perso": true,
-     "notes": "Retours Vincent sur Frame.io",
-     "sous": [
-      {
-       "id": "mcb-v2-miye",
-       "text": "Faire la V2 Miye",
-       "done": false
-      },
-      {
-       "id": "mcb-v2-kj",
-       "text": "Faire la V2 KJ Locks",
-       "done": false
-      },
-      {
-       "id": "mcb-miye-coins",
-       "text": "Miye : coins coupés (0:09)",
-       "done": false
-      },
-      {
-       "id": "mcb-miye-deuxieme",
-       "text": "Miye : enlever « La deuxième » (0:35)",
-       "done": false
-      },
-      {
-       "id": "mcb-miye-fin",
-       "text": "Miye : fin coupée + fondu 1,5 s",
-       "done": false
-      },
-      {
-       "id": "mcb-kj-debut",
-       "text": "KJ Locks : enlever le début (0:00-0:03)",
-       "done": false
-      },
-      {
-       "id": "mcb-kj-hook",
-       "text": "KJ Locks : fin (0:51) en hook",
-       "done": false
-      },
-      {
-       "id": "mcb-renomme",
-       "text": "VDEF : « Miye VDEF » → « Ojjon VDEF »",
-       "done": false
-      },
-      {
-       "id": "mcb-suppr",
-       "text": "VDEF : supprimer l'ancien « Ojjon VDEF »",
-       "done": false
-      }
-     ]
+     "at": 1795126427084,
+     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF"
+    },
+    {
+     "id": "cmc-beaute-v2-kj",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : V2 KJ Locks",
+     "done": false,
+     "perso": true,
+     "at": 1795126427084,
+     "notes": "Début coupé, fin en hook"
     }
    ]
   },
@@ -74,27 +37,31 @@
      "text": "Michalak : tournage masterclass",
      "done": true,
      "notes": "10h, Damien/Voile/Nuage + packshots Noël",
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "mich-masterclass-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
      "done": false,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "benito-appart-tournage",
      "client": "Benito",
      "text": "Benito : finir le tournage appartement",
      "done": false,
-     "notes": "10h confirmé"
+     "notes": "10h confirmé",
+     "at": 1795126427084
     },
     {
      "id": "benito-appart-tournage-ssd",
      "client": "Benito",
      "text": "Benito : rushs + photos → SSD",
-     "done": false
+     "done": false,
+     "at": 1795126427084
     },
     {
      "id": "curve-photos-toutes",
@@ -103,7 +70,8 @@
      "done": false,
      "notes": "Email à Noélie + Nathalie",
      "prio": 3,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "mich-retouche-photos",
@@ -111,7 +79,8 @@
      "text": "Michalak : retoucher toutes les photos",
      "done": false,
      "prio": 3,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "kermes-v1",
@@ -119,7 +88,8 @@
      "text": "Ensemble Kermes : faire la V1 the last race",
      "done": false,
      "prio": 3,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "citadium-v1",
@@ -127,7 +97,8 @@
      "text": "Ensemble Pop up Citadium : faire la V1",
      "done": false,
      "prio": 3,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "laduree-halloween",
@@ -157,7 +128,8 @@
        "done": true
       }
      ],
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "cmc-evasion",
@@ -177,7 +149,8 @@
        "done": false
       }
      ],
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "astotel-lorette-v1",
@@ -185,7 +158,8 @@
      "text": "Astotel - Lorette : faire la V1",
      "done": false,
      "prio": 2,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "cmc-lifestyle-lien",
@@ -194,7 +168,8 @@
      "done": false,
      "notes": "Vidéos du 13/10 introuvables",
      "prio": 1,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "mich-mail-damien",
@@ -203,7 +178,8 @@
      "done": false,
      "notes": "Questions + inspis, avant 10h",
      "prio": 1,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "laduree-gravelle",
@@ -233,14 +209,16 @@
        "done": false
       }
      ],
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "theia-v1",
      "client": "Xuan-nam",
      "text": "Cercle de Théia : faire la V1",
      "done": false,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "benito-agenda-tournage",
@@ -248,14 +226,16 @@
      "text": "Benito : tournage ven. 20 matin → agenda",
      "done": false,
      "notes": "10h confirmé",
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     },
     {
      "id": "ensemble-solum-v1",
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
      "done": false,
-     "perso": true
+     "perso": true,
+     "at": 1795126427084
     }
    ]
   },
@@ -366,6 +346,7 @@
   "cmc-evasion-v1-interviews",
   "cmc-beaute-v2-interviews",
   "cmc-beaute-v2-bilingues",
-  "cmc-beaute-sanex-v2"
+  "cmc-beaute-sanex-v2",
+  "cmc-beaute-v2-miye-kj"
  ]
 }
