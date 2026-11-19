@@ -38,6 +38,8 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 
 /* Verre dépoli SANS calcul : fond flouté (blur.jpg) calé une fois par alignGlass() */
 .glass{position:relative;border-radius:28px;border:1px solid rgba(255,255,255,.16);background:#1c1c1e;overflow:hidden}
+/* Safari 12 : un enfant animé (will-change / transform) sort des coins arrondis malgré overflow:hidden → on arrondit aussi l'intérieur */
+.t-in,.fc-in{border-radius:inherit}
 .glass.light{color:#111;border-color:#E9E9EC;background:#E9E9EC}
 .card{padding:24px}
 .tap{transition:opacity .12s}
