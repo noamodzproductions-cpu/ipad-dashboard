@@ -11,13 +11,77 @@
      "id": "mich-masterclass-tournage",
      "client": "Michalak",
      "text": "Michalak : tournage masterclass",
-     "done": false,
+     "done": true,
      "notes": "10h, Damien/Voile/Nuage + packshots Noël"
     },
     {
      "id": "mich-masterclass-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
+     "done": false
+    },
+    {
+     "id": "cmc-beaute-v2-miye-kj",
+     "client": "Marie Claire",
+     "text": "Marie Claire Beauté : V2 Miye + KJ Locks",
+     "done": false,
+     "perso": true,
+     "notes": "Retours Vincent sur Frame.io",
+     "sous": [
+      {
+       "id": "mcb-miye-coins",
+       "text": "Miye : coins coupés (0:09)",
+       "done": false
+      },
+      {
+       "id": "mcb-miye-deuxieme",
+       "text": "Miye : enlever « La deuxième » (0:35)",
+       "done": false
+      },
+      {
+       "id": "mcb-miye-fin",
+       "text": "Miye : fin coupée + fondu 1,5 s",
+       "done": false
+      },
+      {
+       "id": "mcb-kj-debut",
+       "text": "KJ Locks : enlever le début (0:00-0:03)",
+       "done": false
+      },
+      {
+       "id": "mcb-kj-hook",
+       "text": "KJ Locks : fin (0:51) en hook",
+       "done": false
+      },
+      {
+       "id": "mcb-renomme",
+       "text": "VDEF : « Miye VDEF » → « Ojjon VDEF »",
+       "done": false
+      },
+      {
+       "id": "mcb-suppr",
+       "text": "VDEF : supprimer l'ancien « Ojjon VDEF »",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-11-20",
+   "jour": "Vendredi 20 novembre",
+   "tasks": [
+    {
+     "id": "benito-appart-tournage",
+     "client": "Benito",
+     "text": "Benito : finir le tournage appartement",
+     "done": false,
+     "notes": "10h confirmé"
+    },
+    {
+     "id": "benito-appart-tournage-ssd",
+     "client": "Benito",
+     "text": "Benito : rushs + photos → SSD",
      "done": false
     },
     {
@@ -34,21 +98,24 @@
      "client": "Michalak",
      "text": "Michalak : retoucher toutes les photos",
      "done": false,
-     "prio": 3
+     "prio": 3,
+     "perso": true
     },
     {
      "id": "kermes-v1",
      "client": "Ensemble",
      "text": "Ensemble Kermes : faire la V1 the last race",
      "done": false,
-     "prio": 3
+     "prio": 3,
+     "perso": true
     },
     {
      "id": "citadium-v1",
      "client": "Ensemble",
      "text": "Ensemble Pop up Citadium : faire la V1",
      "done": false,
-     "prio": 3
+     "prio": 3,
+     "perso": true
     },
     {
      "id": "laduree-halloween",
@@ -77,7 +144,8 @@
        "text": "Marie-Antoinette plan large",
        "done": true
       }
-     ]
+     ],
+     "perso": true
     },
     {
      "id": "cmc-evasion",
@@ -96,14 +164,16 @@
        "text": "Interviews",
        "done": false
       }
-     ]
+     ],
+     "perso": true
     },
     {
      "id": "astotel-lorette-v1",
      "client": "Astotel",
      "text": "Astotel - Lorette : faire la V1",
      "done": false,
-     "prio": 2
+     "prio": 2,
+     "perso": true
     },
     {
      "id": "cmc-lifestyle-lien",
@@ -111,7 +181,8 @@
      "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
      "done": false,
      "notes": "Vidéos du 13/10 introuvables",
-     "prio": 1
+     "prio": 1,
+     "perso": true
     },
     {
      "id": "mich-mail-damien",
@@ -119,7 +190,8 @@
      "text": "Michalak : répondre au mail de Damien",
      "done": false,
      "notes": "Questions + inspis, avant 10h",
-     "prio": 1
+     "prio": 1,
+     "perso": true
     },
     {
      "id": "laduree-gravelle",
@@ -148,45 +220,30 @@
        "text": "Le dressage d'un plat",
        "done": false
       }
-     ]
+     ],
+     "perso": true
     },
     {
      "id": "theia-v1",
      "client": "Xuan-nam",
      "text": "Cercle de Théia : faire la V1",
-     "done": false
+     "done": false,
+     "perso": true
     },
     {
      "id": "benito-agenda-tournage",
      "client": "Benito",
      "text": "Benito : tournage ven. 20 matin → agenda",
      "done": false,
-     "notes": "10h confirmé"
+     "notes": "10h confirmé",
+     "perso": true
     },
     {
      "id": "ensemble-solum-v1",
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
-     "done": false
-    }
-   ]
-  },
-  {
-   "date": "2026-11-20",
-   "jour": "Vendredi 20 novembre",
-   "tasks": [
-    {
-     "id": "benito-appart-tournage",
-     "client": "Benito",
-     "text": "Benito : finir le tournage appartement",
      "done": false,
-     "notes": "10h confirmé"
-    },
-    {
-     "id": "benito-appart-tournage-ssd",
-     "client": "Benito",
-     "text": "Benito : rushs + photos → SSD",
-     "done": false
+     "perso": true
     }
    ]
   },
