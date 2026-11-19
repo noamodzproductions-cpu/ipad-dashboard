@@ -185,7 +185,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tgb.on.u3{background:#f87171;border-color:#f87171}
 .tgb.brand{background:rgba(255,255,255,.18);color:#fff;text-transform:uppercase}
 /* fiche : modifs = glisser à gauche (Modifier / Supprimer), appui long = déplacer */
-#modal .scard{position:relative;margin-bottom:12px;border:0;border-radius:20px;overflow:hidden;background:#000}
+#modal .scard{-webkit-mask-image:-webkit-radial-gradient(white,black);position:relative;z-index:0;margin-bottom:12px;border:0;border-radius:20px;overflow:hidden;background:#000}
 #modal .scard .fc-in{padding:0;background:#000;border-radius:20px}
 #modal .scard .mchk{width:100%;background:#1c1c1e}
 #modal .scard .mchk.on{background:#183824}
@@ -334,7 +334,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .esh-t{text-align:center;font-size:24px;font-weight:700}
 .lnk{background:none;border:none;color:#cbb8ff;font-size:24px;height:70px;padding:0 6px;min-width:0}
 .lnk.b{font-weight:700;color:#fff}
-.tdet-ok{position:-webkit-sticky;position:sticky;bottom:0;padding:14px 0 20px;background:#000}
+.tdet-ok{position:-webkit-sticky;position:sticky;bottom:0;z-index:10;padding:14px 0 20px;background:#000;-webkit-transform:translateZ(0);transform:translateZ(0)}
 .tdet-ok button{width:100%;height:84px;font-size:30px}
 .tsub{font-size:18px;color:rgba(255,255,255,.55);margin-top:4px}
 /* compteur de sous-tâches à droite de la carte (vidéos du projet / modifs) */
