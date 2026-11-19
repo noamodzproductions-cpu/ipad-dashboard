@@ -16,6 +16,16 @@
      "notes": "Retours Vincent sur Frame.io",
      "sous": [
       {
+       "id": "mcb-v2-miye",
+       "text": "Faire la V2 Miye",
+       "done": false
+      },
+      {
+       "id": "mcb-v2-kj",
+       "text": "Faire la V2 KJ Locks",
+       "done": false
+      },
+      {
        "id": "mcb-miye-coins",
        "text": "Miye : coins coupés (0:09)",
        "done": false
