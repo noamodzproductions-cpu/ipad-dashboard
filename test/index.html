@@ -155,6 +155,14 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .mchk.on{background:rgba(74,222,128,.2);border-color:rgba(74,222,128,.5)}
 .mchk.on .tchk{background:#4ade80;border-color:#4ade80}
 .mrow2{margin-bottom:12px}
+.tgrow{margin:0 0 14px}
+.tglab{font-size:22px;color:rgba(255,255,255,.6);margin-bottom:10px}
+.tgb{height:70px;min-height:70px;font-size:19px;font-weight:800;letter-spacing:.5px;padding:0 20px;margin:0 10px 10px 0;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.tgb.on{background:#A78BFA;border-color:#A78BFA;color:#111}
+.tgb.on.u1{background:#facc15;border-color:#facc15}
+.tgb.on.u2{background:#fb923c;border-color:#fb923c}
+.tgb.on.u3{background:#f87171;border-color:#f87171}
+.tgb.brand{background:rgba(255,255,255,.18);color:#fff;text-transform:uppercase}
 /* fiche : modifs = glisser à gauche (Modifier / Supprimer), appui long = déplacer */
 #modal .scard{position:relative;margin-bottom:12px;border:0;border-radius:20px;overflow:hidden;background:#000}
 #modal .scard .fc-in{padding:0;background:#000;border-radius:20px}
@@ -991,14 +999,27 @@ function facUndo(id){
   else if (last) facUnrelance(id);
   else renderFactures();
 }
+/* relances : la dernière à la date choisie ; les précédentes gardées (les plus récentes),
+   celles qui manquent réparties entre l'envoi de la facture et la plus ancienne connue */
+function facRelList(id, last, nb, envAgo){
+  var old = (data.facEtat.relances[id] || []).slice(0, -1), prev = [], i;
+  for (i = 0; i < old.length; i++) if (num(old[i]) < last - 43200000) prev.push(num(old[i]));
+  prev.sort(function(a, b){ return a - b; });
+  if (prev.length > nb - 1) prev = prev.slice(prev.length - (nb - 1));
+  var miss = nb - 1 - prev.length, env = dayStart(new Date()) - envAgo * 86400000 + 12 * 3600000, top = prev.length ? prev[0] : last, add = [];
+  if (env >= top) env = top - miss * 86400000 - 86400000;
+  for (i = 1; i <= miss; i++) add.push(dayStart(new Date(env + (top - env) * i / (miss + 1))) + 12 * 3600000);
+  return add.concat(prev, [last]);
+}
 /* Fenêtre « Relance » : 1) date de la dernière relance (corrigeable)  2) rythme « relancer tous les N jours » */
+function fnbSync(){ if (!modal) return; if (modal.ago === null) modal.nb = 0; else if (!modal.nb) modal.nb = 1; }
 function facDelai(id, st){
   var r = facRow(id); if (!r) return;
   var E = data.facEtat, rels = E.relances[id] || [], today = dayStart(new Date());
   if (!st){
     var last = rels.length ? num(rels[rels.length - 1]) : 0;
     st = {kind:'fdelai', id:id, env:Math.max(0, Math.round((today - dayStart(new Date(r.entree))) / 86400000)), chEnv:false,
-      ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false};
+      ago:last ? Math.max(0, Math.round((today - dayStart(new Date(last))) / 86400000)) : null, every:num((E.delais || {})[id]) || RELANCE_J, changed:false, nb:rels.length};
   }
   var envD = today - st.env * 86400000, base = st.ago === null ? envD : Math.max(envD, today - st.ago * 86400000);
   var nx = new Date(base); nx.setDate(nx.getDate() + st.every);
@@ -1010,6 +1031,7 @@ function facDelai(id, st){
     '<div class="row frg"><div class="grow"><div class="dh">Dernière relance</div><div class="frg-v">' + (st.ago === null ? 'Jamais' : cap(agoTxt(st.ago))) + '</div></div>' +
       (st.ago === null ? '' : '<button data-act="flaset" data-arg="none" style="margin-right:12px">Jamais</button>') +
       '<input class="dinput" type="date" id="f-rel" max="' + isoDate(new Date()) + '" value="' + (st.ago === null ? '' : isoDate(new Date(today - st.ago * 86400000))) + '"></div>' +
+    '<div class="row frg"><div class="grow"><div class="dh">Nombre de relances</div><div class="frg-v">' + (st.nb ? 'Relancé ' + st.nb + '×' : 'Jamais relancé') + '</div></div>' + stepper('', st.nb + '×', 'fnb', 'x') + '</div>' +
     '<div class="row frg"><div class="grow"><div class="dh">Relancer tous les</div><div class="frg-v">' + st.every + ' jours</div></div>' + stepper('', st.every + ' j', 'fev', 'x') + '</div>' +
     '<div class="mprev" style="font-size:28px;margin:16px 0 20px">Prochaine relance : ' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' (dans ' + left + ' j)') + '</div>' +
     '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>');
@@ -1283,7 +1305,7 @@ var modal = null, confirmCb = null;
 function modalOpen(){ return !!modal; }
 function confirmOpen(){ return !!confirmCb; }
 function openModal(state, html){ modal = state; var m = $('modal'); m.innerHTML = '<div class="mbox">' + html + '</div>'; m.className = 'overlay show'; m.scrollTop = 0; }
-function closeModal(){ modal = null; $('modal').className = 'overlay'; $('modal').innerHTML = ''; }
+function closeModal(){ window.__brandFor = null; modal = null; $('modal').className = 'overlay'; $('modal').innerHTML = ''; }
 function askConfirm(msg, okLabel, cb){ confirmCb = cb; $('cf-msg').textContent = msg; $('cf-ok').textContent = okLabel; $('confirm').className = 'overlay show'; }
 function closeConfirm(){ confirmCb = null; $('confirm').className = 'overlay'; }
 function margeRow(v){
@@ -1512,7 +1534,7 @@ function findTask(id){
 var URG_RE = /^URGENT\s*·\s*/, tGesture = false, tapTimer = null, tapId = null, toastTimer = null, toastCb = null;
 function tEd(){
   var e = data.tEdits || (data.tEdits = {}), k, n, lim = Date.now() - 14 * 86400000;
-  for (n in {del:1, ren:1, mov:1, ord:1, add:1}){
+  for (n in {del:1, ren:1, mov:1, ord:1, add:1, meta:1}){
     if (!e[n] || typeof e[n] !== 'object') e[n] = {};
     for (k in e[n]) if (e[n].hasOwnProperty(k) && !(e[n][k] && (e[n][k].at > lim || (n === 'add' && e[n][k].day >= isoDate(new Date(Date.now() - 86400000)))))) delete e[n][k];
   }
@@ -1563,6 +1585,15 @@ function applyOp(w, op){
       w.days.push(ad); w.days.sort(function(x, y){ return x.date < y.date ? -1 : x.date > y.date ? 1 : 0; });
     }
     ad.tasks.push({id:op.id, client:'', text:op.v, done:false, perso:true});
+  } else if (op.op === 'meta'){
+    /* étiquettes choisies par Noam : prio (0 = aucune, 1 urgent, 2 en retard, 3 très en retard), reporté, marque */
+    tk = null;
+    for (var m = 0; m < w.days.length && !tk; m++) for (var n2 = 0; n2 < w.days[m].tasks.length; n2++) if (w.days[m].tasks[n2].id === op.id) tk = w.days[m].tasks[n2];
+    if (!tk || !op.v) return;
+    if (op.v.hasOwnProperty('prio')){ if (op.v.prio) tk.prio = op.v.prio; else delete tk.prio; if (URG_RE.test(tk.text || '') && op.v.prio !== 1) tk.text = tk.text.replace(URG_RE, ''); }
+    if (op.v.hasOwnProperty('rep')){ if (op.v.rep){ if (!(tk.rep && tk.rep < isoDate(new Date()))) tk.rep = '2000-01-01'; } else delete tk.rep; }
+    if (op.v.hasOwnProperty('client')) tk.client = op.v.client;
+    tk.perso = true;
   }
 }
 function applyEdits(w){
@@ -1575,6 +1606,7 @@ function applyEdits(w){
   for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v});
   for (k in e.ord) if (e.ord.hasOwnProperty(k)) applyOp(w, {op:'ord', day:k, ids:e.ord[k].v});
   rollOver(w);
+  for (k in e.meta) if (e.meta.hasOwnProperty(k)) applyOp(w, {op:'meta', id:k, v:e.meta[k].v});
   return w;
 }
 /* après minuit : les tâches pas faites des jours passés restent visibles, en haut d'aujourd'hui
@@ -1618,7 +1650,7 @@ function pushEdits(){
     try { w = JSON.parse(b64dec(j.content)); } catch(e){ ghBusy = false; return; }
     if (!(w.days instanceof Array)){ ghBusy = false; return; }
     applyOp(w, op);
-    var lab = {del:'Supprimé : ', ren:'Renommé : ', mov:'Déplacé : ', ord:'Rangé : ', add:'Ajouté : '}[op.op] + (op.id || op.day);
+    var lab = {del:'Supprimé : ', ren:'Renommé : ', mov:'Déplacé : ', ord:'Rangé : ', add:'Ajouté : ', meta:'Étiquettes : '}[op.op] + (op.id || op.day);
     ghReq('PUT', {message:'iPad · ' + lab, content:b64enc(JSON.stringify(w, null, 1) + '\n'), sha:j.sha, branch:'main'}, function(ok2, j2, st2){
       if (ok2){
         ghErr = ''; data.tQ.shift(); data.tasksCache = applyEdits(w); save(); ghBusy = false;
@@ -1699,6 +1731,35 @@ function splitTask(tk){
   var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
   return k > 0 ? {proj:full.slice(0, k), act:full.slice(k + 3)} : {proj:'', act:full};
 }
+/* fiche : étiquettes à toucher (URGENT / EN RETARD / TRÈS EN RETARD / REPORTÉ) + marque */
+function knownClients(){
+  var d = (data.tasksCache && data.tasksCache.days) || [], seen = {}, out = [], i, k, c;
+  for (i = 0; i < d.length; i++) for (k = 0; k < d[i].tasks.length; k++){ c = d[i].tasks[k].client; if (c && !seen[c.toLowerCase()]){ seen[c.toLowerCase()] = 1; out.push(c); } }
+  out.sort(function(a, b){ return a.localeCompare(b, 'fr'); });
+  return out;
+}
+function metaRow(tk){
+  var id = esc(tk.id), p = Math.round(num(tk.prio)), rp = !!(tk.rep && tk.rep < isoDate(new Date())), h = '<div class="tgrow">', i;
+  if (window.__brandFor === tk.id){
+    var L = knownClients();
+    h += '<div class="tglab">Marque</div>';
+    for (i = 0; i < L.length; i++) h += '<button class="tgb' + (L[i] === tk.client ? ' on' : '') + '" data-act="tbset" data-arg="' + id + '|' + esc(L[i]) + '">' + esc(L[i]) + '</button>';
+    h += '<button class="tgb" data-act="tbset" data-arg="' + id + '|">Aucune</button>' +
+      '<div class="row" style="margin-top:4px"><input type="text" id="m-brand" placeholder="Autre marque…" style="flex:1"><button class="white" data-act="tbnew" data-arg="' + id + '" style="margin-left:12px">OK</button></div>';
+    return h + '</div>';
+  }
+  for (i = 1; i <= 3; i++) h += '<button class="tgb' + (p === i ? ' on u' + i : '') + '" data-act="tmeta" data-arg="' + id + '|prio|' + i + '">' + PRIO_TXT[i] + '</button>';
+  h += '<button class="tgb' + (rp ? ' on' : '') + '" data-act="tmeta" data-arg="' + id + '|rep|1">REPORTÉ</button>' +
+    '<button class="tgb brand" data-act="tbrand" data-arg="' + id + '">' + (tk.client ? esc(tk.client) : '+ Marque') + '</button>';
+  return h + '</div>';
+}
+function setMeta(id, part){
+  var e = tEd().meta, cur = (e[id] && e[id].v) || {}, k;
+  for (k in part) if (part.hasOwnProperty(k)) cur[k] = part[k];
+  e[id] = {v:cur, at:Date.now()};
+  queueEdit({op:'meta', id:id, v:part});
+  refreshTasks(); openTaskDetail(id);
+}
 /* fiche de tâche : simple, tout se modifie sur place, un seul bouton OK */
 function openTaskDetail(id){
   var tk = findTask(id); if (!tk) return;
@@ -1708,7 +1769,7 @@ function openTaskDetail(id){
   for (i = 0; i < l.length; i++) rk[l[i].id] = fz ? (fz.indexOf(l[i].id) < 0 ? 1e4 + i : fz.indexOf(l[i].id)) : (l[i].done ? 1e4 : 0) + i;
   l.sort(function(x, y){ return rk[x.id] - rk[y.id]; });
   window.__subLast = {id:id, ord:l.map(function(x){ return x.id; })};
-  h = tagsHtml(tk, urg && !on) + (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
+  h = metaRow(tk) + (sp.proj ? '<div class="tdet-p">' + esc(sp.proj) + '</div>' : '') +
     '<div class="tdet-t" data-act="tren" data-arg="' + esc(id) + '">' + esc(cap(sp.act)) + '</div>' +
     (tk.notes ? '<div class="tnotes">' + esc(tk.notes) + '</div>' : '');
   for (i = 0; i < l.length; i++){
@@ -2148,6 +2209,14 @@ function handle(act, arg){
       var oc2 = document.querySelector('#s-taches .task.open2');
       if (oc2){ oc2.classList.remove('open2'); return; }
       handle('tdone', arg); return;
+    case 'tmeta':
+      a = arg.split('|'); var tkm = findTask(a[0]); if (!tkm) return;
+      if (a[1] === 'prio') setMeta(a[0], {prio:Math.round(num(tkm.prio)) === +a[2] ? 0 : +a[2]});
+      else setMeta(a[0], {rep:!(tkm.rep && tkm.rep < isoDate(new Date()))});
+      return;
+    case 'tbrand': window.__brandFor = arg; openTaskDetail(arg); return;
+    case 'tbset': a = arg.split('|'); window.__brandFor = null; setMeta(a[0], {client:a.slice(1).join('|')}); return;
+    case 'tbnew': var bv = trimV('m-brand'); if (!bv) return; window.__brandFor = null; setMeta(arg, {client:bv}); return;
     case 'tren':
       var te = document.querySelector('#modal .tdet-t'); if (!te || te.querySelector('input')) return;
       var tkr = findTask(arg); if (!tkr) return; var spr = splitTask(tkr);
@@ -2257,10 +2326,18 @@ function handle(act, arg){
         if (modal.ago === null) modal.ago = dlt > 0 ? 0 : null;
         else if (modal.ago === 0 && dlt < 0) modal.ago = null;
         else modal.ago = Math.max(0, Math.min(365, modal.ago + dlt));
+        modal.changed = true; fnbSync(); facDelai(modal.id, modal);
+      }
+      return;
+    case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; fnbSync(); facDelai(modal.id, modal); } return;
+    /* nombre de relances déjà faites : 0 = jamais ; passer de 0 à 1 = relancé aujourd'hui */
+    case 'fnb':
+      if (modal && modal.kind === 'fdelai'){
+        modal.nb = Math.max(0, Math.min(20, modal.nb + (+arg.split(':')[1])));
+        if (!modal.nb) modal.ago = null; else if (modal.ago === null) modal.ago = 0;
         modal.changed = true; facDelai(modal.id, modal);
       }
       return;
-    case 'flaset': if (modal && modal.kind === 'fdelai'){ modal.ago = arg === 'none' ? null : +arg; modal.changed = true; facDelai(modal.id, modal); } return;
     case 'fen': if (modal && modal.kind === 'fdelai'){ modal.env = Math.max(0, Math.min(365, modal.env + (+arg.split(':')[1]))); modal.chEnv = true; facDelai(modal.id, modal); } return;
     case 'fev': if (modal && modal.kind === 'fdelai'){ modal.every = Math.max(1, Math.min(120, modal.every + (+arg.split(':')[1]))); facDelai(modal.id, modal); } return;
     case 'fevset': if (modal && modal.kind === 'fdelai'){ modal.every = +arg; facDelai(modal.id, modal); } return;
@@ -2271,7 +2348,7 @@ function handle(act, arg){
         if (modal.ago === null) delete FE.relances[fid];
         else {
           var ts = dayStart(new Date()) - modal.ago * 86400000 + 12 * 3600000;
-          if (!FE.relances[fid] || !FE.relances[fid].length) FE.relances[fid] = [ts]; else FE.relances[fid][FE.relances[fid].length - 1] = ts;
+          FE.relances[fid] = facRelList(fid, ts, Math.max(1, modal.nb), modal.env);
         }
       }
       if (modal.chEnv){
@@ -2508,9 +2585,10 @@ document.addEventListener('change', function(e){
   var el = e.target; if (!el || (el.id !== 'f-env' && el.id !== 'f-rel') || !modal || modal.kind !== 'fdelai') return;
   var d = parseIso(el.value), n = d ? Math.max(0, Math.round((dayStart(new Date()) - dayStart(d)) / 86400000)) : null;
   if (el.id === 'f-env'){ if (n === null) return; modal.env = n; modal.chEnv = true; }
-  else { modal.ago = n; modal.changed = true; }
+  else { modal.ago = n; modal.changed = true; fnbSync(); }
   facDelai(modal.id, modal);
 });
+document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-brand' && modal && modal.kind === 'tdet'){ e.preventDefault(); handle('tbnew', modal.id); } });
 document.addEventListener('keydown', function(e){ if (e.keyCode === 13 && e.target && e.target.id === 'm-sub' && modal && modal.kind === 'tdet'){ e.preventDefault(); handle('tsubadd', modal.id); } });
 var sw0 = null, sw0m = false;
 function swStart(t, x, y){ sw0 = {x:x, y:y, fid:closestAttr(t, 'data-fid')}; }
