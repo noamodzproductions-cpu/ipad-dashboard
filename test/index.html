@@ -216,6 +216,12 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-when{font-size:26px;font-weight:700}
 .late .fc-when{color:#cbb8ff}
 .paid .fc-when{color:#4ade80}
+.rbadge{display:inline-block;vertical-align:middle;min-width:40px;height:40px;line-height:40px;margin:-4px 0 0 12px;padding:0 8px;border-radius:20px;text-align:center;font-size:19px;font-weight:800;color:#111}
+.rbadge.r1{background:#4ade80}
+.rbadge.r2{background:#facc15}
+.rbadge.r3{background:#fb923c}
+.rbadge.r4{background:#f87171}
+.paid .rbadge{opacity:.45}
 .fc-hist{font-size:20px;color:rgba(255,255,255,.6);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .good .fbar i{background:#4ade80}
 .bad .fbar i{background:#f87171}
@@ -995,13 +1001,17 @@ function renderFactures(){
     var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
     var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
-    var hist = (r.nrel ? 'Relancé ' + r.nrel + '× · dernière le ' + dCourt(r.last) : 'Jamais relancé · envoyée le ' + dCourt(r.entree)) + (num((data.facEtat.delais || {})[r.id]) && num(data.facEtat.delais[r.id]) !== RELANCE_J ? ' · tous les ' + num(data.facEtat.delais[r.id]) + ' j' : '') + ((data.facEtat.promis || {})[r.id] ? ' · promis le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime() - 86400000) : ((data.facEtat.prochaine || {})[r.id] ? ' · relance prévue le ' + dCourt(parseIso(data.facEtat.prochaine[r.id]).getTime()) : ''));
+    /* bas de carte épuré : pastille ×N (relances, de plus en plus rouge) + « paiement promis dans N j » si promesse */
+    var pmz = (data.facEtat.promis || {})[r.id], hist = '';
+    if (pmz && !r.paye){ var pzd = parseIso(pmz.d); if (pzd){ pzd.setDate(pzd.getDate() + num(pmz.w) * 7); var pzl = Math.round((dayStart(pzd) - dayStart(new Date())) / 86400000);
+      hist = pzl > 0 ? 'Paiement promis dans ' + pzl + ' j' : (pzl === 0 ? 'Paiement promis aujourd’hui' : 'Promesse dépassée'); } }
+    var rb = r.nrel ? '<span class="rbadge r' + Math.min(4, r.nrel) + '">×' + r.nrel + '</span>' : '';
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
     var bad = !r.paye && r.days >= 30;
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + r.days + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%' + bcol + '"></i></div>' +
-      '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + '</div><div class="fc-hist num">' + hist + '</div></div>' +
+      '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + rb + '</div>' + (hist ? '<div class="fc-hist num">' + hist + '</div>' : '') + '</div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
       '</div></div><div class="fc-act"><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Réglages</button></div></div>';
