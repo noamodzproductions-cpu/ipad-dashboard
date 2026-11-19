@@ -1,17 +1,24 @@
 {
- "updated": "mercredi 18 nov. à 19h57",
- "trello": "mercredi 18 nov. à 19h57",
+ "updated": "jeudi 19 nov. à 7h58",
+ "trello": "jeudi 19 nov. à 7h58",
  "whatsapp": "mercredi 18 nov. à 15h05",
  "days": [
   {
-   "date": "2026-11-18",
-   "jour": "Mercredi 18 novembre",
+   "date": "2026-11-19",
+   "jour": "Jeudi 19 novembre",
    "tasks": [
     {
-     "id": "xuannam-appel-montage",
-     "client": "Xuan-nam",
-     "text": "15h30 · Xuan-nam : appel nouveau montage",
-     "done": true
+     "id": "mich-masterclass-tournage",
+     "client": "Michalak",
+     "text": "Michalak : tournage masterclass",
+     "done": false,
+     "notes": "10h, Damien/Voile/Nuage + packshots Noël"
+    },
+    {
+     "id": "mich-masterclass-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false
     },
     {
      "id": "curve-photos-toutes",
@@ -111,7 +118,7 @@
      "client": "Michalak",
      "text": "Michalak : répondre au mail de Damien",
      "done": false,
-     "notes": "Questions + inspis, avant 10h demain",
+     "notes": "Questions + inspis, avant 10h",
      "prio": 1
     },
     {
@@ -119,6 +126,7 @@
      "client": "Ladurée",
      "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
      "done": false,
+     "prio": 1,
      "sous": [
       {
        "id": "laduree-gravelle-v1",
@@ -143,6 +151,12 @@
      ]
     },
     {
+     "id": "theia-v1",
+     "client": "Xuan-nam",
+     "text": "Cercle de Théia : faire la V1",
+     "done": false
+    },
+    {
      "id": "benito-agenda-tournage",
      "client": "Benito",
      "text": "Benito : tournage ven. 20 matin → agenda",
@@ -153,31 +167,6 @@
      "id": "ensemble-solum-v1",
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
-     "done": false
-    }
-   ]
-  },
-  {
-   "date": "2026-11-19",
-   "jour": "Jeudi 19 novembre",
-   "tasks": [
-    {
-     "id": "mich-masterclass-tournage",
-     "client": "Michalak",
-     "text": "Michalak : tournage masterclass",
-     "done": false,
-     "notes": "10h, Damien/Voile/Nuage + packshots Noël"
-    },
-    {
-     "id": "mich-masterclass-tournage-ssd",
-     "client": "Michalak",
-     "text": "Michalak : rushs + photos → SSD",
-     "done": false
-    },
-    {
-     "id": "theia-v1",
-     "client": "Xuan-nam",
-     "text": "Cercle de Théia : faire la V1",
      "done": false
     }
    ]
