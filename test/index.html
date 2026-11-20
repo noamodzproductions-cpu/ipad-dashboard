@@ -364,6 +364,14 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .task.on .ttxt{text-decoration:line-through}
 .ttag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.16);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;white-space:nowrap}
 .ttxt{font-size:26px;font-weight:500;line-height:1.25}
+.t1{display:flex;align-items:baseline;min-width:0}
+.t1 .ttxt,.t1 .ptxt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbrand{flex-shrink:0;font-size:18px;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px;margin-right:12px;white-space:nowrap}
+.tdot{flex-shrink:0;display:inline-block;width:12px;height:12px;border-radius:6px;margin-right:10px;position:relative;top:-3px}
+.tdl{display:flex;align-items:center;margin-top:10px}
+.tdl-b{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+.tdl-b i{display:block;height:100%;border-radius:3px}
+.tdl-j{flex-shrink:0;min-width:64px;margin-left:14px;text-align:right;font-size:18px;font-weight:700}
 .tall{padding:28px;text-align:center;font-size:30px;font-weight:700;color:#4ade80;margin-bottom:12px}
 .tdem{padding:20px 24px;margin-top:6px}
 .tdem-l{font-size:22px;color:rgba(255,255,255,.75);line-height:1.5;margin-top:8px}
@@ -1505,8 +1513,7 @@ function closeSwiped(){ var o = document.querySelector('.open2'); if (o){ o.clas
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
   return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
-    '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + tagsHtml(tk, urg && !on) +
-    '<div class="ttxt">' + esc((tk.text || '').replace(/^URGENT\s*·\s*/, '')) + '</div></div>' + subCount(tk) + '</div>' +
+    '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + cardMain(tk, 'ttxt') + '</div>' + subCount(tk) + '</div>' +
     swAct(tk.id) + '</div>';
 }
 /* bloc « Week-end » daté du samedi : le dimanche, il compte comme aujourd'hui */
@@ -1637,6 +1644,7 @@ function applyOp(w, op){
     if (op.v.hasOwnProperty('prio')){ if (op.v.prio) tk.prio = op.v.prio; else delete tk.prio; if (URG_RE.test(tk.text || '') && op.v.prio !== 1) tk.text = tk.text.replace(URG_RE, ''); }
     if (op.v.hasOwnProperty('rep')){ if (op.v.rep){ if (!(tk.rep && tk.rep < isoDate(new Date()))) tk.rep = '2000-01-01'; } else delete tk.rep; }
     if (op.v.hasOwnProperty('client')) tk.client = op.v.client;
+    if (op.v.hasOwnProperty('deadline')){ if (op.v.deadline) tk.deadline = op.v.deadline; else delete tk.deadline; }
     tk.perso = true;
   }
 }
@@ -1903,7 +1911,8 @@ function openTaskEdit(id){
 function tagNow(tk){ var p = Math.round(num(tk.prio)); return p >= 1 && p <= 3 ? String(p) : (tk.rep && tk.rep < isoDate(new Date()) ? 'rep' : ''); }
 function tagSelects(tk){
   var cur = tagNow(tk), L = knownClients(), i, o = [['', 'Aucune'], ['1', 'Urgent'], ['2', 'En retard'], ['3', 'Très en retard'], ['rep', 'Reporté']];
-  var h = '<div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Étiquette</div><select class="dinput" id="m-ttag">';
+  var h = '<div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Deadline</div>' + (tk.deadline ? '<button class="lnk" data-act="tdlclr" style="margin-right:14px">Aucune</button>' : '') + '<input class="dinput" type="date" id="m-tdl" value="' + esc(tk.deadline || '') + '"></div>' +
+    '<div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Étiquette</div><select class="dinput" id="m-ttag">';
   for (i = 0; i < o.length; i++) h += '<option value="' + o[i][0] + '"' + (o[i][0] === cur ? ' selected' : '') + '>' + o[i][1] + '</option>';
   h += '</select></div><div class="row" style="margin-top:18px;align-items:center"><div class="grow dh">Marque</div><select class="dinput" id="m-tbrand"><option value="">Aucune</option>';
   if (tk.client && L.indexOf(tk.client) < 0) L.push(tk.client);
@@ -2027,6 +2036,26 @@ function prioOf(tk){
   if (p >= 1 && p <= 3) return p;
   return 0; /* « URGENT · » dans le texte ne suffit plus : seulement "prio" (urgence avec parcimonie) */
 }
+/* carte compacte : point de couleur (urgence / reporté), MARQUE en petit sur la même ligne, titre ; puis barre de deadline */
+var DOT = ['', '#facc15', '#fb923c', '#f87171'];
+function cardTitle(tk){
+  var t = (tk.text || '').replace(URG_RE, ''), c = tk.client || '';
+  if (c && t.toLowerCase().indexOf(c.toLowerCase()) === 0){ t = t.slice(c.length).replace(/^\s*[:\-·]?\s*/, ''); if (!t) t = tk.text || ''; }
+  return cap(t);
+}
+function dlInfo(tk){
+  var d = parseIso(tk.deadline || ''); if (!d || isDoneTask(tk)) return null;
+  var left = Math.round((dayStart(d) - dayStart(new Date())) / 86400000);
+  var col = left < 0 ? '#f87171' : (left <= 1 ? '#f87171' : (left <= 3 ? '#fb923c' : (left <= 7 ? '#facc15' : '#4ade80')));
+  return {left:left, col:col, fill:Math.max(4, Math.min(100, Math.round((1 - left / 14) * 100))), txt:left < 0 ? '+' + (-left) + ' j' : (left === 0 ? 'Auj.' : 'J-' + left)};
+}
+function cardMain(tk, cls){
+  var p = prioOf(tk), rp = tk.rep && tk.rep < isoDate(new Date()) && !isDoneTask(tk), dl = dlInfo(tk);
+  var h = '<div class="t1">' + (p ? '<span class="tdot" style="background:' + DOT[p] + '"></span>' : (rp ? '<span class="tdot" style="background:rgba(255,255,255,.45)"></span>' : '')) +
+    (tk.client ? '<span class="tbrand">' + esc(tk.client) + '</span>' : '') + '<span class="' + cls + '">' + esc(cardTitle(tk)) + '</span></div>';
+  if (dl) h += '<div class="tdl"><div class="tdl-b"><i style="width:' + dl.fill + '%;background:' + dl.col + '"></i></div><span class="tdl-j num" style="color:' + dl.col + '">' + dl.txt + '</span></div>';
+  return h;
+}
 function tagsHtml(tk, urg){
   var p = prioOf(tk);
   var y = new Date(); y.setDate(y.getDate() - 1);
@@ -2050,7 +2079,7 @@ function renderPlanning(){
     for (k = 0; k < d.tasks.length; k++){
       var tk = d.tasks[k], on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
       h += '<div class="ptask' + (on ? ' on' : '') + (urg && !on ? ' urg' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="pedit" data-arg="' + esc(tk.id) + '" data-pid="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(d.date) + '">' +
-        '<div class="t-in"><div class="grow">' + tagsHtml(tk, urg && !on) + '<div class="ptxt">' + esc((tk.text || '').replace(URG_RE, '')) + '</div></div>' + subCount(tk) + '</div>' + swAct(tk.id) + '</div>';
+        '<div class="t-in"><div class="grow">' + cardMain(tk, 'ptxt') + '</div>' + subCount(tk) + '</div>' + swAct(tk.id) + '</div>';
     }
     h += '</div></div>';
   }
@@ -2320,6 +2349,7 @@ function handle(act, arg){
       return;
     case 'tdetdone': closeModal(); handle('tdone', arg); return;
     case 'tdetedit': closeModal(); openTaskEdit(arg); return;
+    case 'tdlclr': if ($('m-tdl')) $('m-tdl').value = ''; return;
     case 'tesave':
       if (!modal) return;
       var tv = (modal.text || '').replace(/^\s+|\s+$/g, '').replace(URG_RE, '');
@@ -2329,6 +2359,7 @@ function handle(act, arg){
         var tgv = $('m-ttag').value, bsel = $('m-tbrand').value, bv2 = bsel === '__new' ? trimV('m-tbnew') : bsel;
         if (tgv !== tagNow(tkx)){ tmeta = {prio:tgv === 'rep' || !tgv ? 0 : +tgv, rep:tgv === 'rep'}; }
         if (!(bsel === '__new' && !bv2) && bv2 !== (tkx.client || '')){ tmeta = tmeta || {}; tmeta.client = bv2; }
+        var dlv = $('m-tdl') ? $('m-tdl').value : ''; if (dlv !== (tkx.deadline || '')){ tmeta = tmeta || {}; tmeta.deadline = dlv; }
       }
       if (tdn && tdn !== tdo && !findDay(data.tasksCache, tdn)){ $('m-tday').style.borderColor = '#A78BFA'; showToast('Ce jour n’est pas dans le planning', null); return; }
       closeModal();
