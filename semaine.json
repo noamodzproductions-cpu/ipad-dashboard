@@ -26,6 +26,15 @@
      "notes": "Début coupé, fin en hook"
     },
     {
+     "id": "theia-v1",
+     "client": "Xuan-nam",
+     "text": "Cercle de Théia : faire la V1",
+     "done": false,
+     "perso": true,
+     "at": 1795183202618,
+     "deadline": "2026-11-24"
+    },
+    {
      "id": "mich-masterclass-tournage",
      "client": "Michalak",
      "text": "Michalak : tournage masterclass",
@@ -203,14 +212,6 @@
        "done": false
       }
      ],
-     "perso": true,
-     "at": 1795126427084
-    },
-    {
-     "id": "theia-v1",
-     "client": "Xuan-nam",
-     "text": "Cercle de Théia : faire la V1",
-     "done": false,
      "perso": true,
      "at": 1795126427084
     },
