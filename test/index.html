@@ -1648,11 +1648,16 @@ function applyOp(w, op){
     tk.perso = true;
   }
 }
+function taskAt(w, id){
+  for (var a = 0; a < w.days.length; a++) for (var b = 0; b < w.days[a].tasks.length; b++) if (w.days[a].tasks[b].id === id) return w.days[a].tasks[b].at;
+  return 0;
+}
 function applyEdits(w){
   if (!w || !(w.days instanceof Array)) return w;
   var e = tEd(), k;
   for (k in e.add) if (e.add.hasOwnProperty(k)) applyOp(w, {op:'add', id:k, day:e.add[k].day, v:e.add[k].v});
-  for (k in e.del) if (e.del.hasOwnProperty(k)) while (pullTask(w, k)) {}
+  /* suppression locale ignorée si Claude a remis la tâche depuis (champ "at" plus récent dans semaine.json) */
+  for (k in e.del) if (e.del.hasOwnProperty(k) && !(num(taskAt(w, k)) > num(e.del[k].at))) while (pullTask(w, k)) {}
   if (w.supprimes instanceof Array) for (var i = 0; i < w.supprimes.length; i++) while (pullTask(w, w.supprimes[i])) {}
   for (k in e.ren) if (e.ren.hasOwnProperty(k)) applyOp(w, {op:'ren', id:k, v:e.ren[k].v});
   for (k in e.mov) if (e.mov.hasOwnProperty(k)) applyOp(w, {op:'mov', id:k, v:e.mov[k].v, at:e.mov[k].at});
