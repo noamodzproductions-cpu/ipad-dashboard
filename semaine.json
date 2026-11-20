@@ -1,7 +1,8 @@
 {
- "updated": "vendredi 20 nov. à 15h05",
- "trello": "vendredi 20 nov. à 15h05",
- "whatsapp": "vendredi 20 nov. à 15h05",
+ "updated": "vendredi 20 nov. à 19h53",
+ "trello": "vendredi 20 nov. à 19h53",
+ "whatsapp": "vendredi 20 nov. à 19h53",
+ "auto": true,
  "days": [
   {
    "date": "2026-11-20",
@@ -90,7 +91,14 @@
      "done": false,
      "prio": 3,
      "perso": true,
-     "at": 1795126427084
+     "at": 1795126427084,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Envoyer sur le Drive (relance Noélie)",
+       "done": false
+      }
+     ]
     },
     {
      "id": "kermes-v1",
