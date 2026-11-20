@@ -1,7 +1,7 @@
 {
- "updated": "vendredi 20 nov. à 11h22",
- "trello": "vendredi 20 nov. à 11h22",
- "whatsapp": "mercredi 18 nov. à 15h05",
+ "updated": "vendredi 20 nov. à 15h05",
+ "trello": "vendredi 20 nov. à 15h05",
+ "whatsapp": "vendredi 20 nov. à 15h05",
  "days": [
   {
    "date": "2026-11-20",
@@ -14,7 +14,14 @@
      "done": false,
      "perso": true,
      "at": 1795126427084,
-     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF"
+     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Remonter, viser 45s (retour Vincent)",
+       "done": false
+      }
+     ]
     },
     {
      "id": "cmc-beaute-v2-kj",
@@ -91,6 +98,7 @@
      "text": "Ensemble Kermes : faire la V1 the last race",
      "done": false,
      "prio": 3,
+     "deadline": "2026-11-16",
      "perso": true,
      "at": 1795126427084
     },
@@ -100,6 +108,7 @@
      "text": "Ensemble Pop up Citadium : faire la V1",
      "done": false,
      "prio": 3,
+     "deadline": "2026-11-23",
      "perso": true,
      "at": 1795126427084
     },
@@ -139,7 +148,8 @@
      "client": "Marie Claire",
      "text": "Café Marie Claire Evasion : V1",
      "done": false,
-     "prio": 2,
+     "prio": 3,
+     "deadline": "2026-11-18",
      "sous": [
       {
        "id": "cmc-evasion-v1",
@@ -189,7 +199,8 @@
      "client": "Ladurée",
      "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
      "done": false,
-     "prio": 1,
+     "prio": 2,
+     "deadline": "2026-11-20",
      "sous": [
       {
        "id": "laduree-gravelle-v1",
@@ -229,6 +240,7 @@
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
      "done": false,
+     "deadline": "2026-11-20",
      "perso": true,
      "at": 1795126427084
     }
