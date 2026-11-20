@@ -361,14 +361,17 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .task.on{opacity:.45}
 .task{transition:opacity .25s}
 .task.on .tchk{background:#4ade80;border-color:#4ade80}
+.task.p1:not(.on) .tchk,.task.p2:not(.on) .tchk,.task.p3:not(.on) .tchk{border-color:#A78BFA}
+.task.p2:not(.on) .tchk{background:rgba(167,139,250,.16)}
+.task.p3:not(.on) .tchk{background:rgba(167,139,250,.38)}
+.task.rp:not(.on) .tchk{border-style:dashed}
+.pbox{flex-shrink:0;display:inline-block;width:20px;height:20px;border-radius:6px;border:2.5px solid #A78BFA;margin-right:12px}
 .task.on .ttxt{text-decoration:line-through}
 .ttag{display:inline-block;height:30px;line-height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.16);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;white-space:nowrap}
 .ttxt{font-size:26px;font-weight:500;line-height:1.25}
-.t1{display:flex;align-items:baseline;min-width:0}
+.t1{display:flex;align-items:center;min-width:0}
 .t1 .ttxt,.t1 .ptxt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tbrand{flex-shrink:0;font-size:19px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.5px;margin-right:12px;white-space:nowrap}
-.tdot{flex-shrink:0;display:inline-block;width:12px;height:12px;border-radius:6px;margin-right:10px;position:relative;top:-3px}
-.tprio{flex-shrink:0;margin-right:12px;font-size:22px;font-weight:900;color:#A78BFA;letter-spacing:1px}
+.tbrand{flex-shrink:0;-webkit-align-self:center;align-self:center;font-size:17px;font-weight:700;height:32px;line-height:32px;padding:0 13px;border-radius:16px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);margin-right:14px;white-space:nowrap}
 .tdl{display:flex;align-items:center;margin-top:10px}
 .tdl-b{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
 .tdl-b i{display:block;height:100%;border-radius:3px}
@@ -1515,7 +1518,7 @@ function swAct(id){
 function closeSwiped(){ var o = document.querySelector('.open2'); if (o){ o.classList.remove('open2'); return true; } return false; }
 function taskCard(tk, date){
   var on = isDoneTask(tk), urg = /^URGENT/.test(tk.text || '');
-  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
+  return '<div class="glass task' + (urg && !on ? ' urg' : '') + (on ? ' on' : '') + (prioOf(tk) ? ' p' + prioOf(tk) : '') + (tk.rep && tk.rep < isoDate(new Date()) ? ' rp' : '') + '" data-act="ttap" data-arg="' + esc(tk.id) + '" data-tid="' + esc(tk.id) + '" data-day="' + esc(date || '') + '">' +
     '<div class="t-in"><span class="tchk" data-act="tchk" data-arg="' + esc(tk.id) + '">' + (on ? '✓' : '') + '</span><div class="grow">' + cardMain(tk, 'ttxt') + '</div>' + subCount(tk) + '</div>' +
     swAct(tk.id) + '</div>';
 }
@@ -2059,7 +2062,7 @@ function dlInfo(tk){
 }
 function cardMain(tk, cls){
   var p = prioOf(tk), rp = tk.rep && tk.rep < isoDate(new Date()) && !isDoneTask(tk), dl = dlInfo(tk);
-  var h = '<div class="t1">' + (p ? '<span class="tprio">' + ['', '!', '!!', '!!!'][p] + '</span>' : (rp ? '<span class="tdot" style="background:rgba(255,255,255,.45)"></span>' : '')) +
+  var h = '<div class="t1">' + (cls === 'ptxt' && (p || rp) ? '<span class="pbox" style="' + (p ? 'background:rgba(167,139,250,' + [0, 0, .16, .38][p] + ')' : 'border-color:rgba(255,255,255,.45);border-style:dashed') + '"></span>' : '') +
     (tk.client ? '<span class="tbrand">' + esc(tk.client) + '</span>' : '') + '<span class="' + cls + '">' + esc(cardTitle(tk)) + '</span></div>';
   if (dl) h += '<div class="tdl"><div class="tdl-b"><i style="width:' + dl.fill + '%;background:' + dl.col + '"></i></div><span class="tdl-j num" style="color:' + dl.col + '">' + dl.txt + '</span></div>';
   return h;
