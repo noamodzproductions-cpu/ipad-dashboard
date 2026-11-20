@@ -1,6 +1,6 @@
 {
  "lu_le": "2026-11-14",
- "trello_vu": "2026-11-19T19:55",
+ "trello_vu": "2026-11-20T11:22",
  "projets": [
   {
    "carte_id": "6aedf942b19fe58afdb7b249",
@@ -115,6 +115,44 @@
    ]
   },
   {
+   "carte_id": "6aff6f7b4c4a2afaea94b88d",
+   "projet": "Michalak",
+   "liste": "🎬 En production",
+   "tournage": "2026-11-19",
+   "deadline": "",
+   "modif": "2026-11-19T22:43:09.676Z",
+   "videos": [
+    {
+     "nom": "Dégustation à l'aveugle de nounours",
+     "etat": "à faire"
+    },
+    {
+     "nom": "Fast and Curious",
+     "etat": "à faire"
+    },
+    {
+     "nom": "POV lunettes",
+     "etat": "à faire"
+    },
+    {
+     "nom": "Éclair caméra",
+     "etat": "à faire"
+    },
+    {
+     "nom": "Vidéo de la voile",
+     "etat": "à faire"
+    },
+    {
+     "nom": "Vidéo du nuage",
+     "etat": "à faire"
+    },
+    {
+     "nom": "Vidéo caméra de surveillance",
+     "etat": "à faire"
+    }
+   ]
+  },
+  {
    "carte_id": "6ade5ef2cb82481064a2c186",
    "projet": "Ensemble Solum",
    "liste": "🎬 En production",
@@ -220,7 +258,7 @@
    "liste": "🎬 En production",
    "tournage": "2026-11-17",
    "deadline": "2026-11-24",
-   "modif": "2026-11-18T14:46:53.745Z",
+   "modif": "2026-11-19T22:12:03.416Z",
    "videos": [
     {
      "nom": "forum Femmes & Industrie",
