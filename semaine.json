@@ -1,7 +1,7 @@
 {
- "updated": "samedi 21 nov. à 14h51",
- "trello": "samedi 21 nov. à 14h51",
- "whatsapp": "samedi 21 nov. à 14h51",
+ "updated": "samedi 21 nov. à 19h55",
+ "trello": "samedi 21 nov. à 19h55",
+ "whatsapp": "samedi 21 nov. à 19h55",
  "auto": true,
  "days": [
   {
@@ -177,6 +177,14 @@
      "prio": 1,
      "perso": true,
      "at": 1795259463044
+    },
+    {
+     "id": "ensemble-raf-dispos",
+     "client": "Ensemble",
+     "text": "Ensemble x Raf : répondre pour les dispos",
+     "done": false,
+     "notes": "Nouveau projet, dim. ou lun.",
+     "prio": 1
     },
     {
      "id": "cmc-beaute-v2-miye",
