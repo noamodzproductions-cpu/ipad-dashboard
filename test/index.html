@@ -1020,9 +1020,9 @@ function renderFactures(){
       hist = pzl > 0 ? 'Paiement prévu dans ' + pzl + ' j' : (pzl === 0 ? 'Paiement prévu aujourd’hui' : 'Paiement prévu dépassé'); } }
     var rb = r.nrel ? '<span class="rbadge r' + Math.min(4, r.nrel) + '">×' + r.nrel + '</span>' : '';
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
-    var bad = !r.paye && r.days >= 30;
+    var bad = !r.paye && r.days > 30; /* retard = jours au-delà des 30 jours */
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
-      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + r.days + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
+      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + (r.days - 30) + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%' + bcol + '"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + rb + '</div>' + (hist ? '<div class="fc-hist num">' + hist + '</div>' : '') + '</div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
