@@ -1,7 +1,7 @@
 {
- "updated": "dimanche 22 nov. à 14h51",
- "trello": "dimanche 22 nov. à 14h51",
- "whatsapp": "dimanche 22 nov. à 14h51",
+ "updated": "dimanche 22 nov. à 19h53",
+ "trello": "dimanche 22 nov. à 19h53",
+ "whatsapp": "dimanche 22 nov. à 19h53",
  "auto": true,
  "days": [
   {
@@ -12,7 +12,7 @@
      "id": "ensemble-raf-dispos",
      "client": "Ensemble",
      "text": "19h · Ensemble x Raf : call",
-     "done": false,
+     "done": true,
      "notes": "Raf et Ultrains OK"
     }
    ]
