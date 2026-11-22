@@ -725,6 +725,22 @@ function normalize(d){
       {id:'ch-innra', t:'Fado hack · Ampoule Innr E27', p:50, ok:false}, {id:'ch-bras', t:'Bureau · Bras écrans', p:40, ok:false}]});
     d.seedChambre = true;
   }
+  /* liste Chambre v2 : tout (sauf le déjà acheté), par ordre d'importance ; garde les coches */
+  if (!d.seedChambre2){
+    var CH2 = [
+      {id:'ch-bras', t:'Bureau · Bras écrans', p:40}, {id:'ch-innrp', t:'Light hack · Prise Innr (lumière connectée)', p:20},
+      {id:'ch-innra', t:'Fado hack · Ampoule Innr E27', p:50}, {id:'ch-fado', t:'Fado hack · Lampe Fado', p:20},
+      {id:'ch-rideaux', t:'Rideaux (24 € pièce)', p:90}, {id:'ch-stork', t:'Table de nuit · Storklinta', p:50},
+      {id:'ch-lack', t:'Mur · Lack', p:17}, {id:'ch-mossl', t:'Mur · Mosslanda', p:6}, {id:'ch-tass', t:'Mur · Panneau tasseaux ×4', p:120}];
+    for (var cj = 0; cj < d.listes.length; cj++) if (d.listes[cj].id === 'chambre'){
+      var chOld = {}, chIt = d.listes[cj].items, cn = [];
+      for (var ck = 0; ck < chIt.length; ck++) chOld[chIt[ck].id] = chIt[ck];
+      for (ck = 0; ck < CH2.length; ck++){ CH2[ck].ok = !!(chOld[CH2[ck].id] && chOld[CH2[ck].id].ok); cn.push(CH2[ck]); delete chOld[CH2[ck].id]; }
+      for (var cx in chOld) if (chOld.hasOwnProperty(cx) && cx.indexOf('ch-') !== 0) cn.push(chOld[cx]); /* garde ce que Noam a ajouté lui-même */
+      d.listes[cj].items = cn;
+    }
+    d.seedChambre2 = true;
+  }
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
     {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
@@ -1218,7 +1234,7 @@ function renderListes(){
     if (!l.items.length) h += '<div class="mhint" style="padding:24px 10px">' + (l.prix ? 'Aucun abonnement.<br>Touche + en haut pour en ajouter.' : 'Liste vide.<br>Touche + en haut pour écrire.') + '</div>';
     rows = l.items.slice();
     if (l.prix) rows.sort(function(a, b){ return lMois(b) - lMois(a); });
-    else rows.sort(function(a, b){ return (a.ok ? 1 : 0) - (b.ok ? 1 : 0); });
+    else rows.sort(function(a, b){ return ((a.ok ? 1 : 0) - (b.ok ? 1 : 0)) || (l.items.indexOf(a) - l.items.indexOf(b)); });
     for (i = 0; i < rows.length; i++){
       it = rows[i];
       h += '<div class="fcard lcard' + (!l.prix && it.ok ? ' paid' : '') + '" data-fid="' + esc(it.id) + '"><div class="fc-in lin"' + (l.prix ? ' data-act="litem" data-arg="' + esc(it.id) + '"' : '') + '>' +
