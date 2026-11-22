@@ -164,7 +164,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .lcard.open .fc-in{-webkit-transform:translate3d(-300px,0,0);transform:translate3d(-300px,0,0)}
 .lcard .fc-act button{height:62px;font-size:21px;padding:0 18px}
 .lcard.paid .ln{opacity:.45;text-decoration:line-through}
-.lbox{flex-shrink:0;width:50px;height:50px;min-width:0;padding:0;margin-right:16px;border-radius:14px;font-size:26px;font-weight:800;background:transparent;border:2px solid rgba(255,255,255,.3)}
+.lbox{flex-shrink:0;width:50px;height:50px;min-width:0;min-height:0;padding:0;margin-right:16px;border-radius:14px;font-size:26px;font-weight:800;background:transparent;border:2px solid rgba(255,255,255,.3)}
 .lbox.on{background:#4ade80;border-color:#4ade80;color:#111}
 .tot-v{overflow:hidden;text-overflow:ellipsis}
 /* Matériel */
@@ -716,6 +716,15 @@ function normalize(d){
   if (!d.facEtat.envoi) d.facEtat.envoi = {};
   if (!d.facEtat.promis) d.facEtat.promis = {};
   if (!(d.listes instanceof Array)) d.listes = [{id:'abos', nom:'Abonnements', prix:true, items:[]}, {id:'notes', nom:'Notes', prix:false, items:[]}];
+  if (!d.seedChambre){
+    var chOk = false; for (var ci = 0; ci < d.listes.length; ci++) if (d.listes[ci].id === 'chambre') chOk = true;
+    if (!chOk) d.listes.push({id:'chambre', nom:'Chambre', prix:false, items:[
+      {id:'ch-rideaux', t:'Rideaux', p:90, ok:false}, {id:'ch-lack', t:'Mur · Lack', p:17, ok:false}, {id:'ch-mossl', t:'Mur · Mosslanda', p:6, ok:false},
+      {id:'ch-tass', t:'Mur · Panneau tasseaux ×4', p:120, ok:false}, {id:'ch-stork', t:'Table de nuit · Storklinta', p:50, ok:false},
+      {id:'ch-innrp', t:'Light hack · Prise Innr', p:20, ok:false}, {id:'ch-fado', t:'Fado hack · Fado', p:20, ok:false},
+      {id:'ch-innra', t:'Fado hack · Ampoule Innr E27', p:50, ok:false}, {id:'ch-bras', t:'Bureau · Bras écrans', p:40, ok:false}]});
+    d.seedChambre = true;
+  }
   if (!(d.materiel instanceof Array)) d.materiel = [
     {id:'a7s3', nom:'A7S3', items:[{id:'a7s3-sd', nom:'Carte SD'}, {id:'a7s3-bat', nom:'Batteries'}, {id:'a7s3-obj', nom:'Objectif'}]},
     {id:'atomos', nom:'Atomos', items:[{id:'atomos-bat', nom:'Batterie'}]},
@@ -1201,6 +1210,11 @@ function renderListes(){
       for (i = 0; i < l.items.length; i++) m += lMois(l.items[i]);
       h += '<div class="lsum"><b class="num">' + prixTxt(m) + '<small> / mois</small></b><span class="num">' + prixTxt(m * 12) + ' / an</span></div>';
     }
+    if (!l.prix){
+      var lt0 = 0, lr0 = 0, lhas = false;
+      for (i = 0; i < l.items.length; i++) if (num(l.items[i].p)){ lhas = true; lt0 += num(l.items[i].p); if (!l.items[i].ok) lr0 += num(l.items[i].p); }
+      if (lhas) h += '<div class="lsum"><b class="num">' + prixTxt(lr0) + '<small> à acheter</small></b><span class="num">Total ' + prixTxt(lt0) + '</span></div>';
+    }
     if (!l.items.length) h += '<div class="mhint" style="padding:24px 10px">' + (l.prix ? 'Aucun abonnement.<br>Touche + en haut pour en ajouter.' : 'Liste vide.<br>Touche + en haut pour écrire.') + '</div>';
     rows = l.items.slice();
     if (l.prix) rows.sort(function(a, b){ return lMois(b) - lMois(a); });
@@ -1209,7 +1223,7 @@ function renderListes(){
       it = rows[i];
       h += '<div class="fcard lcard' + (!l.prix && it.ok ? ' paid' : '') + '" data-fid="' + esc(it.id) + '"><div class="fc-in lin"' + (l.prix ? ' data-act="litem" data-arg="' + esc(it.id) + '"' : '') + '>' +
         (l.prix ? '<div class="ln">' + esc(it.t) + '</div><div class="lp num">' + prixTxt(it.p) + '<small> / ' + (it.an ? 'an' : 'mois') + '</small></div>'
-                : '<button class="lbox' + (it.ok ? ' on' : '') + '" data-act="ltog" data-arg="' + esc(it.id) + '">' + (it.ok ? '✓' : '') + '</button><div class="ln" data-act="litem" data-arg="' + esc(it.id) + '">' + esc(it.t) + '</div>') +
+                : '<button class="lbox' + (it.ok ? ' on' : '') + '" data-act="ltog" data-arg="' + esc(it.id) + '">' + (it.ok ? '✓' : '') + '</button><div class="ln" data-act="litem" data-arg="' + esc(it.id) + '">' + esc(it.t) + '</div>' + (num(it.p) ? '<div class="lp num">' + prixTxt(num(it.p)) + '</div>' : '')) +
         '</div><div class="fc-act"><button class="white" data-act="litem" data-arg="' + esc(it.id) + '">Modifier</button><button class="vio" data-act="ldel" data-arg="' + esc(it.id) + '">Supprimer</button></div></div>';
     }
   }
@@ -1228,7 +1242,8 @@ function lItemSheet(id){
     '<div class="row esh"><button class="lnk" data-act="mclose">Annuler</button><div class="grow esh-t">' + (it ? 'Modifier' : (l.prix ? 'Nouvel abonnement' : 'Ajouter')) + '</div><button class="lnk b" data-act="litok">OK</button></div>' +
     '<input type="text" id="li-t" value="' + esc(it ? it.t : '') + '" placeholder="' + (l.prix ? 'Nom (ex. Netflix)' : 'Écrire…') + '" autocomplete="off" style="width:100%">' +
     (l.prix ? '<div class="row" style="margin-top:18px;align-items:center"><input type="text" class="num" id="li-p" inputmode="decimal" placeholder="Prix en €" value="' + (it ? esc(String(it.p).replace('.', ',')) : '') + '" autocomplete="off" style="flex:1;min-width:0;margin-right:14px">' +
-      '<button class="' + (it && it.an ? '' : 'white') + '" id="li-m" data-act="liper" data-arg="0">/ mois</button><button class="' + (it && it.an ? 'white' : '') + '" id="li-a" data-act="liper" data-arg="1" style="margin-left:12px">/ an</button></div>' : ''));
+      '<button class="' + (it && it.an ? '' : 'white') + '" id="li-m" data-act="liper" data-arg="0">/ mois</button><button class="' + (it && it.an ? 'white' : '') + '" id="li-a" data-act="liper" data-arg="1" style="margin-left:12px">/ an</button></div>'
+           : '<input type="text" class="num" id="li-p" inputmode="decimal" placeholder="Prix en € (facultatif)" value="' + (it && num(it.p) ? esc(String(it.p).replace('.', ',')) : '') + '" autocomplete="off" style="width:100%;margin-top:18px">'));
   if (!it) try { $('li-t').focus(); } catch(e){}
 }
 function closeLSwiped(){ var o = document.querySelectorAll('#s-listes .fcard.open'), n = o.length; for (var i = 0; i < n; i++) o[i].classList.remove('open'); return n > 0; }
@@ -2508,11 +2523,11 @@ function handle(act, arg){
     case 'liper': if (!modal) return; modal.an = arg === '1'; $('li-m').className = modal.an ? '' : 'white'; $('li-a').className = modal.an ? 'white' : ''; return;
     case 'litok':
       var li = lCur(); if (!li || !modal) return;
-      var lnt = trimV('li-t'), lnp = li.prix ? prixVal($('li-p').value) : 0;
+      var lnt = trimV('li-t'), lnp = $('li-p') ? (prixVal($('li-p').value) || 0) : 0;
       if (!lnt){ $('li-t').style.borderColor = '#A78BFA'; return; }
       if (li.prix && !lnp){ $('li-p').style.borderColor = '#A78BFA'; return; }
-      if (modal.id){ var lj = lFindItem(li, modal.id); if (lj < 0) return; li.items[lj].t = lnt; if (li.prix){ li.items[lj].p = lnp; li.items[lj].an = !!modal.an; } }
-      else li.items.push(li.prix ? {id:uid(), t:lnt, p:lnp, an:!!modal.an} : {id:uid(), t:lnt, ok:false});
+      if (modal.id){ var lj = lFindItem(li, modal.id); if (lj < 0) return; li.items[lj].t = lnt; if (li.prix){ li.items[lj].p = lnp; li.items[lj].an = !!modal.an; } else if (lnp) li.items[lj].p = lnp; else delete li.items[lj].p; }
+      else li.items.push(li.prix ? {id:uid(), t:lnt, p:lnp, an:!!modal.an} : (lnp ? {id:uid(), t:lnt, p:lnp, ok:false} : {id:uid(), t:lnt, ok:false}));
       save(); closeModal(); renderListes(); return;
     case 'ldel':
       var ld = lCur(), lx2 = ld ? lFindItem(ld, arg) : -1; if (lx2 < 0) return;
