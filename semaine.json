@@ -14,89 +14,33 @@
      "text": "19h · Ensemble x Raf : call",
      "done": true,
      "notes": "Raf et Ultrains OK"
-    }
-   ]
-  },
-  {
-   "date": "2026-11-23",
-   "jour": "Lundi 23 novembre",
-   "tasks": [
-    {
-     "id": "curve-photos-toutes",
-     "client": "Kurv Studio",
-     "text": "Kurv Studio : envoyer toutes les photos",
-     "done": false,
-     "notes": "Email à Noélie + Nathalie",
-     "prio": 3,
-     "perso": true,
-     "at": 1795259463044
     },
     {
-     "id": "mich-retouche-photos",
-     "client": "Michalak",
-     "text": "Michalak : retoucher toutes les photos",
+     "id": "cmc-beaute-v2-miye",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : V2 Miye",
      "done": false,
-     "prio": 3,
      "perso": true,
-     "at": 1795259463044,
+     "at": 1795385893928,
+     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
      "sous": [
       {
        "id": "s1",
-       "text": "Envoyer sur le Drive (relance Noélie)",
+       "text": "Remonter, viser 45s (retour Vincent)",
        "done": false
-      }
-     ]
-    },
-    {
-     "id": "kermes-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Kermes : faire la V1 the last race",
-     "done": false,
-     "prio": 3,
-     "deadline": "2026-11-16",
-     "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "citadium-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Pop up Citadium : faire la V1",
-     "done": false,
-     "prio": 3,
-     "deadline": "2026-11-23",
-     "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "laduree-halloween",
-     "client": "Ladurée",
-     "text": "Ladurée Halloween (octobre) : V1 des vidéos",
-     "done": false,
-     "prio": 3,
-     "sous": [
-      {
-       "id": "laduree-halloween-v1-stopmotion",
-       "text": "Stop motion club",
-       "done": true
-      },
-      {
-       "id": "laduree-halloween-v1-macarons",
-       "text": "Duplicat macarons",
-       "done": false
-      },
-      {
-       "id": "laduree-halloween-v1-carte",
-       "text": "Carte mode Halloween",
-       "done": true
-      },
-      {
-       "id": "laduree-halloween-3",
-       "text": "Marie-Antoinette plan large",
-       "done": true
       }
      ],
+     "deadline": "2026-11-23"
+    },
+    {
+     "id": "cmc-beaute-v2-kj",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : V2 KJ Locks",
+     "done": false,
      "perso": true,
-     "at": 1795259463044
+     "at": 1795385893928,
+     "notes": "Début coupé, fin en hook",
+     "deadline": "2026-11-23"
     },
     {
      "id": "cmc-evasion",
@@ -104,7 +48,7 @@
      "text": "Café Marie Claire Evasion : V1",
      "done": false,
      "prio": 3,
-     "deadline": "2026-11-18",
+     "deadline": "2026-11-25",
      "sous": [
       {
        "id": "cmc-evasion-v1",
@@ -118,48 +62,7 @@
       }
      ],
      "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "astotel-lorette-v1",
-     "client": "Astotel",
-     "text": "Astotel - Lorette : faire la V1",
-     "done": false,
-     "prio": 2,
-     "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "laduree-gravelle",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
-     "done": false,
-     "prio": 2,
-     "deadline": "2026-11-20",
-     "sous": [
-      {
-       "id": "laduree-gravelle-v1",
-       "text": "Le Pavillon (lieu)",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-lieu2",
-       "text": "La salle en détails",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-plats1",
-       "text": "The Most Difficult Choice",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-plats2",
-       "text": "Le dressage d'un plat",
-       "done": false
-      }
-     ],
-     "perso": true,
-     "at": 1795259463044
+     "at": 1795385893928
     },
     {
      "id": "cmc-lifestyle-lien",
@@ -168,6 +71,39 @@
      "done": false,
      "notes": "Vidéos du 13/10 introuvables",
      "prio": 1,
+     "perso": true,
+     "at": 1795385893928,
+     "deadline": "2026-11-23"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-23",
+   "jour": "Lundi 23 novembre",
+   "tasks": [
+    {
+     "id": "theia-v1",
+     "client": "Cercle de Théia",
+     "text": "2ème Forum Femmes et Industrie : faire la V1",
+     "done": false,
+     "perso": true,
+     "at": 1795259463044,
+     "deadline": "2026-11-24"
+    },
+    {
+     "id": "benito-appart-v1",
+     "client": "Benito",
+     "text": "Benito : faire la V1 appartement",
+     "done": false,
+     "deadline": "2026-11-25",
+     "at": 1795385893928,
+     "perso": true
+    },
+    {
+     "id": "mich-masterclass-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false,
      "perso": true,
      "at": 1795259463044
     },
@@ -182,44 +118,12 @@
      "at": 1795259463044
     },
     {
-     "id": "cmc-beaute-v2-miye",
-     "client": "Marie Claire",
-     "text": "Grand Café Beauté : V2 Miye",
+     "id": "curve-photos-toutes",
+     "client": "Kurv Studio",
+     "text": "Kurv Studio : envoyer toutes les photos",
      "done": false,
-     "perso": true,
-     "at": 1795259463044,
-     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Remonter, viser 45s (retour Vincent)",
-       "done": false
-      }
-     ]
-    },
-    {
-     "id": "cmc-beaute-v2-kj",
-     "client": "Marie Claire",
-     "text": "Grand Café Beauté : V2 KJ Locks",
-     "done": false,
-     "perso": true,
-     "at": 1795259463044,
-     "notes": "Début coupé, fin en hook"
-    },
-    {
-     "id": "theia-v1",
-     "client": "Cercle de Théia",
-     "text": "2ème Forum Femmes et Industrie : faire la V1",
-     "done": false,
-     "perso": true,
-     "at": 1795259463044,
-     "deadline": "2026-11-24"
-    },
-    {
-     "id": "mich-masterclass-tournage-ssd",
-     "client": "Michalak",
-     "text": "Michalak : rushs + photos → SSD",
-     "done": false,
+     "notes": "Email à Noélie + Nathalie",
+     "prio": 3,
      "perso": true,
      "at": 1795259463044
     },
@@ -244,16 +148,6 @@
      "text": "Benito : tournage ven. 20 matin → agenda",
      "done": false,
      "notes": "10h confirmé",
-     "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "ensemble-solum-v1",
-     "client": "Ensemble",
-     "text": "Ensemble Solum : faire la V1",
-     "done": false,
-     "prio": 2,
-     "deadline": "2026-11-20",
      "perso": true,
      "at": 1795259463044
     }
@@ -318,14 +212,48 @@
        "text": "Caméra de surveillance",
        "done": false
       }
-     ]
+     ],
+     "deadline": "2026-11-27"
     }
    ]
   },
   {
    "date": "2026-11-25",
    "jour": "Mercredi 25 novembre",
-   "tasks": []
+   "tasks": [
+    {
+     "id": "laduree-gravelle",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
+     "done": false,
+     "prio": 2,
+     "deadline": "2026-11-27",
+     "sous": [
+      {
+       "id": "laduree-gravelle-v1",
+       "text": "Le Pavillon (lieu)",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-lieu2",
+       "text": "La salle en détails",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats1",
+       "text": "The Most Difficult Choice",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats2",
+       "text": "Le dressage d'un plat",
+       "done": false
+      }
+     ],
+     "perso": true,
+     "at": 1795385893928
+    }
+   ]
   },
   {
    "date": "2026-11-26",
@@ -343,21 +271,30 @@
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
      "done": false
+    },
+    {
+     "id": "mich-retouche-photos",
+     "client": "Michalak",
+     "text": "Michalak : retoucher toutes les photos",
+     "done": false,
+     "prio": 3,
+     "perso": true,
+     "at": 1795385893928,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Envoyer sur le Drive (relance Noélie)",
+       "done": false
+      }
+     ],
+     "deadline": "2026-11-27"
     }
    ]
   },
   {
    "date": "2026-11-27",
    "jour": "Vendredi 27 novembre",
-   "tasks": [
-    {
-     "id": "mich-noel-v1",
-     "client": "Michalak",
-     "text": "Michalak : faire la V1 collection de Noël",
-     "done": false,
-     "notes": "Deadline demandée dim. 29"
-    }
-   ]
+   "tasks": []
   },
   {
    "date": "2026-11-28",
@@ -368,6 +305,91 @@
    "date": "2026-11-29",
    "jour": "Dimanche 29 novembre",
    "tasks": []
+  },
+  {
+   "date": "2026-11-30",
+   "jour": "Lundi 30 novembre",
+   "tasks": [
+    {
+     "id": "ensemble-solum-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Solum : faire la V1",
+     "done": false,
+     "prio": 2,
+     "deadline": "2026-11-20",
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "citadium-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Pop up Citadium : faire la V1",
+     "done": false,
+     "prio": 3,
+     "deadline": "2026-11-23",
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "kermes-v1",
+     "client": "Ensemble",
+     "text": "Ensemble Kermes : faire la V1 the last race",
+     "done": false,
+     "prio": 3,
+     "deadline": "2026-11-16",
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "laduree-halloween",
+     "client": "Ladurée",
+     "text": "Ladurée Halloween (octobre) : V1 des vidéos",
+     "done": false,
+     "prio": 3,
+     "sous": [
+      {
+       "id": "laduree-halloween-v1-stopmotion",
+       "text": "Stop motion club",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-v1-macarons",
+       "text": "Duplicat macarons",
+       "done": false
+      },
+      {
+       "id": "laduree-halloween-v1-carte",
+       "text": "Carte mode Halloween",
+       "done": true
+      },
+      {
+       "id": "laduree-halloween-3",
+       "text": "Marie-Antoinette plan large",
+       "done": true
+      }
+     ],
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "astotel-lorette-v1",
+     "client": "Astotel",
+     "text": "Astotel - Lorette : faire la V1",
+     "done": false,
+     "prio": 2,
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "mich-noel-v1",
+     "client": "Michalak",
+     "text": "Michalak : faire la V1 collection de Noël",
+     "done": false,
+     "notes": "Deadline demandée dim. 29",
+     "at": 1795385893928,
+     "perso": true
+    }
+   ]
   },
   {
    "date": "2026-12-01",
