@@ -387,7 +387,8 @@
      "done": false,
      "notes": "Deadline demandée dim. 29",
      "at": 1795385893928,
-     "perso": true
+     "perso": true,
+     "deadline": "2026-12-03"
     }
    ]
   },
@@ -399,7 +400,8 @@
      "id": "nuance-v1",
      "client": "Zack",
      "text": "Nuance Audio : faire la V1",
-     "done": false
+     "done": false,
+     "deadline": "2026-12-01"
     }
    ]
   }
