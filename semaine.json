@@ -1,18 +1,22 @@
 {
- "updated": "samedi 21 nov. à 19h55",
- "trello": "samedi 21 nov. à 19h55",
- "whatsapp": "samedi 21 nov. à 19h55",
+ "updated": "dimanche 22 nov. à 7h53",
+ "trello": "dimanche 22 nov. à 7h53",
+ "whatsapp": "dimanche 22 nov. à 7h53",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-21",
-   "jour": "Samedi 21 novembre",
-   "tasks": []
-  },
-  {
    "date": "2026-11-22",
    "jour": "Dimanche 22 novembre",
-   "tasks": []
+   "tasks": [
+    {
+     "id": "ensemble-raf-dispos",
+     "client": "Ensemble",
+     "text": "Ensemble x Raf : confirmer 19h pour le call",
+     "done": false,
+     "notes": "Raf propose 19h (lui 18h max)",
+     "prio": 1
+    }
+   ]
   },
   {
    "date": "2026-11-23",
@@ -179,14 +183,6 @@
      "at": 1795259463044
     },
     {
-     "id": "ensemble-raf-dispos",
-     "client": "Ensemble",
-     "text": "Ensemble x Raf : répondre pour les dispos",
-     "done": false,
-     "notes": "Nouveau projet, dim. ou lun.",
-     "prio": 1
-    },
-    {
      "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
      "text": "Grand Café Beauté : V2 Miye",
@@ -232,7 +228,7 @@
      "id": "benito-appart-tournage",
      "client": "Benito",
      "text": "Benito : finir le tournage appartement",
-     "done": false,
+     "done": true,
      "notes": "10h confirmé",
      "at": 1795259463044
     },
@@ -240,7 +236,7 @@
      "id": "benito-appart-tournage-ssd",
      "client": "Benito",
      "text": "Benito : rushs + photos → SSD",
-     "done": false,
+     "done": true,
      "at": 1795259463044
     },
     {
@@ -257,6 +253,7 @@
      "client": "Ensemble",
      "text": "Ensemble Solum : faire la V1",
      "done": false,
+     "prio": 2,
      "deadline": "2026-11-20",
      "perso": true,
      "at": 1795259463044
@@ -366,6 +363,11 @@
   {
    "date": "2026-11-28",
    "jour": "Samedi 28 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-29",
+   "jour": "Dimanche 29 novembre",
    "tasks": []
   },
   {
