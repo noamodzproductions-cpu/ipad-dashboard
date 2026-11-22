@@ -209,6 +209,17 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .mgh b{float:right}
 .mgh.ok,.mgh.ok b{color:#4ade80}
 .mat-r .mchk{width:100%;margin-bottom:10px}
+.mline{display:flex;align-items:center}
+.mline .mchk{flex:1;width:auto}
+.mline .mstep{margin:0 0 10px 12px}
+.mstep{flex-shrink:0;display:flex;align-items:center}
+.mstep button{width:58px;height:58px;padding:0;border-radius:29px;font-size:28px;font-weight:700}
+.mstep span{min-width:64px;text-align:center;font-size:26px;font-weight:700}
+.mstep small{font-size:18px;opacity:.55}
+.mq{color:rgba(255,255,255,.55);font-weight:700;margin-left:6px}
+.mseg{display:flex;margin-right:12px;border-radius:35px;background:rgba(255,255,255,.08);padding:4px}
+.mseg button{height:62px;padding:0 22px;border-radius:31px;border:0;background:transparent;font-size:22px;font-weight:700;color:rgba(255,255,255,.6)}
+.mseg button.on{background:#fff;color:#111}
 .mready{padding:16px;text-align:center;font-size:28px;font-weight:700;color:#4ade80}
 .mhint{font-size:24px;color:rgba(255,255,255,.55);text-align:center;padding:40px 10px;line-height:1.4}
 .fc-top,.fc-bot{display:flex;align-items:center}
@@ -712,6 +723,8 @@ function normalize(d){
   ];
   if (!d.matCheck || typeof d.matCheck !== 'object') d.matCheck = {};
   if (!d.matPris || typeof d.matPris !== 'object') d.matPris = {};
+  if (!d.matQ || typeof d.matQ !== 'object') d.matQ = {};   /* nombre pris ce tournage (accessoire en plusieurs exemplaires) */
+  if (!d.matRet || typeof d.matRet !== 'object') d.matRet = {}; /* retour : coché = rentré */
   if (!d.tSub || typeof d.tSub !== 'object') d.tSub = {};
   if (!d.matV2){
     var oldSeed = true;
@@ -1092,13 +1105,26 @@ function facDelai(id, st){
 function uid(){ return Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
 function matFind(id){ for (var i = 0; i < data.materiel.length; i++) if (data.materiel[i].id === id) return i; return -1; }
 function matCount(a){ var n = 0; for (var i = 0; i < a.items.length; i++) if (data.matCheck[a.items[i].id]) n++; return n; }
-var matEdit = false;
+function matQte(it){ return Math.max(1, num(it.qte) || 1); }
+function matPrisQ(it){ var q = num(data.matQ[it.id]); return q >= 1 ? Math.min(q, matQte(it)) : matQte(it); }
+/* retour : l'appareil lui-même + ses accessoires */
+function matRetCount(a){ var n = data.matRet['app:' + a.id] ? 1 : 0; for (var i = 0; i < a.items.length; i++) if (data.matRet[a.items[i].id]) n++; return n; }
+var matEdit = false, matMode = 'dep';
+function matRow(id, label, on, act, qHtml){
+  return '<div class="mline"><button class="mchk' + (on ? ' on' : '') + '" data-act="' + act + '" data-arg="' + esc(id) + '"><span class="tchk">' + (on ? '✓' : '') + '</span>' + label + '</button>' + (qHtml || '') + '</div>';
+}
 function renderMateriel(){
-  var L = data.materiel, i, k, a, tot = 0, ok = 0, pris = [];
-  for (i = 0; i < L.length; i++) if (data.matPris[L[i].id]){ pris.push(L[i]); tot += L[i].items.length; ok += matCount(L[i]); }
+  var L = data.materiel, i, k, a, tot = 0, ok = 0, pris = [], ret = matMode === 'ret' && !matEdit;
+  for (i = 0; i < L.length; i++) if (data.matPris[L[i].id]){
+    pris.push(L[i]);
+    if (ret){ tot += L[i].items.length + 1; ok += matRetCount(L[i]); } else { tot += L[i].items.length; ok += matCount(L[i]); }
+  }
+  var seg = matEdit ? '' : '<div class="mseg"><button class="' + (ret ? '' : 'on') + '" data-act="mmode" data-arg="dep">Départ</button><button class="' + (ret ? 'on' : '') + '" data-act="mmode" data-arg="ret">Retour</button></div>';
   var right = matEdit ? '<button class="white" data-act="madd">+ Appareil</button><button data-act="medit">Terminé</button>'
-                      : '<button data-act="mreset">Nouveau tournage</button><button data-act="medit">Modifier</button>';
-  var sub = matEdit ? 'Touche un appareil pour le modifier' : (!pris.length ? 'Coche ce que tu prends' : (ok === tot ? 'Tout est prêt ✓' : (tot - ok) + ' à vérifier'));
+                      : seg + '<button data-act="mreset">Nouveau</button><button data-act="medit">Modifier</button>';
+  var sub = matEdit ? 'Touche un appareil pour le modifier'
+          : (!pris.length ? 'Coche ce que tu prends'
+          : (ret ? (ok === tot ? 'Tout est rentré ✓' : (tot - ok) + ' à ranger') : (ok === tot ? 'Tout est prêt ✓' : (tot - ok) + ' à vérifier')));
   var h = hdr('Matériel', sub, right) + '<div class="content mat"><div class="glass mat-l">';
   if (!L.length) h += '<div class="mhint">Aucun appareil.<br>Touche « Modifier » puis « + Appareil ».</div>';
   for (i = 0; i < L.length; i++){
@@ -1109,15 +1135,21 @@ function renderMateriel(){
   }
   h += '</div><div class="glass mat-r">';
   if (!pris.length) h += '<div class="mhint">Coche à gauche ce que tu prends pour ce tournage :<br>la liste de ce qu’il faut vérifier apparaîtra ici.</div>';
-  else if (tot && ok === tot) h += '<div class="mready">Tout est prêt ✓</div>';
+  else if (tot && ok === tot) h += '<div class="mready">' + (ret ? 'Tout est rentré ✓' : 'Tout est prêt ✓') + '</div>';
   for (i = 0; i < pris.length; i++){
     a = pris[i];
-    var n = matCount(a), t = a.items.length;
+    var n = ret ? matRetCount(a) : matCount(a), t = ret ? a.items.length + 1 : a.items.length;
     h += '<div class="mgh' + (t && n === t ? ' ok' : '') + '">' + esc(a.nom) + '<b class="num">' + (t ? n + ' / ' + t : '') + '</b></div>';
-    if (!t) h += '<div class="muted" style="font-size:20px;margin-bottom:10px">Rien à vérifier · ajoute des accessoires dans « Modifier »</div>';
-    for (k = 0; k < t; k++){
-      var it = a.items[k], c = !!data.matCheck[it.id];
-      h += '<button class="mchk' + (c ? ' on' : '') + '" data-act="mtog" data-arg="' + esc(it.id) + '"><span class="tchk">' + (c ? '✓' : '') + '</span>' + esc(it.nom) + '</button>';
+    if (ret) h += matRow('app:' + a.id, esc(a.nom), !!data.matRet['app:' + a.id], 'mret');
+    else if (!t) h += '<div class="muted" style="font-size:20px;margin-bottom:10px">Rien à vérifier · ajoute des accessoires dans « Modifier »</div>';
+    for (k = 0; k < a.items.length; k++){
+      var it = a.items[k], qs = matQte(it), qp = matPrisQ(it), lab = esc(it.nom) + (qs > 1 || ret ? '' : '');
+      if (ret){
+        h += matRow(it.id, esc(it.nom) + (qp > 1 ? ' <span class="mq num">×' + qp + '</span>' : ''), !!data.matRet[it.id], 'mret');
+      } else {
+        var qh = qs > 1 ? '<div class="mstep"><button data-act="mq" data-arg="' + esc(it.id) + '|-1">–</button><span class="num">' + qp + '<small>/' + qs + '</small></span><button data-act="mq" data-arg="' + esc(it.id) + '|1">+</button></div>' : '';
+        h += matRow(it.id, lab, !!data.matCheck[it.id], 'mtog', qh);
+      }
     }
   }
   h += '</div></div>';
@@ -1131,9 +1163,11 @@ function matOpen(id){
   var ai = matFind(id); if (ai < 0) return;
   var a = data.materiel[ai], h = '<div class="mtitle">' + esc(a.nom) + '</div>';
   if (!a.items.length) h += '<div class="fm-l">Pas encore d’accessoire : ajoute-les ci-dessous.</div>';
+  else h += '<div class="fm-l">Le chiffre = combien tu en as en stock.</div>';
   for (var i = 0; i < a.items.length; i++){
     var it = a.items[i];
     h += '<div class="row mrow2"><div class="grow" style="font-size:28px">' + esc(it.nom) + '</div>' +
+      '<div class="mstep"><button data-act="mstock" data-arg="' + esc(a.id + '|' + it.id) + '|-1">–</button><span class="num">' + matQte(it) + '</span><button data-act="mstock" data-arg="' + esc(a.id + '|' + it.id) + '|1">+</button></div>' +
       '<button class="xbtn" data-act="mdel" data-arg="' + esc(a.id + '|' + it.id) + '">✕</button></div>';
   }
   h += '<div class="row mrow2" style="margin-top:20px"><input type="text" id="m-new" placeholder="Ajouter un accessoire" style="flex:1"><button class="white" data-act="mitem" data-arg="' + esc(a.id) + '">Ajouter</button></div>' +
@@ -2503,6 +2537,20 @@ function handle(act, arg){
     case 'mpris': data.matPris[arg] = !data.matPris[arg]; if (!data.matPris[arg]) delete data.matPris[arg]; save(); renderMateriel(); return;
     case 'mtog': data.matCheck[arg] = !data.matCheck[arg]; if (!data.matCheck[arg]) delete data.matCheck[arg]; save(); renderMateriel(); return;
     case 'medit': matEdit = !matEdit; renderMateriel(); return;
+    case 'mmode': matMode = arg === 'ret' ? 'ret' : 'dep'; renderMateriel(); return;
+    case 'mret': data.matRet[arg] = !data.matRet[arg]; if (!data.matRet[arg]) delete data.matRet[arg]; save(); renderMateriel(); return;
+    case 'mq':
+      a = arg.split('|'); var mit = null;
+      for (var mz = 0; mz < data.materiel.length && !mit; mz++) for (var my = 0; my < data.materiel[mz].items.length; my++) if (data.materiel[mz].items[my].id === a[0]) mit = data.materiel[mz].items[my];
+      if (!mit) return;
+      data.matQ[a[0]] = Math.max(1, Math.min(matQte(mit), matPrisQ(mit) + num(a[1]))); save(); renderMateriel(); return;
+    case 'mstock':
+      a = arg.split('|'); i = matFind(a[0]); if (i < 0) return;
+      for (var mx = 0; mx < data.materiel[i].items.length; mx++) if (data.materiel[i].items[mx].id === a[1]){
+        var msi = data.materiel[i].items[mx]; msi.qte = Math.max(1, Math.min(99, matQte(msi) + num(a[2])));
+        if (msi.qte === 1) delete msi.qte;
+      }
+      save(); matOpen(a[0]); renderMateriel(); return;
     case 'mitem':
       var nv = trimV('m-new'); if (!nv) return;
       i = matFind(arg); if (i < 0) return;
@@ -2533,7 +2581,7 @@ function handle(act, arg){
       if (modal && modal.kind === 'tdet' && $('m-sub') && trimV('m-sub')){ tSubOf(modal.id).add.push({id:'n' + uid(), text:trimV('m-sub')}); save(); }
       closeModal(); renderTaches(); if (current === 'planning') renderPlanning(); return;
     case 'mfin': closeModal(); if (current === 'materiel') renderMateriel(); return;
-    case 'mreset': askConfirm('Tout remettre à zéro pour un nouveau tournage ?', 'Remettre à zéro', function(){ data.matCheck = {}; data.matPris = {}; save(); renderMateriel(); }); return;
+    case 'mreset': askConfirm('Tout remettre à zéro pour un nouveau tournage ?', 'Remettre à zéro', function(){ data.matCheck = {}; data.matPris = {}; data.matQ = {}; data.matRet = {}; matMode = 'dep'; save(); renderMateriel(); }); return;
 
     case 'ntog': dv[arg] = !dv[arg]; save(); renderDevis(); return;
     case 'nrem': dv.remise = Math.max(0, Math.min(50, num(dv.remise) + num(arg))); save(); renderDevis(); return;
