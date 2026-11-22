@@ -1714,12 +1714,32 @@ function applyOp(w, op){
     tk.perso = true;
   }
 }
+/* "subFrom":[ids] sur une tâche (écrit par Claude) : elle récupère les sous-tâches ajoutées sur l'iPad à ces anciennes tâches */
+function subMigrate(w){
+  var moved = false, a, b, t, k, src, dst, s;
+  for (a = 0; a < w.days.length; a++) for (b = 0; b < w.days[a].tasks.length; b++){
+    t = w.days[a].tasks[b]; if (!(t.subFrom instanceof Array)) continue;
+    for (k = 0; k < t.subFrom.length; k++){
+      src = data.tSub[t.subFrom[k]]; if (!src || src === data.tSub[t.id]) continue;
+      if (!(src.add && src.add.length) && !src.ord && !src.txt) continue;
+      dst = tSubOf(t.id);
+      for (s = 0; s < (src.add || []).length; s++) dst.add.push(src.add[s]);
+      for (s in (src.chk || {})) if (src.chk.hasOwnProperty(s)) dst.chk[s] = src.chk[s];
+      if (src.txt){ dst.txt = dst.txt || {}; for (s in src.txt) if (src.txt.hasOwnProperty(s)) dst.txt[s] = src.txt[s]; }
+      if (src.del){ dst.del = dst.del || {}; for (s in src.del) if (src.del.hasOwnProperty(s)) dst.del[s] = src.del[s]; }
+      if (src.ord){ dst.ord = (dst.ord || []).concat(src.ord); }
+      delete data.tSub[t.subFrom[k]]; moved = true;
+    }
+  }
+  if (moved) save();
+}
 function taskAt(w, id){
   for (var a = 0; a < w.days.length; a++) for (var b = 0; b < w.days[a].tasks.length; b++) if (w.days[a].tasks[b].id === id) return w.days[a].tasks[b].at;
   return 0;
 }
 function applyEdits(w){
   if (!w || !(w.days instanceof Array)) return w;
+  subMigrate(w);
   var e = tEd(), k;
   for (k in e.add) if (e.add.hasOwnProperty(k)) applyOp(w, {op:'add', id:k, day:e.add[k].day, v:e.add[k].v});
   /* suppression locale ignorée si Claude a remis la tâche depuis (champ "at" plus récent dans semaine.json) */
