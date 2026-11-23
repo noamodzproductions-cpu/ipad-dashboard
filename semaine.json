@@ -1,8 +1,8 @@
 {
- "updated": "lundi 23 nov. à 7h54",
+ "updated": "lundi 23 nov. à 11h29",
  "trello": "lundi 23 nov. à 7h54",
- "whatsapp": "lundi 23 nov. à 7h54",
- "auto": true,
+ "whatsapp": "lundi 23 nov. à 11h29",
+ "auto": false,
  "days": [
   {
    "date": "2026-11-23",
@@ -85,6 +85,33 @@
      "deadline": "2026-11-25",
      "at": 1795385893928,
      "perso": true,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Retours Frame.io à intégrer",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Photo salle de bain : retirer le scotch",
+       "done": false
+      },
+      {
+       "id": "s3",
+       "text": "Autre photo salle de bain : tiroir fermé",
+       "done": false
+      },
+      {
+       "id": "s4",
+       "text": "Photo : montrer aussi le sol",
+       "done": false
+      },
+      {
+       "id": "s5",
+       "text": "Vidéo de l'après seule (lien Frame.io envoyé)",
+       "done": false
+      }
+     ],
      "subFrom": [
       "benito-appart-tournage",
       "benito-appart-tournage-ssd",
