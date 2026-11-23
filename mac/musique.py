@@ -53,6 +53,10 @@ LECTURES = {
                       "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
                       "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__read_page,"
                       "mcp__claude-in-chrome__find,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__javascript_tool", True),
+    "lire-frameio": ("lire-frameio.md", "Read,Edit,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
+                     "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
+                     "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__read_page,"
+                     "mcp__claude-in-chrome__find,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__javascript_tool", True),
 }
 en_cours = threading.Lock()
 ETAT_TOPIC = NTFY_TOPIC + "-etat"   # le Mac y écrit l'état des lectures, l'iPad le lit
@@ -97,16 +101,26 @@ def lecture(nom):
     try:
         fichier, outils, chrome = LECTURES[nom]
         consigne = open("%s/mac/%s" % (DOSSIER, fichier), encoding="utf-8").read()
-        cmd = [CLAUDE, "-p", consigne, "--model", "sonnet", "--allowedTools", outils, "--output-format", "text"]
+        cmd = [CLAUDE, "-p", consigne, "--model", "sonnet", "--allowedTools", outils, "--output-format", "json"]
         if chrome:
             cmd.append("--chrome")
         debut = time.time()
         etat(nom, "en cours")
         r = subprocess.run(cmd, cwd=DOSSIER, capture_output=True, text=True, timeout=900)
-        sortie = (r.stdout or "") + "\n" + (r.stderr or "")
+        texte, conso = r.stdout or "", ""
+        try:
+            j = json.loads(texte)
+            texte = j.get("result") or ""
+            u = j.get("usage") or {}
+            conso = "tokens : %d lus (dont %d en cache), %d écrits, %d tours, coût API ~%.2f $" % (
+                (u.get("input_tokens") or 0) + (u.get("cache_read_input_tokens") or 0) + (u.get("cache_creation_input_tokens") or 0),
+                u.get("cache_read_input_tokens") or 0, u.get("output_tokens") or 0, j.get("num_turns") or 0, j.get("total_cost_usd") or 0)
+        except ValueError:
+            pass
+        sortie = texte + "\n" + conso + "\n" + (r.stderr or "")
         with open("/tmp/lecture.log", "a") as log:
             log.write("\n=== %s %s ===\n%s\n" % (time.strftime("%Y-%m-%d %H:%M"), nom, sortie))
-        st, msg = raison(r.stdout or "", r.returncode, r.stderr or "")
+        st, msg = raison(texte, r.returncode, r.stderr or "")
         etat(nom, st, msg)
         print("relais ->", nom, "-> %s en %d s : %s" % (st, time.time() - debut, msg), flush=True)
     except subprocess.TimeoutExpired:

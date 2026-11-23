@@ -2288,9 +2288,10 @@ function renderReglages(){
     } else if (regPage === 'sync'){
       h += '<div class="glass ghrow"><div class="sitem-l">Dernier passage de Claude</div><div style="font-size:24px">' + (W.updated ? esc(W.updated) : '—') + '</div>' +
         '<div class="sitem-l" style="margin-top:12px">Dernière lecture Trello</div>' + lectLine('trello', W.trello) +
-        '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div>' + lectLine('whatsapp', W.whatsapp) + '</div>' +
-        '<div class="row" style="margin-bottom:6px"><button class="grow" data-act="lire" data-arg="lire-trello">Lire Trello</button><button class="grow" data-act="lire" data-arg="lire-whatsapp" style="margin-left:14px">Lire WhatsApp</button></div>' +
-        '<div class="muted" style="font-size:18px;margin-bottom:16px">Le Mac relit juste cette source (allumé, Chrome ouvert pour WhatsApp). L’heure ci-dessus change quand c’est fini.</div>' +
+        '<div class="sitem-l" style="margin-top:12px">Dernière lecture WhatsApp</div>' + lectLine('whatsapp', W.whatsapp) +
+        '<div class="sitem-l" style="margin-top:12px">Dernière lecture Frame.io</div>' + lectLine('frameio', W.frameio) + '</div>' +
+        '<div class="row" style="margin-bottom:6px"><button class="grow" data-act="lire" data-arg="lire-trello">Lire Trello</button><button class="grow" data-act="lire" data-arg="lire-whatsapp" style="margin-left:14px">Lire WhatsApp</button><button class="grow" data-act="lire" data-arg="lire-frameio" style="margin-left:14px">Lire Frame.io</button></div>' +
+        '<div class="muted" style="font-size:18px;margin-bottom:16px">Le Mac relit juste cette source (allumé, Chrome ouvert pour WhatsApp et Frame.io). L’heure ci-dessus change quand c’est fini.</div>' +
         '<div class="glass ghrow row"><div class="grow"><div class="sitem-l">Clé GitHub · coches partagées</div><div class="muted" style="font-size:18px">' +
         (ghToken() ? 'Active ✓' : 'Inactive : les coches restent sur l’iPad') + '</div></div>' +
         '<input type="password" id="gh-in" placeholder="' + (ghToken() ? 'Changer la clé' : 'Coller la clé') + '" style="width:300px">' +
@@ -2314,7 +2315,7 @@ function lectSet(k, st, msg){
   if (st === 'wait') o = { t0: Date.now() };
   o.st = st; o.msg = msg || ''; o.t = Date.now(); data.lect[k] = o; save();
   if (st === 'ok' || st === 'err'){
-    showToast((k === 'trello' ? 'Trello' : 'WhatsApp') + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
+    showToast((k === 'trello' ? 'Trello' : (k === 'frameio' ? 'Frame.io' : 'WhatsApp')) + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
     if (st === 'ok'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
   }
   if (current === 'reglages') renderReglages();
@@ -2328,7 +2329,7 @@ function lectLine(k, last){
 }
 function lectPoll(){
   clearTimeout(lectTimer);
-  var ks = ['trello', 'whatsapp'], since = 0, busy = false, i, o;
+  var ks = ['trello', 'whatsapp', 'frameio'], since = 0, busy = false, i, o;
   for (i = 0; i < ks.length; i++){ o = lectOf(ks[i]); if (o.st === 'wait' || o.st === 'run'){ busy = true; if (!since || o.t0 < since) since = o.t0; } }
   if (!busy) return;
   var x = new XMLHttpRequest();
@@ -2350,7 +2351,7 @@ function lectPoll(){
   x.send();
 }
 function lectCheck(){
-  var ks = ['trello', 'whatsapp'], i, o, now = Date.now();
+  var ks = ['trello', 'whatsapp', 'frameio'], i, o, now = Date.now();
   for (i = 0; i < ks.length; i++){
     o = lectOf(ks[i]);
     if (o.st === 'wait' && now - o.t0 > 45000) lectSet(ks[i], 'err', 'Le Mac ne répond pas (éteint ou en veille ?)');
@@ -2365,7 +2366,7 @@ function handle(act, arg){
     case 'go': closeModal(); go(arg); return;
     case 'regp': regPage = arg; renderReglages(); return;
     case 'lire':
-      if (arg !== 'lire-trello' && arg !== 'lire-whatsapp') return;
+      if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio') return;
       var lk = arg.replace('lire-', ''), lc = lectOf(lk);
       if (lc.st === 'wait' || lc.st === 'run') return;
       lectSet(lk, 'wait', 'Demande envoyée au Mac…');
