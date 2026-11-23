@@ -1,7 +1,7 @@
 {
- "updated": "lundi 23 nov. à 14h52",
- "trello": "lundi 23 nov. à 14h52",
- "whatsapp": "lundi 23 nov. à 14h52",
+ "updated": "lundi 23 nov. à 20h27",
+ "trello": "lundi 23 nov. à 20h27",
+ "whatsapp": "lundi 23 nov. à 20h27",
  "auto": true,
  "days": [
   {
@@ -138,6 +138,11 @@
       {
        "id": "s5",
        "text": "Vidéo de l'après seule (lien Frame.io envoyé)",
+       "done": false
+      },
+      {
+       "id": "s6",
+       "text": "Mieux montrer les volumes/dimensions",
        "done": false
       }
      ],
