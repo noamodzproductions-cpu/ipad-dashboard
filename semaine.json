@@ -28,6 +28,16 @@
      "at": 1795430150806
     },
     {
+     "id": "mich-photos-drive",
+     "client": "Michalak",
+     "text": "Michalak : photos du 1er shooting sur le Drive",
+     "done": false,
+     "deadline": "2026-11-23",
+     "notes": "Noélie relance depuis vendredi",
+     "perso": true,
+     "at": 1795430436191
+    },
+    {
      "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
      "text": "Grand Café Beauté : V2 Miye",
@@ -208,6 +218,16 @@
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false,
      "notes": "Décalé du 17"
+    },
+    {
+     "id": "mich-damien-buches",
+     "client": "Michalak",
+     "text": "Michalak : vidéo de Damien + bûches de Noël",
+     "done": false,
+     "deadline": "2026-11-25",
+     "notes": "Demandé par Noélie · mercredi soir max",
+     "perso": true,
+     "at": 1795430436191
     },
     {
      "id": "mich-19nov-v1",
