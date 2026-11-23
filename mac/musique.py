@@ -97,7 +97,7 @@ def lecture(nom):
     try:
         fichier, outils, chrome = LECTURES[nom]
         consigne = open("%s/mac/%s" % (DOSSIER, fichier), encoding="utf-8").read()
-        cmd = [CLAUDE, "-p", consigne, "--model", ("opus" if nom == "lire-whatsapp" else "sonnet"), "--allowedTools", outils, "--output-format", "text"]
+        cmd = [CLAUDE, "-p", consigne, "--model", "sonnet", "--allowedTools", outils, "--output-format", "text"]
         if chrome:
             cmd.append("--chrome")
         debut = time.time()
