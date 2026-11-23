@@ -1,20 +1,13 @@
 {
- "updated": "dimanche 22 nov. à 19h53",
- "trello": "dimanche 22 nov. à 19h53",
- "whatsapp": "dimanche 22 nov. à 19h53",
+ "updated": "lundi 23 nov. à 7h54",
+ "trello": "lundi 23 nov. à 7h54",
+ "whatsapp": "lundi 23 nov. à 7h54",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-22",
-   "jour": "Dimanche 22 novembre",
+   "date": "2026-11-23",
+   "jour": "Lundi 23 novembre",
    "tasks": [
-    {
-     "id": "ensemble-raf-dispos",
-     "client": "Ensemble",
-     "text": "19h · Ensemble x Raf : call",
-     "done": true,
-     "notes": "Raf et Ultrains OK"
-    },
     {
      "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
@@ -74,13 +67,7 @@
      "perso": true,
      "at": 1795385893928,
      "deadline": "2026-11-23"
-    }
-   ]
-  },
-  {
-   "date": "2026-11-23",
-   "jour": "Lundi 23 novembre",
-   "tasks": [
+    },
     {
      "id": "theia-v1",
      "client": "Cercle de Théia",
@@ -218,7 +205,7 @@
        "done": false
       }
      ],
-     "deadline": "2026-11-27"
+     "deadline": "2026-11-26"
     }
    ]
   },
@@ -351,6 +338,7 @@
      "text": "Ladurée Halloween (octobre) : V1 des vidéos",
      "done": false,
      "prio": 3,
+     "deadline": "2026-10-30",
      "sous": [
       {
        "id": "laduree-halloween-v1-stopmotion",
@@ -382,6 +370,7 @@
      "text": "Astotel - Lorette : faire la V1",
      "done": false,
      "prio": 2,
+     "deadline": "2026-11-17",
      "perso": true,
      "at": 1795385893928
     },
