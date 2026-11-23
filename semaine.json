@@ -9,6 +9,25 @@
    "jour": "Lundi 23 novembre",
    "tasks": [
     {
+     "id": "cmc-beaute-oraya",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : vidéo Laboratoire Oraya",
+     "done": false,
+     "deadline": "2026-11-23",
+     "notes": "Promis à Gam pour aujourd'hui",
+     "perso": true,
+     "at": 1795430150806
+    },
+    {
+     "id": "cmc-food-liens",
+     "client": "Marie Claire",
+     "text": "Café MC : liens des vidéos dans le tableau de suivi",
+     "done": false,
+     "notes": "Demandé par Gam · respecter la nomenclature des noms",
+     "perso": true,
+     "at": 1795430150806
+    },
+    {
      "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
      "text": "Grand Café Beauté : V2 Miye",
