@@ -36,9 +36,16 @@
      "text": "Nuance Audio : faire la V1",
      "done": false,
      "deadline": "2026-12-01",
-     "notes": "Avancé au 24 : plus rapide que prévu",
+     "notes": "Il reste juste la musique",
      "perso": true,
-     "at": 1795543800050
+     "at": 1795543959902,
+     "sous": [
+      {
+       "id": "nuance-v1-musique",
+       "text": "Ajouter la musique",
+       "done": false
+      }
+     ]
     },
     {
      "id": "mich-damien-buches",
