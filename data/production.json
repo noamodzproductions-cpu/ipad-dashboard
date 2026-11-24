@@ -1,6 +1,6 @@
 {
  "lu_le": "2026-11-23",
- "trello_vu": "2026-11-24T13:05",
+ "trello_vu": "2026-11-24T14:55",
  "projets": [
   {
    "carte_id": "6aedf942b19fe58afdb7b249",
@@ -8,7 +8,7 @@
    "liste": "🎥 À tourner",
    "tournage": "2026-11-24",
    "deadline": "",
-   "modif": "2026-11-16T14:39:35.131Z",
+   "modif": "2026-11-24T13:41:59.478Z",
    "videos": [
     {
      "nom": "publi Sophie Davant",
@@ -22,7 +22,7 @@
    "liste": "🎬 En production",
    "tournage": "2026-11-10",
    "deadline": "",
-   "modif": "2026-11-15T00:05:17.448Z",
+   "modif": "2026-11-24T13:41:36.488Z",
    "videos": [
     {
      "nom": "photos",
@@ -120,7 +120,7 @@
    "liste": "🎬 En production",
    "tournage": "2026-11-19",
    "deadline": "",
-   "modif": "2026-11-19T22:43:09.676Z",
+   "modif": "2026-11-24T13:41:45.235Z",
    "videos": [
     {
      "nom": "Dégustation à l'aveugle de nounours",

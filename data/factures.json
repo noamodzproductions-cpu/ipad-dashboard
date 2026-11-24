@@ -1,5 +1,5 @@
 {
- "updated": "mardi 24 nov. à 13h05",
+ "updated": "mardi 24 nov. à 14h55",
  "factures": [
   {
    "id": "6aa7e25a40bb3b1f54c98267",
@@ -14,13 +14,6 @@
    "brut": 450,
    "reste": 450,
    "entree": "2026-10-26"
-  },
-  {
-   "id": "6ae63eabc40141f215491dfe",
-   "projet": "Le Barranco",
-   "brut": 300,
-   "reste": 150,
-   "entree": "2026-11-05"
   },
   {
    "id": "6af4814df900b80e9327309b",

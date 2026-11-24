@@ -1,7 +1,7 @@
 {
- "updated": "mardi 24 nov. à 13h05",
- "trello": "mardi 24 nov. à 13h05",
- "whatsapp": "mardi 24 nov. à 13h05",
+ "updated": "mardi 24 nov. à 14h55",
+ "trello": "mardi 24 nov. à 14h55",
+ "whatsapp": "mardi 24 nov. à 14h55",
  "auto": true,
  "days": [
   {
@@ -14,7 +14,7 @@
      "text": "Grand Café Beauté : vidéo Laboratoire Oraya",
      "done": false,
      "deadline": "2026-11-23",
-     "notes": "Gam relance, pas envoyée hier",
+     "notes": "Gamze appelle 15h30",
      "prio": 1,
      "perso": true,
      "at": 1795521903000
@@ -146,6 +146,11 @@
       {
        "id": "s6",
        "text": "Mieux montrer les volumes/dimensions",
+       "done": false
+      },
+      {
+       "id": "s7",
+       "text": "Vidéo suivante : chambre bien visible (vertical)",
        "done": false
       }
      ],
