@@ -1,12 +1,12 @@
 {
- "updated": "lundi 23 nov. à 20h27",
- "trello": "lundi 23 nov. à 20h27",
- "whatsapp": "lundi 23 nov. à 20h27",
+ "updated": "mardi 24 nov. à 13h05",
+ "trello": "mardi 24 nov. à 13h05",
+ "whatsapp": "mardi 24 nov. à 13h05",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-23",
-   "jour": "Lundi 23 novembre",
+   "date": "2026-11-24",
+   "jour": "Mardi 24 novembre",
    "tasks": [
     {
      "id": "cmc-beaute-oraya",
@@ -14,9 +14,10 @@
      "text": "Grand Café Beauté : vidéo Laboratoire Oraya",
      "done": false,
      "deadline": "2026-11-23",
-     "notes": "Promis à Gam pour aujourd'hui",
+     "notes": "Gam relance, pas envoyée hier",
+     "prio": 1,
      "perso": true,
-     "at": 1795430150806
+     "at": 1795521903000
     },
     {
      "id": "cmc-food-liens",
@@ -25,7 +26,7 @@
      "done": false,
      "notes": "Demandé par Gam · respecter la nomenclature des noms",
      "perso": true,
-     "at": 1795430150806
+     "at": 1795521903000
     },
     {
      "id": "mich-photos-drive",
@@ -35,7 +36,7 @@
      "deadline": "2026-11-23",
      "notes": "Noélie relance depuis vendredi",
      "perso": true,
-     "at": 1795430436191
+     "at": 1795521903000
     },
     {
      "id": "cmc-beaute-v2-miye",
@@ -43,7 +44,7 @@
      "text": "Grand Café Beauté : V2 Miye",
      "done": false,
      "perso": true,
-     "at": 1795385893928,
+     "at": 1795521903000,
      "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
      "sous": [
       {
@@ -60,7 +61,7 @@
      "text": "Grand Café Beauté : V2 KJ Locks",
      "done": false,
      "perso": true,
-     "at": 1795385893928,
+     "at": 1795521903000,
      "notes": "Début coupé, fin en hook",
      "deadline": "2026-11-23"
     },
@@ -84,7 +85,7 @@
       }
      ],
      "perso": true,
-     "at": 1795385893928
+     "at": 1795521903000
     },
     {
      "id": "cmc-lifestyle-lien",
@@ -94,7 +95,7 @@
      "notes": "Vidéos du 13/10 introuvables",
      "prio": 1,
      "perso": true,
-     "at": 1795385893928,
+     "at": 1795521903000,
      "deadline": "2026-11-23"
     },
     {
@@ -103,7 +104,7 @@
      "text": "2ème Forum Femmes et Industrie : faire la V1",
      "done": false,
      "perso": true,
-     "at": 1795259463044,
+     "at": 1795521903000,
      "deadline": "2026-11-24"
     },
     {
@@ -112,8 +113,10 @@
      "text": "Benito : faire la V1 appartement",
      "done": false,
      "deadline": "2026-11-25",
-     "at": 1795385893928,
+     "at": 1795521903000,
      "perso": true,
+     "prio": 1,
+     "notes": "Benito presse, promis aujourd'hui",
      "sous": [
       {
        "id": "s1",
@@ -158,7 +161,7 @@
      "text": "Michalak : rushs + photos → SSD",
      "done": false,
      "perso": true,
-     "at": 1795259463044
+     "at": 1795521903000
     },
     {
      "id": "mich-mail-damien",
@@ -168,7 +171,7 @@
      "notes": "Questions + inspis, avant 10h",
      "prio": 1,
      "perso": true,
-     "at": 1795259463044
+     "at": 1795521903000
     },
     {
      "id": "curve-photos-toutes",
@@ -178,22 +181,7 @@
      "notes": "Email à Noélie + Nathalie",
      "prio": 3,
      "perso": true,
-     "at": 1795259463044
-    },
-    {
-     "id": "benito-appart-tournage",
-     "client": "Benito",
-     "text": "Benito : finir le tournage appartement",
-     "done": true,
-     "notes": "10h confirmé",
-     "at": 1795259463044
-    },
-    {
-     "id": "benito-appart-tournage-ssd",
-     "client": "Benito",
-     "text": "Benito : rushs + photos → SSD",
-     "done": true,
-     "at": 1795259463044
+     "at": 1795521903000
     },
     {
      "id": "benito-agenda-tournage",
@@ -202,19 +190,13 @@
      "done": false,
      "notes": "10h confirmé",
      "perso": true,
-     "at": 1795259463044
-    }
-   ]
-  },
-  {
-   "date": "2026-11-24",
-   "jour": "Mardi 24 novembre",
-   "tasks": [
+     "at": 1795521903000
+    },
     {
      "id": "nuance-tournage",
      "client": "Zack",
      "text": "Nuance Audio : tournage Sophie Davant",
-     "done": false,
+     "done": true,
      "notes": "Décalé du 17"
     },
     {
