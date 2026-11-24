@@ -1,7 +1,7 @@
 {
- "updated": "mardi 24 nov. à 14h55",
- "trello": "mardi 24 nov. à 14h55",
- "whatsapp": "mardi 24 nov. à 14h55",
+ "updated": "mardi 24 nov. à 19h55",
+ "trello": "mardi 24 nov. à 19h55",
+ "whatsapp": "mardi 24 nov. à 19h55",
  "auto": true,
  "days": [
   {
@@ -35,8 +35,8 @@
      "client": "Zack",
      "text": "Nuance Audio : faire la V1",
      "done": false,
-     "deadline": "2026-12-01",
-     "notes": "Il reste juste la musique",
+     "deadline": "2026-11-25",
+     "notes": "Raccourcir, garder la musique · V1 promise demain",
      "perso": true,
      "at": 1795543959902,
      "sous": [
@@ -468,7 +468,14 @@
      "notes": "Deadline demandée dim. 29",
      "at": 1795385893928,
      "perso": true,
-     "deadline": "2026-12-03"
+     "deadline": "2026-12-03",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Autre proposition avec plus de gros plans (si Céline demande)",
+       "done": false
+      }
+     ]
     }
    ]
   },
