@@ -51,52 +51,6 @@
      "at": 1795543800050
     },
     {
-     "id": "mich-19nov-v1",
-     "client": "Michalak",
-     "text": "Michalak : V1 des vidéos",
-     "done": false,
-     "sous": [
-      {
-       "id": "mich-19nov-v1-nounours",
-       "text": "Dégustation nounours",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-fastcurious",
-       "text": "Fast and Curious",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-pov",
-       "text": "POV lunettes",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-eclair",
-       "text": "Éclair caméra",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-voile",
-       "text": "Voile",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-nuage",
-       "text": "Nuage",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-cam",
-       "text": "Caméra de surveillance",
-       "done": false
-      }
-     ],
-     "deadline": "2026-11-26",
-     "perso": true,
-     "at": 1795543800050
-    },
-    {
      "id": "theia-v1",
      "client": "Cercle de Théia",
      "text": "2ème Forum Femmes et Industrie : faire la V1",
@@ -287,6 +241,50 @@
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false,
      "notes": "Décalé du 17"
+    },
+    {
+     "id": "mich-19nov-v1",
+     "client": "Michalak",
+     "text": "Michalak : V1 des vidéos",
+     "done": false,
+     "sous": [
+      {
+       "id": "mich-19nov-v1-nounours",
+       "text": "Dégustation nounours",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-fastcurious",
+       "text": "Fast and Curious",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-pov",
+       "text": "POV lunettes",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-eclair",
+       "text": "Éclair caméra",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-voile",
+       "text": "Voile",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-nuage",
+       "text": "Nuage",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-cam",
+       "text": "Caméra de surveillance",
+       "done": false
+      }
+     ],
+     "deadline": "2026-11-26"
     }
    ]
   },
