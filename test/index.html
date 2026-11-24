@@ -227,7 +227,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fbar{height:12px;border-radius:6px;background:rgba(255,255,255,.12);margin:14px 0 12px;overflow:hidden}
 .fbar i{display:block;height:100%;border-radius:6px;background:rgba(255,255,255,.45)}
 .dprog{flex-shrink:0;margin:-4px 0 18px}
-.dprog-l{display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between;font-size:19px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:8px}
 .dprog .fbar{margin:0;position:relative}
 .dprog .fbar b{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1px;background:rgba(255,255,255,.4)}
 .late .fbar i{background:#A78BFA}
@@ -1600,7 +1599,7 @@ function renderTaches(){
   if (day) for (i = 0; i < day.tasks.length; i++) (isDoneTask(day.tasks[i]) ? fait : todo).push(day.tasks[i]);
   var title = day ? day.jour : (isToday ? 'Aujourd’hui' : tView);
   var h = '<div class="hdr row"><button class="rbtn" data-act="go" data-arg="home" aria-label="Accueil">' + ico(IC.back) + '</button>' +
-    '<div class="grow"><div class="h1">Projets</div><div class="sub">' + (isToday ? 'Aujourd’hui · ' : '') + esc(title) + '</div></div>' +
+    '<div class="grow"><div class="h1">Projets</div>' + (isToday ? '' : '<div class="sub">' + esc(title) + '</div>') + '</div>' +
     (W ? '<button class="rbtn wkbtn" data-act="tadd" data-arg="' + esc(tView) + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') +
     '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
@@ -1630,7 +1629,7 @@ function renderTaches(){
       if (fait.length) h += '<div class="tsep"></div>';
       for (i = 0; i < fait.length; i++) h += taskCard(fait[i], day.date);
     }
-    if (W.trello || W.whatsapp) h += '<div class="muted tupd">' + (W.trello ? 'Trello · ' + esc(String(W.trello).replace(/^.* à /, '')) : '') + (W.trello && W.whatsapp ? '<span class="tupsp"></span>' : '') + (W.whatsapp ? 'WhatsApp · ' + esc(String(W.whatsapp).replace(/^.* à /, '')) : '') + (W.auto ? '<span class="tauto">auto</span>' : '') + (ghToken() && ghErr ? ' · ' + esc(ghErr) : '') + '</div>';
+    if (W.trello || W.whatsapp) h += '<div class="muted tupd">' + (W.trello ? 'Trello · ' + esc(String(W.trello).replace(/^.* à /, '')) : '') + (W.trello && W.whatsapp ? '<span class="tupsp"></span>' : '') + (W.whatsapp ? 'WhatsApp · ' + esc(String(W.whatsapp).replace(/^.* à /, '')) : '') + (ghToken() && ghErr ? ' · ' + esc(ghErr) : '') + '</div>';
   }
   h += '</div>';
   var old = document.querySelector('#s-taches .content'), scroll = old ? old.scrollTop : 0;
@@ -1887,9 +1886,7 @@ function dayProgress(day){
   }
   var f = sum / day.tasks.length, pc = Math.round(f * 100);
   var r = Math.round(167 + (74 - 167) * f), g = Math.round(139 + (222 - 139) * f), b = Math.round(250 + (128 - 250) * f);
-  var mot = pc >= 100 ? 'Terminé ✓' : pc >= 75 ? 'Presque fini' : pc >= 50 ? 'Plus de la moitié' : pc >= 25 ? 'En route' : 'C’est parti';
-  return '<div class="dprog"><div class="dprog-l"><span>Ma journée · ' + mot + '</span><span class="num" style="color:rgb(' + r + ',' + g + ',' + b + ')">' + pc + ' %</span></div>' +
-    '<div class="fbar"><i style="width:' + pc + '%;background:rgb(' + r + ',' + g + ',' + b + ')"></i><b></b></div></div>';
+  return '<div class="dprog"><div class="fbar"><i style="width:' + pc + '%;background:rgb(' + r + ',' + g + ',' + b + ')"></i><b></b></div></div>';
 }
 function splitTask(tk){
   var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
