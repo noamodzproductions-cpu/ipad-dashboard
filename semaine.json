@@ -1,34 +1,150 @@
 {
- "updated": "mardi 24 nov. à 19h55",
- "trello": "mardi 24 nov. à 19h55",
- "whatsapp": "mardi 24 nov. à 19h55",
+ "updated": "mercredi 25 nov. à 8h06",
+ "trello": "mercredi 25 nov. à 8h06",
+ "whatsapp": "mercredi 25 nov. à 8h06",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-24",
-   "jour": "Mardi 24 novembre",
+   "date": "2026-11-25",
+   "jour": "Mercredi 25 novembre",
    "tasks": [
     {
-     "id": "cmc-beaute-oraya",
+     "id": "cmc-evasion",
      "client": "Marie Claire",
-     "text": "Grand Café Marie Claire Beauté",
+     "text": "Café Marie Claire Evasion : V1",
      "done": false,
-     "deadline": "2026-11-23",
-     "prio": 1,
-     "perso": true,
-     "at": 1795543800050,
+     "prio": 3,
+     "deadline": "2026-11-25",
      "sous": [
       {
-       "id": "oraya-presentation",
-       "text": "Oraya : vidéo où elle se présente",
+       "id": "cmc-evasion-v1",
+       "text": "Récap",
+       "done": true
+      },
+      {
+       "id": "cmc-evasion-v1-interviews",
+       "text": "Interviews",
+       "done": false
+      }
+     ],
+     "perso": true,
+     "at": 1795521903000
+    },
+    {
+     "id": "curve-photos-toutes",
+     "client": "Kurv Studio",
+     "text": "Kurv Studio : envoyer toutes les photos",
+     "done": false,
+     "notes": "Email à Noélie + Nathalie",
+     "prio": 3,
+     "perso": true,
+     "at": 1795521903000
+    },
+    {
+     "id": "laduree-gravelle",
+     "client": "Ladurée",
+     "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
+     "done": false,
+     "prio": 2,
+     "deadline": "2026-11-27",
+     "sous": [
+      {
+       "id": "laduree-gravelle-v1",
+       "text": "Le Pavillon (lieu)",
        "done": false
       },
       {
-       "id": "oraya-normale",
-       "text": "Oraya : vidéo normale",
+       "id": "laduree-gravelle-v1-lieu2",
+       "text": "La salle en détails",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats1",
+       "text": "The Most Difficult Choice",
+       "done": false
+      },
+      {
+       "id": "laduree-gravelle-v1-plats2",
+       "text": "Le dressage d'un plat",
        "done": false
       }
+     ],
+     "perso": true,
+     "at": 1795385893928
+    },
+    {
+     "id": "cmc-lifestyle-lien",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
+     "done": false,
+     "notes": "Vidéos du 13/10 introuvables",
+     "prio": 1,
+     "perso": true,
+     "at": 1795521903000,
+     "deadline": "2026-11-23"
+    },
+    {
+     "id": "benito-appart-v1",
+     "client": "Benito",
+     "text": "Benito : faire la V1 appartement",
+     "done": false,
+     "deadline": "2026-11-25",
+     "at": 1795521903000,
+     "perso": true,
+     "prio": 1,
+     "notes": "Benito presse, promis aujourd'hui",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Retours Frame.io à intégrer",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Photo salle de bain : retirer le scotch",
+       "done": false
+      },
+      {
+       "id": "s3",
+       "text": "Autre photo salle de bain : tiroir fermé",
+       "done": false
+      },
+      {
+       "id": "s4",
+       "text": "Photo : montrer aussi le sol",
+       "done": false
+      },
+      {
+       "id": "s5",
+       "text": "Vidéo de l'après seule (lien Frame.io envoyé)",
+       "done": false
+      },
+      {
+       "id": "s6",
+       "text": "Mieux montrer les volumes/dimensions",
+       "done": false
+      },
+      {
+       "id": "s7",
+       "text": "Vidéo suivante : chambre bien visible (vertical)",
+       "done": true
+      }
+     ],
+     "subFrom": [
+      "benito-appart-tournage",
+      "benito-appart-tournage-ssd",
+      "benito-agenda-tournage"
      ]
+    },
+    {
+     "id": "mich-mail-damien",
+     "client": "Michalak",
+     "text": "Michalak : répondre au mail de Damien",
+     "done": false,
+     "notes": "Questions + inspis, avant 10h",
+     "prio": 1,
+     "perso": true,
+     "at": 1795521903000
     },
     {
      "id": "nuance-v1",
@@ -113,134 +229,12 @@
      "deadline": "2026-11-23"
     },
     {
-     "id": "cmc-evasion",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Evasion : V1",
-     "done": false,
-     "prio": 3,
-     "deadline": "2026-11-25",
-     "sous": [
-      {
-       "id": "cmc-evasion-v1",
-       "text": "Récap",
-       "done": true
-      },
-      {
-       "id": "cmc-evasion-v1-interviews",
-       "text": "Interviews",
-       "done": false
-      }
-     ],
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "cmc-lifestyle-lien",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Lifestyle : renvoyer le lien des vidéos",
-     "done": false,
-     "notes": "Vidéos du 13/10 introuvables",
-     "prio": 1,
-     "perso": true,
-     "at": 1795521903000,
-     "deadline": "2026-11-23"
-    },
-    {
-     "id": "benito-appart-v1",
-     "client": "Benito",
-     "text": "Benito : faire la V1 appartement",
-     "done": false,
-     "deadline": "2026-11-25",
-     "at": 1795521903000,
-     "perso": true,
-     "prio": 1,
-     "notes": "Benito presse, promis aujourd'hui",
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Retours Frame.io à intégrer",
-       "done": false
-      },
-      {
-       "id": "s2",
-       "text": "Photo salle de bain : retirer le scotch",
-       "done": false
-      },
-      {
-       "id": "s3",
-       "text": "Autre photo salle de bain : tiroir fermé",
-       "done": false
-      },
-      {
-       "id": "s4",
-       "text": "Photo : montrer aussi le sol",
-       "done": false
-      },
-      {
-       "id": "s5",
-       "text": "Vidéo de l'après seule (lien Frame.io envoyé)",
-       "done": false
-      },
-      {
-       "id": "s6",
-       "text": "Mieux montrer les volumes/dimensions",
-       "done": false
-      },
-      {
-       "id": "s7",
-       "text": "Vidéo suivante : chambre bien visible (vertical)",
-       "done": false
-      }
-     ],
-     "subFrom": [
-      "benito-appart-tournage",
-      "benito-appart-tournage-ssd",
-      "benito-agenda-tournage"
-     ]
-    },
-    {
      "id": "mich-masterclass-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
      "done": false,
      "perso": true,
      "at": 1795521903000
-    },
-    {
-     "id": "mich-mail-damien",
-     "client": "Michalak",
-     "text": "Michalak : répondre au mail de Damien",
-     "done": false,
-     "notes": "Questions + inspis, avant 10h",
-     "prio": 1,
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "curve-photos-toutes",
-     "client": "Kurv Studio",
-     "text": "Kurv Studio : envoyer toutes les photos",
-     "done": false,
-     "notes": "Email à Noélie + Nathalie",
-     "prio": 3,
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "benito-agenda-tournage",
-     "client": "Benito",
-     "text": "Benito : tournage ven. 20 matin → agenda",
-     "done": false,
-     "notes": "10h confirmé",
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "nuance-tournage",
-     "client": "Zack",
-     "text": "Nuance Audio : tournage Sophie Davant",
-     "done": true,
-     "notes": "Décalé du 17"
     },
     {
      "id": "nuance-tournage-ssd",
@@ -289,47 +283,14 @@
        "id": "mich-19nov-v1-cam",
        "text": "Caméra de surveillance",
        "done": false
+      },
+      {
+       "id": "mich-19nov-v1-fastcurious-plan2",
+       "text": "Fast and Curious : plan plus rapproché (avis Céline)",
+       "done": false
       }
      ],
      "deadline": "2026-11-26"
-    }
-   ]
-  },
-  {
-   "date": "2026-11-25",
-   "jour": "Mercredi 25 novembre",
-   "tasks": [
-    {
-     "id": "laduree-gravelle",
-     "client": "Ladurée",
-     "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
-     "done": false,
-     "prio": 2,
-     "deadline": "2026-11-27",
-     "sous": [
-      {
-       "id": "laduree-gravelle-v1",
-       "text": "Le Pavillon (lieu)",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-lieu2",
-       "text": "La salle en détails",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-plats1",
-       "text": "The Most Difficult Choice",
-       "done": false
-      },
-      {
-       "id": "laduree-gravelle-v1-plats2",
-       "text": "Le dressage d'un plat",
-       "done": false
-      }
-     ],
-     "perso": true,
-     "at": 1795385893928
     }
    ]
   },
@@ -482,6 +443,11 @@
   {
    "date": "2026-12-01",
    "jour": "Mardi 1 décembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-12-02",
+   "jour": "Mercredi 2 décembre",
    "tasks": []
   }
  ],
