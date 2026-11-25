@@ -1,8 +1,8 @@
 {
- "updated": "mercredi 25 nov. à 8h06",
+ "updated": "mercredi 25 nov. à 12h38",
  "trello": "mercredi 25 nov. à 8h06",
- "whatsapp": "mercredi 25 nov. à 8h06",
- "auto": true,
+ "whatsapp": "mercredi 25 nov. à 12h38",
+ "auto": false,
  "days": [
   {
    "date": "2026-11-25",
@@ -171,7 +171,14 @@
      "deadline": "2026-11-25",
      "notes": "Demandé par Noélie · mercredi soir max",
      "perso": true,
-     "at": 1795543800050
+     "at": 1795543800050,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Reel du chef (bûche) sur Frame.io pour l'équipe Michalak",
+       "done": false
+      }
+     ]
     },
     {
      "id": "theia-v1",
@@ -192,10 +199,18 @@
      "at": 1795521903000
     },
     {
+     "id": "cmc-retours-vincent",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire : lire les retours de Vincent",
+     "done": false,
+     "deadline": "2026-11-25",
+     "notes": "Tableau + Frame à jour"
+    },
+    {
      "id": "mich-photos-drive",
      "client": "Michalak",
      "text": "Michalak : photos du 1er shooting sur le Drive",
-     "done": false,
+     "done": true,
      "deadline": "2026-11-23",
      "notes": "Noélie relance depuis vendredi",
      "perso": true,
