@@ -1,8 +1,8 @@
 {
- "updated": "mercredi 25 nov. à 12h38",
- "trello": "mercredi 25 nov. à 8h06",
- "whatsapp": "mercredi 25 nov. à 12h38",
- "auto": false,
+ "updated": "mercredi 25 nov. à 12h51",
+ "trello": "mercredi 25 nov. à 12h51",
+ "whatsapp": "mercredi 25 nov. à 12h51",
+ "auto": true,
  "days": [
   {
    "date": "2026-11-25",
@@ -287,7 +287,7 @@
       {
        "id": "mich-19nov-v1-voile",
        "text": "Voile",
-       "done": false
+       "done": true
       },
       {
        "id": "mich-19nov-v1-nuage",
