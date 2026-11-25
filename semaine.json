@@ -1,7 +1,7 @@
 {
- "updated": "mercredi 25 nov. à 14h53",
- "trello": "mercredi 25 nov. à 14h53",
- "whatsapp": "mercredi 25 nov. à 14h53",
+ "updated": "mercredi 25 nov. à 19h58",
+ "trello": "mercredi 25 nov. à 19h58",
+ "whatsapp": "mercredi 25 nov. à 19h58",
  "auto": true,
  "days": [
   {
@@ -24,6 +24,11 @@
       {
        "id": "cmc-evasion-v1-interviews",
        "text": "Interviews",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-v1-pornic",
+       "text": "Uploader rush Destination Pornic (Vincent)",
        "done": false
       }
      ],
@@ -184,7 +189,7 @@
      "id": "theia-v1",
      "client": "Cercle de Théia",
      "text": "2ème Forum Femmes et Industrie : faire la V1",
-     "done": false,
+     "done": true,
      "notes": "Vidéo 5-7 min OK (Xuan-nam)",
      "perso": true,
      "at": 1795543800050,
