@@ -1,7 +1,7 @@
 {
- "updated": "mercredi 25 nov. à 12h51",
- "trello": "mercredi 25 nov. à 12h51",
- "whatsapp": "mercredi 25 nov. à 12h51",
+ "updated": "mercredi 25 nov. à 14h53",
+ "trello": "mercredi 25 nov. à 14h53",
+ "whatsapp": "mercredi 25 nov. à 14h53",
  "auto": true,
  "days": [
   {
@@ -185,6 +185,7 @@
      "client": "Cercle de Théia",
      "text": "2ème Forum Femmes et Industrie : faire la V1",
      "done": false,
+     "notes": "Vidéo 5-7 min OK (Xuan-nam)",
      "perso": true,
      "at": 1795543800050,
      "deadline": "2026-11-24"
@@ -302,6 +303,16 @@
       {
        "id": "mich-19nov-v1-fastcurious-plan2",
        "text": "Fast and Curious : plan plus rapproché (avis Céline)",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-voile-recadrer",
+       "text": "Voile : recadrer plus zoomé",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-nounours-forme",
+       "text": "Nounours : forme A, visage B",
        "done": false
       }
      ],
