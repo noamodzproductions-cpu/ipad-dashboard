@@ -358,7 +358,17 @@
   {
    "date": "2026-11-29",
    "jour": "Dimanche 29 novembre",
-   "tasks": []
+   "tasks": [
+    {
+     "id": "noam-1795606990999",
+     "client": "Astotel",
+     "text": "Astotel - Lorette : faire la V2",
+     "done": false,
+     "deadline": "2026-11-29",
+     "perso": true,
+     "at": 1795606990999
+    }
+   ]
   },
   {
    "date": "2026-11-30",
