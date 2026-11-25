@@ -226,9 +226,6 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-bot button{height:70px;font-size:24px;margin-left:12px}
 .fbar{height:12px;border-radius:6px;background:rgba(255,255,255,.12);margin:14px 0 12px;overflow:hidden}
 .fbar i{display:block;height:100%;border-radius:6px;background:rgba(255,255,255,.45)}
-.dprog{flex-shrink:0;margin:-4px 0 18px}
-.dprog .fbar{margin:0;position:relative}
-.dprog .fbar b{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1px;background:rgba(255,255,255,.4)}
 .late .fbar i{background:#A78BFA}
 .paid .fbar i{background:#4ade80}
 .fc-when{font-size:26px;font-weight:700}
@@ -394,7 +391,10 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .tupd{font-size:17px;text-align:left;margin-top:14px;padding-left:8px}
 .tupsp{display:inline-block;width:36px}
 .tauto{display:inline-block;margin-left:16px;padding:0 10px;height:24px;line-height:24px;border-radius:12px;background:rgba(167,139,250,.18);color:#A78BFA;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.tsep{height:1px;background:rgba(255,255,255,.18);margin:28px 4px 30px}
+/* projets validés : zone à part, en creux, loin des projets à faire (pas de trait, pas de texte) */
+.tdone{margin-top:56px;padding:12px 12px 0;border-radius:28px;background:rgba(255,255,255,.035)}
+.tdone .task{background:#111112;border-color:rgba(255,255,255,.08)}
+.tdone .t-in{background:#111112}
 
 /* Planning : tous les jours, grosses dates, glisser pour déplacer */
 .pday{margin-bottom:18px;padding:18px 20px 10px;border-radius:24px}
@@ -1603,7 +1603,7 @@ function renderTaches(){
     (W ? '<button class="rbtn wkbtn" data-act="tadd" data-arg="' + esc(tView) + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') +
     '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
-    (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div>' + dayProgress(day) + '<div class="content">';
+    (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
     /* week-end = repos : pas de tâches « en avance » le samedi / dimanche */
@@ -1626,8 +1626,11 @@ function renderTaches(){
         }
       }
       /* séparation nette : projets à faire en haut, projets validés en bas */
-      if (fait.length) h += '<div class="tsep"></div>';
-      for (i = 0; i < fait.length; i++) h += taskCard(fait[i], day.date);
+      if (fait.length){
+        h += '<div class="tdone">';
+        for (i = 0; i < fait.length; i++) h += taskCard(fait[i], day.date);
+        h += '</div>';
+      }
     }
     if (W.trello || W.whatsapp) h += '<div class="muted tupd">' + (W.trello ? 'Trello · ' + esc(String(W.trello).replace(/^.* à /, '')) : '') + (W.trello && W.whatsapp ? '<span class="tupsp"></span>' : '') + (W.whatsapp ? 'WhatsApp · ' + esc(String(W.whatsapp).replace(/^.* à /, '')) : '') + (ghToken() && ghErr ? ' · ' + esc(ghErr) : '') + '</div>';
   }
@@ -1872,21 +1875,6 @@ function subCount(tk){
   /* pastille : violet au départ, vire au vert à mesure que les sous-tâches sont faites */
   var f = n / l.length, r = Math.round(167 + (74 - 167) * f), g = Math.round(139 + (222 - 139) * f), b = Math.round(250 + (128 - 250) * f);
   return '<div class="tcount num" style="color:rgb(' + r + ',' + g + ',' + b + ');background:rgba(' + r + ',' + g + ',' + b + ',.16)">' + n + '<small>/' + l.length + '</small></div>';
-}
-/* barre de progression de la journée : une tâche = 1 part, ses sous-tâches se partagent sa part */
-function dayProgress(day){
-  if (!day || !day.tasks.length) return '';
-  var sum = 0, i, k, l, n;
-  for (i = 0; i < day.tasks.length; i++){
-    var tk = day.tasks[i];
-    if (isDoneTask(tk)){ sum += 1; continue; }
-    l = subsOf(tk); n = 0;
-    for (k = 0; k < l.length; k++) if (l[k].done) n++;
-    if (l.length) sum += n / l.length;
-  }
-  var f = sum / day.tasks.length, pc = Math.round(f * 100);
-  var r = Math.round(167 + (74 - 167) * f), g = Math.round(139 + (222 - 139) * f), b = Math.round(250 + (128 - 250) * f);
-  return '<div class="dprog"><div class="fbar"><i style="width:' + pc + '%;background:rgb(' + r + ',' + g + ',' + b + ')"></i><b></b></div></div>';
 }
 function splitTask(tk){
   var full = (tk.text || '').replace(URG_RE, ''), k = full.indexOf(' : ');
