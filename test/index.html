@@ -891,7 +891,6 @@ function loadFactures(){
       try {
         var j = JSON.parse(x.responseText);
         if (!j || !(j.factures instanceof Array)) return;
-        facSortis(data.facCache, j);
         data.facCache = j;
         facPurge(); save(); renderFactures();
       } catch(e){}
@@ -900,24 +899,20 @@ function loadFactures(){
   } catch(e){}
   facPull();
 }
-/* une carte sortie de « Solde en attente » (passée dans Payé & Archivé) compte comme encaissée ce jour-là */
-function facSortis(oldC, newC){
-  if (!oldC || !oldC.factures) return;
-  var ids = {}, i, f, E = data.facEtat, ch = false;
-  for (i = 0; i < newC.factures.length; i++) ids[newC.factures[i].id] = 1;
-  /* cartes retirées sans paiement (ex. remises dans « Facture à faire ») : pas comptées comme encaissées */
-  for (i = 0; i < (newC.pasPayes || []).length; i++) ids[newC.pasPayes[i]] = 1;
-  for (i = 0; i < oldC.factures.length; i++){
-    f = oldC.factures[i];
-    if (!ids[f.id] && !E.encaisses[f.id]){ E.encaisses[f.id] = {v:num(f.reste), m:Date.now(), p:f.projet}; ch = true; }
-  }
-  var lim = Date.now() - 70 * 86400000, k;
-  for (k in E.encaisses) if (E.encaisses.hasOwnProperty(k) && num(E.encaisses[k].m) < lim){ delete E.encaisses[k]; ch = true; }
-  if (ch) facSchedule();
-}
+/* Encaissé du mois = cartes passées dans « ✅ Payé & Archivé » ce mois-ci (liste "encaisses" de factures.json,
+   écrite par la routine depuis Trello : {id, projet, montant, date:'AAAA-MM-JJ'})
+   + factures cochées « Payé » sur l'iPad que la routine n'a pas encore déplacées. */
 function facEncaisseMois(){
-  var t = 0, now = new Date(), k, e, d, E = data.facEtat.encaisses;
-  for (k in E) if (E.hasOwnProperty(k)){ e = E[k]; d = new Date(num(e.m)); if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) t += num(e.v); }
+  var t = 0, now = new Date(), mois = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
+  var C = data.facCache || {}, enc = C.encaisses || [], vu = {}, i, k, d, r, P = data.facEtat.payes;
+  for (i = 0; i < enc.length; i++){
+    vu[enc[i].id] = 1;
+    if (String(enc[i].date || '').slice(0, 7) === mois) t += num(enc[i].montant);
+  }
+  for (k in P) if (P.hasOwnProperty(k) && !vu[k]){
+    d = new Date(num(P[k])); r = facRow(k);
+    if (r && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) t += num(r.reste);
+  }
   return t;
 }
 /* oublie relances / payés des cartes sorties de la liste (ex. déplacées dans Payé & Archivé) */
