@@ -245,8 +245,10 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-d{font-size:21px;color:rgba(255,255,255,.65);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .late .fc-d{color:#cbb8ff;font-weight:600}
 .fc-v{flex-shrink:0;margin-left:16px;font-size:40px;font-weight:700;white-space:nowrap}
-.fcard.paid .fc-top,.fcard.paid .fc-hist{opacity:.45}
-.fcard.paid .fc-v{text-decoration:line-through}
+/* payées du mois : en vert, en bas, jusqu'à la fin du mois */
+.fcard.paid .fc-v{color:#4ade80}
+.fpaidh{display:flex;align-items:baseline;margin:26px 4px 14px;font-size:26px;font-weight:700;color:#4ade80;white-space:nowrap}
+.fpaidh span{margin-left:auto;font-size:22px;font-weight:400;color:rgba(255,255,255,.55)}
 .fchk{display:flex;flex-shrink:0;margin-left:18px;padding-left:18px;border-left:1px solid rgba(255,255,255,.16)}
 .fbox{position:relative;width:76px;height:76px;min-width:76px;padding:0;border-radius:20px;background:transparent;border:2px solid rgba(255,255,255,.18)}
 .fbox + .fbox,.fbox-x + .fbox{margin-left:12px}
@@ -1046,8 +1048,14 @@ function renderFactures(){
   var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('À toucher', t.tot) + tot('URSSAF 23,2 %', t.urs) + tot('Net', t.net) + tot('Encaissé ' + MOIS_C[new Date().getMonth()], facEncaisseMois()) + '</div>' +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
+  var encM = facEncaisseMois(), paidH = false;
+  function paidHead(){
+    if (paidH) return ''; paidH = true;
+    return '<div class="fpaidh">Payées en ' + MOIS[new Date().getMonth()] + ' · ' + eur(encM) + '<span>URSSAF ' + eur(Math.round(encM * 0.232)) + '</span></div>';
+  }
   for (i = 0; i < rows.length; i++){
     var r = rows[i], late = !r.paye && r.left <= 0;
+    if (r.paye) h += paidHead();
     /* barre = temps depuis l'envoi sur 30 j : vert → jaune → rouge */
     var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
@@ -1066,6 +1074,17 @@ function renderFactures(){
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
       '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
       '</div></div><div class="fc-act"><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Réglages</button></div></div>';
+  }
+  /* factures payées ce mois-ci (passées dans « ✅ Payé & Archivé ») : en vert, plus récentes en haut */
+  var encL = ((data.facCache && data.facCache.encaisses) || []).slice(), nowM = new Date(), moisC = nowM.getFullYear() + '-' + ('0' + (nowM.getMonth() + 1)).slice(-2);
+  encL.sort(function(a, b){ return String(b.date) < String(a.date) ? -1 : (String(b.date) > String(a.date) ? 1 : 0); });
+  for (i = 0; i < encL.length; i++){
+    var e = encL[i], ed = parseIso(e.date);
+    if (String(e.date || '').slice(0, 7) !== moisC || !ed) continue;
+    h += paidHead() + '<div class="glass fcard paid"><div class="fc-in">' +
+      '<div class="fc-top"><div class="fc-n grow">' + esc(e.projet) + '</div><div class="fc-v num">' + eur(num(e.montant)) + '</div></div>' +
+      '<div class="fbar"><i style="width:100%"></i></div>' +
+      '<div class="fc-bot"><div class="grow"><div class="fc-when num">Payé le ' + dCourt(ed.getTime()) + '</div></div></div></div></div>';
   }
   h += '</div>';
   $('s-factures').innerHTML = h;
