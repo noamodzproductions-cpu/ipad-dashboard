@@ -1,5 +1,5 @@
 {
- "updated": "mercredi 25 nov. à 19h58",
+ "updated": "jeudi 26 nov. à 7h58",
  "factures": [
   {
    "id": "6aa7e25a40bb3b1f54c98267",
@@ -21,6 +21,13 @@
    "brut": 250,
    "reste": 250,
    "entree": "2026-11-11"
+  },
+  {
+   "id": "6ae533d46ad8850dc3233292",
+   "projet": "Michalak > Tournage",
+   "brut": 1200,
+   "reste": 1200,
+   "entree": "2026-11-25"
   }
  ]
 }

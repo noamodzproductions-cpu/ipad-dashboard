@@ -1,13 +1,104 @@
 {
- "updated": "mercredi 25 nov. à 19h58",
- "trello": "mercredi 25 nov. à 19h58",
- "whatsapp": "mercredi 25 nov. à 19h58",
+ "updated": "jeudi 26 nov. à 7h59",
+ "trello": "jeudi 26 nov. à 7h59",
+ "whatsapp": "jeudi 26 nov. à 7h59",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-25",
-   "jour": "Mercredi 25 novembre",
+   "date": "2026-11-26",
+   "jour": "Jeudi 26 novembre",
    "tasks": [
+    {
+     "id": "mich-noel-tournage",
+     "client": "Michalak",
+     "text": "Michalak : tournage collection de Noël",
+     "done": false,
+     "notes": "Bûches, pâtisserie, plaquette chocolat"
+    },
+    {
+     "id": "mich-noel-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false
+    },
+    {
+     "id": "mich-retouche-photos",
+     "client": "Michalak",
+     "text": "Michalak : retoucher toutes les photos",
+     "done": true,
+     "prio": 3,
+     "perso": true,
+     "at": 1795385893928,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Envoyer sur le Drive (relance Noélie)",
+       "done": true
+      }
+     ],
+     "deadline": "2026-11-27"
+    },
+    {
+     "id": "mich-19nov-v1",
+     "client": "Michalak",
+     "text": "Michalak : V1 des vidéos",
+     "done": false,
+     "prio": 1,
+     "notes": "Vidéo à publier aujourd'hui (Noélie)",
+     "sous": [
+      {
+       "id": "mich-19nov-v1-nounours",
+       "text": "Dégustation nounours",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-fastcurious",
+       "text": "Fast and Curious",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-pov",
+       "text": "POV lunettes",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-eclair",
+       "text": "Éclair caméra",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-voile",
+       "text": "Voile",
+       "done": true
+      },
+      {
+       "id": "mich-19nov-v1-nuage",
+       "text": "Nuage",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-cam",
+       "text": "Caméra de surveillance",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-fastcurious-plan2",
+       "text": "Fast and Curious : plan plus rapproché (avis Céline)",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-voile-recadrer",
+       "text": "Voile : recadrer plus zoomé",
+       "done": true
+      },
+      {
+       "id": "mich-19nov-v1-nounours-forme",
+       "text": "Nounours : forme A, visage B",
+       "done": false
+      }
+     ],
+     "deadline": "2026-11-26"
+    },
     {
      "id": "cmc-evasion",
      "client": "Marie Claire",
@@ -157,7 +248,8 @@
      "text": "Nuance Audio : faire la V1",
      "done": false,
      "deadline": "2026-11-25",
-     "notes": "Raccourcir, garder la musique · V1 promise demain",
+     "notes": "Raccourcir, garder la musique",
+     "prio": 2,
      "perso": true,
      "at": 1795543959902,
      "sous": [
@@ -174,7 +266,8 @@
      "text": "Michalak : vidéo de Damien + bûches de Noël",
      "done": false,
      "deadline": "2026-11-25",
-     "notes": "Demandé par Noélie · mercredi soir max",
+     "notes": "Demandé par Noélie",
+     "prio": 2,
      "perso": true,
      "at": 1795543800050,
      "sous": [
@@ -184,16 +277,6 @@
        "done": false
       }
      ]
-    },
-    {
-     "id": "theia-v1",
-     "client": "Cercle de Théia",
-     "text": "2ème Forum Femmes et Industrie : faire la V1",
-     "done": true,
-     "notes": "Vidéo 5-7 min OK (Xuan-nam)",
-     "perso": true,
-     "at": 1795543800050,
-     "deadline": "2026-11-24"
     },
     {
      "id": "cmc-food-liens",
@@ -208,25 +291,16 @@
      "id": "cmc-retours-vincent",
      "client": "Marie Claire",
      "text": "Café Marie Claire : lire les retours de Vincent",
-     "done": false,
+     "done": true,
      "deadline": "2026-11-25",
      "notes": "Tableau + Frame à jour"
-    },
-    {
-     "id": "mich-photos-drive",
-     "client": "Michalak",
-     "text": "Michalak : photos du 1er shooting sur le Drive",
-     "done": true,
-     "deadline": "2026-11-23",
-     "notes": "Noélie relance depuis vendredi",
-     "perso": true,
-     "at": 1795521903000
     },
     {
      "id": "cmc-beaute-v2-miye",
      "client": "Marie Claire",
      "text": "Grand Café Beauté : V2 Miye",
      "done": false,
+     "prio": 2,
      "perso": true,
      "at": 1795521903000,
      "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
@@ -244,6 +318,7 @@
      "client": "Marie Claire",
      "text": "Grand Café Beauté : V2 KJ Locks",
      "done": false,
+     "prio": 2,
      "perso": true,
      "at": 1795521903000,
      "notes": "Début coupé, fin en hook",
@@ -263,101 +338,6 @@
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false,
      "notes": "Décalé du 17"
-    },
-    {
-     "id": "mich-19nov-v1",
-     "client": "Michalak",
-     "text": "Michalak : V1 des vidéos",
-     "done": false,
-     "sous": [
-      {
-       "id": "mich-19nov-v1-nounours",
-       "text": "Dégustation nounours",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-fastcurious",
-       "text": "Fast and Curious",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-pov",
-       "text": "POV lunettes",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-eclair",
-       "text": "Éclair caméra",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-voile",
-       "text": "Voile",
-       "done": true
-      },
-      {
-       "id": "mich-19nov-v1-nuage",
-       "text": "Nuage",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-cam",
-       "text": "Caméra de surveillance",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-fastcurious-plan2",
-       "text": "Fast and Curious : plan plus rapproché (avis Céline)",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-voile-recadrer",
-       "text": "Voile : recadrer plus zoomé",
-       "done": false
-      },
-      {
-       "id": "mich-19nov-v1-nounours-forme",
-       "text": "Nounours : forme A, visage B",
-       "done": false
-      }
-     ],
-     "deadline": "2026-11-26"
-    }
-   ]
-  },
-  {
-   "date": "2026-11-26",
-   "jour": "Jeudi 26 novembre",
-   "tasks": [
-    {
-     "id": "mich-noel-tournage",
-     "client": "Michalak",
-     "text": "Michalak : tournage collection de Noël",
-     "done": false,
-     "notes": "Bûches, pâtisserie, plaquette chocolat"
-    },
-    {
-     "id": "mich-noel-tournage-ssd",
-     "client": "Michalak",
-     "text": "Michalak : rushs + photos → SSD",
-     "done": false
-    },
-    {
-     "id": "mich-retouche-photos",
-     "client": "Michalak",
-     "text": "Michalak : retoucher toutes les photos",
-     "done": false,
-     "prio": 3,
-     "perso": true,
-     "at": 1795385893928,
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Envoyer sur le Drive (relance Noélie)",
-       "done": false
-      }
-     ],
-     "deadline": "2026-11-27"
     }
    ]
   },
@@ -379,7 +359,7 @@
      "id": "noam-1795606990999",
      "client": "Astotel",
      "text": "Astotel - Lorette : faire la V2",
-     "done": false,
+     "done": true,
      "deadline": "2026-11-29",
      "perso": true,
      "at": 1795606990999
@@ -397,6 +377,7 @@
      "done": false,
      "prio": 2,
      "deadline": "2026-11-20",
+     "notes": "En pause (attente client)",
      "perso": true,
      "at": 1795385893928
     },
@@ -407,6 +388,7 @@
      "done": false,
      "prio": 3,
      "deadline": "2026-11-23",
+     "notes": "En pause (attente client)",
      "perso": true,
      "at": 1795385893928
     },
@@ -417,6 +399,7 @@
      "done": false,
      "prio": 3,
      "deadline": "2026-11-16",
+     "notes": "En pause (attente client)",
      "perso": true,
      "at": 1795385893928
     },
@@ -456,7 +439,7 @@
      "id": "astotel-lorette-v1",
      "client": "Astotel",
      "text": "Astotel - Lorette : faire la V1",
-     "done": false,
+     "done": true,
      "prio": 2,
      "deadline": "2026-11-17",
      "perso": true,
@@ -489,6 +472,11 @@
   {
    "date": "2026-12-02",
    "jour": "Mercredi 2 décembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-12-03",
+   "jour": "Jeudi 3 décembre",
    "tasks": []
   }
  ],

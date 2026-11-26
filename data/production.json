@@ -1,14 +1,14 @@
 {
  "lu_le": "2026-11-23",
- "trello_vu": "2026-11-25T19:58",
+ "trello_vu": "2026-11-26T07:58",
  "projets": [
   {
    "carte_id": "6aedf942b19fe58afdb7b249",
    "projet": "Nuance Audio",
-   "liste": "🎥 À tourner",
+   "liste": "🎬 En production",
    "tournage": "2026-11-24",
    "deadline": "",
-   "modif": "2026-11-24T13:41:59.478Z",
+   "modif": "2026-11-25T21:17:46.539Z",
    "videos": [
     {
      "nom": "publi Sophie Davant",
@@ -22,7 +22,7 @@
    "liste": "Attente Retour clients",
    "tournage": "2026-11-10",
    "deadline": "",
-   "modif": "2026-11-24T13:41:36.488Z",
+   "modif": "2026-11-25T21:17:38.314Z",
    "videos": [
     {
      "nom": "photos",
@@ -30,7 +30,7 @@
     },
     {
      "nom": "vidéo",
-     "etat": "à faire"
+     "etat": "V1 envoyée"
     }
    ]
   },
@@ -77,10 +77,10 @@
   {
    "carte_id": "6ac66322fe99f29a96919c99",
    "projet": "Ladurée Halloween",
-   "liste": "🎬 En production",
+   "liste": "Attente Retour clients",
    "tournage": "2026-10-23",
    "deadline": "",
-   "modif": "2026-11-15T00:23:51.386Z",
+   "modif": "2026-11-25T21:24:26.211Z",
    "videos": [
     {
      "nom": "stop motion club",
@@ -101,26 +101,12 @@
    ]
   },
   {
-   "carte_id": "6ae533d46ad8850dc3233292",
-   "projet": "Michalak",
-   "liste": "🎬 En production",
-   "tournage": "2026-10-30",
-   "deadline": "",
-   "modif": "2026-11-15T00:07:38.761Z",
-   "videos": [
-    {
-     "nom": "retoucher les photos",
-     "etat": "à faire"
-    }
-   ]
-  },
-  {
    "carte_id": "6aff6f7b4c4a2afaea94b88d",
    "projet": "Michalak",
    "liste": "🎬 En production",
    "tournage": "2026-11-19",
    "deadline": "",
-   "modif": "2026-11-24T13:41:45.235Z",
+   "modif": "2026-11-25T21:24:37.417Z",
    "videos": [
     {
      "nom": "Dégustation à l'aveugle de nounours",
@@ -155,10 +141,10 @@
   {
    "carte_id": "6ade5ef2cb82481064a2c186",
    "projet": "Ensemble Solum",
-   "liste": "🎬 En production",
+   "liste": "En pause",
    "tournage": "",
    "deadline": "2026-11-20",
-   "modif": "2026-11-05T11:53:22.993Z",
+   "modif": "2026-11-25T21:23:08.144Z",
    "videos": [
     {
      "nom": "vidéo",
@@ -169,10 +155,10 @@
   {
    "carte_id": "6aa7e210f599ee727297a430",
    "projet": "Ensemble Kermes",
-   "liste": "🎬 En production",
+   "liste": "En pause",
    "tournage": "2026-09-26",
    "deadline": "2026-11-16",
-   "modif": "2026-11-05T11:53:20.153Z",
+   "modif": "2026-11-25T21:23:09.778Z",
    "videos": [
     {
      "nom": "the last race",
@@ -183,10 +169,10 @@
   {
    "carte_id": "6aa7db137b62aa26bfe5f9b5",
    "projet": "Ensemble Pop up Citadium",
-   "liste": "🎬 En production",
+   "liste": "En pause",
    "tournage": "2026-06-18",
    "deadline": "2026-11-23",
-   "modif": "2026-11-05T11:53:24.450Z",
+   "modif": "2026-11-25T21:23:12.041Z",
    "videos": [
     {
      "nom": "vidéo",
@@ -200,7 +186,7 @@
    "liste": "🎬 En production",
    "tournage": "2026-11-12",
    "deadline": "",
-   "modif": "2026-11-15T00:22:57.091Z",
+   "modif": "2026-11-25T21:23:56.902Z",
    "videos": [
     {
      "nom": "Lieu 1",
@@ -249,20 +235,6 @@
     {
      "nom": "vidéo",
      "etat": "V1 envoyée"
-    }
-   ]
-  },
-  {
-   "carte_id": "6afdb912e1c2ba205f3e22c5",
-   "projet": "Cercle de Théia > 2ème Forum Femmes et Industrie",
-   "liste": "🎬 En production",
-   "tournage": "2026-11-17",
-   "deadline": "2026-11-24",
-   "modif": "2026-11-20T14:02:06.441Z",
-   "videos": [
-    {
-     "nom": "forum Femmes & Industrie",
-     "etat": "à faire"
     }
    ]
   }
