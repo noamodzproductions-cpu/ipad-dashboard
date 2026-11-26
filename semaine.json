@@ -1,8 +1,8 @@
 {
- "updated": "jeudi 26 nov. à 7h59",
+ "updated": "jeudi 26 nov. à 12h10",
  "trello": "jeudi 26 nov. à 7h59",
- "whatsapp": "jeudi 26 nov. à 7h59",
- "auto": true,
+ "whatsapp": "jeudi 26 nov. à 12h10",
+ "auto": false,
  "days": [
   {
    "date": "2026-11-26",
@@ -20,6 +20,29 @@
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
      "done": false
+    },
+    {
+     "id": "cmc-toki-v2",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire Lifestyle : modif vidéo Toki",
+     "done": false,
+     "prio": 1,
+     "deadline": "2026-11-26",
+     "notes": "Demandé par Selma, en prio",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Retirer la répétition après le générique",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "mich-frame-v3-noelie",
+     "client": "Michalak",
+     "text": "Michalak : aider Noélie à télécharger la V3 sur Frame",
+     "done": false,
+     "deadline": "2026-11-26"
     },
     {
      "id": "mich-retouche-photos",
