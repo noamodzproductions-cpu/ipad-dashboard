@@ -21,13 +21,7 @@
    "brut": 250,
    "reste": 250,
    "entree": "2026-11-11"
-  },
-  {
-   "id": "6ae533d46ad8850dc3233292",
-   "projet": "Michalak > Tournage",
-   "brut": 1200,
-   "reste": 1200,
-   "entree": "2026-11-25"
   }
- ]
+ ],
+ "pasPayes": ["6ae533d46ad8850dc3233292"]
 }

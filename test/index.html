@@ -905,6 +905,8 @@ function facSortis(oldC, newC){
   if (!oldC || !oldC.factures) return;
   var ids = {}, i, f, E = data.facEtat, ch = false;
   for (i = 0; i < newC.factures.length; i++) ids[newC.factures[i].id] = 1;
+  /* cartes retirées sans paiement (ex. remises dans « Facture à faire ») : pas comptées comme encaissées */
+  for (i = 0; i < (newC.pasPayes || []).length; i++) ids[newC.pasPayes[i]] = 1;
   for (i = 0; i < oldC.factures.length; i++){
     f = oldC.factures[i];
     if (!ids[f.id] && !E.encaisses[f.id]){ E.encaisses[f.id] = {v:num(f.reste), m:Date.now(), p:f.projet}; ch = true; }
