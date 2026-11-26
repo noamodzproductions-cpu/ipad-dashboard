@@ -909,7 +909,7 @@ function facEncaisseMois(){
   var C = data.facCache || {}, enc = C.encaisses || [], vu = {}, i, k, d, r, P = data.facEtat.payes;
   for (i = 0; i < enc.length; i++){
     vu[enc[i].id] = 1;
-    if (String(enc[i].date || '').slice(0, 7) === mois) t += num(enc[i].montant);
+    if (!enc[i].masque && String(enc[i].date || '').slice(0, 7) === mois) t += num(enc[i].montant);
   }
   for (k in P) if (P.hasOwnProperty(k) && !vu[k]){
     d = new Date(num(P[k])); r = facRow(k);
@@ -1080,7 +1080,7 @@ function renderFactures(){
   encL.sort(function(a, b){ return String(b.date) < String(a.date) ? -1 : (String(b.date) > String(a.date) ? 1 : 0); });
   for (i = 0; i < encL.length; i++){
     var e = encL[i], ed = parseIso(e.date);
-    if (String(e.date || '').slice(0, 7) !== moisC || !ed) continue;
+    if (e.masque || String(e.date || '').slice(0, 7) !== moisC || !ed) continue; /* masque = payé avant (acompte…), retiré par Noam */
     h += paidHead() + '<div class="glass fcard paid"><div class="fc-in">' +
       '<div class="fc-top"><div class="fc-n grow">' + esc(e.projet) + '</div><div class="fc-v num">' + eur(num(e.montant)) + '</div></div>' +
       '<div class="fbar"><i style="width:100%"></i></div>' +
