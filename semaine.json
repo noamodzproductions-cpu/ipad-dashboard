@@ -1,8 +1,8 @@
 {
- "updated": "jeudi 26 nov. à 12h10",
- "trello": "jeudi 26 nov. à 7h59",
- "whatsapp": "jeudi 26 nov. à 12h10",
- "auto": false,
+ "updated": "jeudi 26 nov. à 12h53",
+ "trello": "jeudi 26 nov. à 12h53",
+ "whatsapp": "jeudi 26 nov. à 12h53",
+ "auto": true,
  "days": [
   {
    "date": "2026-11-26",
@@ -41,8 +41,16 @@
      "id": "mich-frame-v3-noelie",
      "client": "Michalak",
      "text": "Michalak : aider Noélie à télécharger la V3 sur Frame",
-     "done": false,
+     "done": true,
      "deadline": "2026-11-26"
+    },
+    {
+     "id": "fally-paiement",
+     "client": "Fally",
+     "text": "Fally : confirmer une date de paiement",
+     "done": false,
+     "prio": 1,
+     "notes": "Facture en retard, Roger relance"
     },
     {
      "id": "mich-retouche-photos",
