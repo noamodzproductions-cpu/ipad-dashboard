@@ -58,6 +58,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .h1{font-size:36px;font-weight:600;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub{font-size:19px;color:rgba(255,255,255,.7);margin-top:3px;white-space:nowrap}
 .rbtn{width:70px;height:70px;padding:0;border-radius:35px}
+.fbtnF{font-size:32px;font-weight:800}
 .rbtn svg{display:block;width:30px;height:30px;margin:auto}
 .content{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;z-index:0}
 /* Safari 12 : dans une longue liste qui défile, chaque carte garde ses calques chez elle (sinon elles se dessinent hors de la zone) */
@@ -116,7 +117,9 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-sub b{color:#cbb8ff}
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
 .ftots{margin:0 0 8px}
-.fprev{margin:-2px 6px 10px;font-size:19px;color:rgba(255,255,255,.45);text-align:right}
+.fprev{margin:0 0 12px;padding:12px 22px;border-radius:18px;background:#141416;font-size:21px;color:rgba(255,255,255,.5);align-items:baseline}
+.fprev .fp-v{font-size:26px;font-weight:700;color:rgba(255,255,255,.8)}
+.fprev .fp-n{margin-left:22px;font-size:22px;color:rgba(255,255,255,.5)}
 .fcard{display:block;padding:0;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
 .fcard.open .fc-in{-webkit-transform:translate3d(-230px,0,0);transform:translate3d(-230px,0,0)}
@@ -243,6 +246,8 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .bad .fbar i{background:#f87171}
 .rtag{display:inline-block;vertical-align:middle;height:28px;line-height:28px;padding:0 10px;margin-left:12px;border-radius:14px;background:#f87171;color:#111;font-size:15px;font-weight:800;letter-spacing:.5px}
 .fc-n{font-size:30px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fc-nw{min-width:0}
+.fc-p{font-size:20px;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
 .fc-d{font-size:21px;color:rgba(255,255,255,.65);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .late .fc-d{color:#cbb8ff;font-weight:600}
 .fc-v{flex-shrink:0;margin-left:16px;font-size:40px;font-weight:700;white-space:nowrap}
@@ -879,7 +884,7 @@ function setHomePage(n){
    (clé GitHub). La routine lit ce fichier : elle déplace les cartes payées dans « ✅ Payé & Archivé » et ajoute
    une tâche « relancer le paiement » (id relance-<6 derniers car. de l'id>-<AAAAMMJJ de l'échéance>) le jour venu.
    Relance due 15 jours après l'entrée dans la liste ou après la dernière relance. */
-var FAC_URL = '../data/factures.json', FAC_ETAT = 'data/factures-etat.json', facLoadedAt = 0, RELANCE_J = 15, facPushT = null, facBusy = false;
+var facLireT = null, FAC_URL = '../data/factures.json', FAC_ETAT = 'data/factures-etat.json', facLoadedAt = 0, RELANCE_J = 15, facPushT = null, facBusy = false;
 function dayStart(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
 function parseIso(s){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
 var MOIS_C = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
@@ -969,7 +974,7 @@ function facRows(){
     if (pr){ due = pr; dl = Math.max(1, Math.round((dayStart(pr) - start) / 86400000)); }
     var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
     var left = Math.round((due.getTime() - today) / 86400000);
-    out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), ent:ent, due:due.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
+    out.push({id:f.id, projet:f.projet, detail:f.detail || '', reste:num(f.reste), entree:d.getTime(), ent:ent, due:due.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
       paye:false, taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
   }
   /* la plus en retard (envoyée depuis le plus longtemps) en haut, payées en bas */
@@ -1019,7 +1024,7 @@ function facOpen(id){
   var today = dayStart(new Date()), env = Math.round((today - dayStart(new Date(r.entree))) / 86400000), nx = new Date(r.due);
   function dl(ms){ return cap(JOURS[new Date(ms).getDay()]) + ' ' + dCourt(ms); }
   function blk(l, big, small){ return '<div class="fi-b"><div class="dh">' + l + '</div><div class="fi-big num">' + big + '</div>' + (small ? '<div class="muted fi-s">' + small + '</div>' : '') + '</div>'; }
-  var h = '<div class="mtitle">' + esc(r.projet) + '</div>' +
+  var h = '<div class="mtitle">' + esc(r.projet) + '</div>' + (r.detail ? '<div class="muted" style="font-size:22px;margin:-6px 0 14px">' + esc(r.detail) + '</div>' : '') +
     blk('Facture envoyée', cap(agoTxt(env)), dl(r.entree)) +
     blk('Dernière relance', r.last ? cap(agoTxt(Math.round((today - dayStart(new Date(r.last))) / 86400000))) : 'Jamais', r.last ? dl(r.last) : '') +
     blk('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">Maintenant</span>' : 'Dans ' + r.left + ' j', r.left <= 0 ? '' : dl(r.due)) +
@@ -1041,13 +1046,13 @@ function renderFactures(){
   var old = document.querySelector('#s-factures .content'), scroll = old ? old.scrollTop : 0;
   var lf = lectOf('facturenet'), lfBusy = lf.st === 'wait' || lf.st === 'run';
   var upd = lfBusy ? 'Lecture de facture.net…' : (data.facCache && data.facCache.updated ? 'facture.net · ' + esc(data.facCache.updated) : '');
-  var rel = '<button class="rbtn" data-act="lire" data-arg="lire-facturenet" aria-label="Relire facture.net"' + (lfBusy ? ' style="opacity:.35"' : '') + '>' + ico(IC.reload) + '</button>';
+  var rel = '<button class="rbtn fbtnF" data-act="flire" aria-label="Relire facture.net"' + (lfBusy ? ' style="opacity:.35"' : '') + '>F</button>';
   /* URSSAF et Net = sur l'encaissé du mois (demandé par Noam), pas sur ce qui reste à toucher */
   var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
   /* « si tout est payé » = encaissé du mois + tout ce qui reste à toucher (petit, en gris : pour se projeter) */
   var allT = encT + t.tot, allU = Math.round(allT * 0.232);
   var h = hdr('Suivi des factures', upd, rel) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
-    (t.tot ? '<div class="fprev num">Si tout est payé : ' + eur(allT) + ' · net ' + eur(allT - allU) + '</div>' : '') +
+    (t.tot ? '<div class="fprev row"><div class="grow">Si tout est payé</div><div class="fp-v num">' + eur(allT) + '</div><div class="fp-n num">' + eur(allT - allU) + ' net</div></div>' : '') +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   var encM = facEncaisseMois(), paidH = false;
@@ -1061,7 +1066,8 @@ function renderFactures(){
     /* barre = temps depuis l'envoi sur 30 j : vert → jaune → rouge */
     var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
-    var when = r.paye ? 'Payé le ' + dCourt(data.facEtat.payes[r.id]) : (late ? 'À relancer' : 'Relance dans ' + r.left + ' j');
+    var jd = cap(JOURS[new Date(r.due).getDay()]).slice(0, 3) + '. ' + dCourt(r.due);
+    var when = late ? (r.left === 0 ? 'À relancer aujourd’hui' : 'À relancer depuis le ' + dCourt(r.due)) : 'Relance ' + jd + ' · dans ' + r.left + ' j';
     /* bas de carte épuré : pastille ×N (relances, de plus en plus rouge) + « paiement promis dans N j » si promesse */
     var pmz = (data.facEtat.promis || {})[r.id], hist = '';
     if (pmz && !r.paye){ var pzd = parseIso(pmz.d); if (pzd){ pzd.setDate(pzd.getDate() + num(pmz.w) * 7); var pzl = Math.round((dayStart(pzd) - dayStart(new Date())) / 86400000);
@@ -1070,7 +1076,8 @@ function renderFactures(){
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
     var bad = !r.paye && r.days > 30; /* retard = jours au-delà des 30 jours */
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
-      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-n grow">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + (r.days - 30) + ' j</span>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
+      '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="grow fc-nw"><div class="fc-n">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + (r.days - 30) + ' j</span>' : '') + '</div>' +
+        (r.detail ? '<div class="fc-p">' + esc(r.detail) + '</div>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
       '<div class="fbar"><i style="width:' + fill + '%' + bcol + '"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + rb + '</div>' + (hist ? '<div class="fc-hist num">' + hist + '</div>' : '') + '</div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
@@ -1083,7 +1090,7 @@ function renderFactures(){
     var e = encL[i], ed = parseIso(e.date);
     if (e.masque || String(e.date || '').slice(0, 7) !== moisC || !ed) continue; /* masque = payé avant (acompte…), retiré par Noam */
     h += paidHead() + '<div class="glass fcard paid"><div class="fc-in">' +
-      '<div class="fc-top"><div class="fc-n grow">' + esc(e.projet) + '</div><div class="fc-v num">' + eur(num(e.montant)) + '</div></div>' +
+      '<div class="fc-top"><div class="grow fc-nw"><div class="fc-n">' + esc(e.projet) + '</div>' + (e.detail ? '<div class="fc-p">' + esc(e.detail) + '</div>' : '') + '</div><div class="fc-v num">' + eur(num(e.montant)) + '</div></div>' +
       '<div class="fbar"><i style="width:100%"></i></div>' +
       '<div class="fc-bot"><div class="grow"><div class="fc-when num">Payé le ' + dCourt(ed.getTime()) + '</div></div></div></div></div>';
   }
@@ -2390,6 +2397,23 @@ function handle(act, arg){
   switch (act){
     case 'go': closeModal(); go(arg); return;
     case 'regp': regPage = arg; renderReglages(); return;
+    /* bouton F (Factures) : 5 s pour annuler un appui par erreur ; pendant la lecture, propose de l'arrêter */
+    case 'flire':
+      var fl = lectOf('facturenet');
+      if (fl.st === 'wait' || fl.st === 'run'){
+        openModal({kind:'fstop'}, '<div class="mtitle">Arrêter la lecture de facture.net ?</div>' +
+          '<div class="row mbtns"><button data-act="mclose">Continuer</button><button class="white" data-act="fstop">Arrêter</button></div>');
+        return;
+      }
+      if (facLireT) return;
+      facLireT = setTimeout(function(){ facLireT = null; hideToast(); handle('lire', 'lire-facturenet'); }, 5000);
+      showToast('Lecture de facture.net dans 5 s', function(){ clearTimeout(facLireT); facLireT = null; });
+      return;
+    case 'fstop':
+      closeModal();
+      var sx = new XMLHttpRequest(); sx.open('POST', MUSIC_RELAY, true); sx.send('stop-facturenet');
+      data.lect.facturenet = {st:'stop', t:Date.now()}; save(); renderFactures();
+      showToast('Lecture de facture.net arrêtée', null); return;
     case 'lire':
       if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio' && arg !== 'lire-facturenet') return;
       var lk = arg.replace('lire-', ''), lc = lectOf(lk);

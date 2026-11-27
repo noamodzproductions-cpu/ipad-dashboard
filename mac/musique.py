@@ -61,9 +61,11 @@ LECTURES = {
     "lire-facturenet": ("lire-facturenet.md", "Read,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
                         "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
                         "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__find,"
-                        "mcp__claude-in-chrome__computer", True),
+                        "mcp__claude-in-chrome__read_page,mcp__claude-in-chrome__computer", True),
 }
 en_cours = threading.Lock()
+procs = {}        # lecture en cours -> processus claude (pour « stop-… » depuis l'iPad)
+annulees = set()  # lectures arrêtées depuis l'iPad
 ETAT_TOPIC = NTFY_TOPIC + "-etat"   # le Mac y écrit l'état des lectures, l'iPad le lit
 
 
@@ -111,7 +113,23 @@ def lecture(nom):
             cmd.append("--chrome")
         debut = time.time()
         etat(nom, "en cours")
-        r = subprocess.run(cmd, cwd=DOSSIER, capture_output=True, text=True, timeout=900)
+        annulees.discard(nom)
+        p = subprocess.Popen(cmd, cwd=DOSSIER, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        procs[nom] = p
+        try:
+            out, err = p.communicate(timeout=900)
+        except subprocess.TimeoutExpired:
+            p.kill(); p.communicate()
+            raise
+        finally:
+            procs.pop(nom, None)
+        if nom in annulees:
+            annulees.discard(nom)
+            if nom == "lire-facturenet":  # fichier peut-être à moitié écrit : on revient à la version du dépôt
+                subprocess.run(["git", "-C", DOSSIER, "checkout", "--", "data/factures.json"])
+            print("relais ->", nom, "-> annulée depuis l'iPad", flush=True)
+            return
+        r = subprocess.CompletedProcess(cmd, p.returncode, out, err)
         texte, conso = r.stdout or "", ""
         try:
             j = json.loads(texte)
@@ -187,7 +205,15 @@ def ecouter_relais():
                     if ev.get("event") != "message":
                         continue
                     msg = ev.get("message", "").strip()
-                    if msg in LECTURES:
+                    if msg.startswith("stop-") and ("lire-" + msg[5:]) in LECTURES:
+                        nom = "lire-" + msg[5:]
+                        p = procs.get(nom)
+                        if p:
+                            annulees.add(nom)
+                            p.kill()
+                            etat(nom, "erreur", "Lecture annulée")
+                        print("relais ->", msg, "->", "arrêtée" if p else "rien à arrêter", flush=True)
+                    elif msg in LECTURES:
                         print("relais ->", msg, "-> lancée", flush=True)
                         threading.Thread(target=lecture, args=(msg,), daemon=True).start()
                     elif msg == "lofi":
