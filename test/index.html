@@ -1246,7 +1246,7 @@ function pipeDone(v){ var n = 0, i; for (i = 0; i < v.length; i++) if (/livr/i.t
 function renderPipeline(){
   var it = pipeItems(), s = pipeSums(), i, c, h, n, sum, rows, x, d;
   var upd = data.pipeCache && parseIso(data.pipeCache.trello_vu) ? 'Trello · lu le ' + esc(dCourt(parseIso(data.pipeCache.trello_vu).getTime())) : 'Chargement…';
-  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('À toucher sur ces projets', s.fact + s.cours) + '</div><div class="content pcols" style="margin-top:16px">';
+  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('À toucher sur ces projets', s.fact + s.cours + s.pause) + '</div><div class="content pcols" style="margin-top:16px">';
   for (c = 0; c < PIPE_COLS.length; c++){
     rows = ''; n = 0; sum = 0;
     for (i = 0; i < it.length; i++){
