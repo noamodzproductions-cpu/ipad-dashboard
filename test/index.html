@@ -85,11 +85,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widget.p2-pipe{flex:2}
 .widget.p2-mat{flex:1;margin-left:18px}
 .p2-bot{flex:1;min-height:0;margin-top:18px}
-.pstages{position:absolute;left:24px;right:24px;bottom:84px;display:flex}
+.pstages{position:absolute;left:24px;right:24px;bottom:86px;display:flex}
 .pst{flex:1;min-width:0;text-align:left}
-.pst b{display:block;font-size:52px;font-weight:700;line-height:1}
-.pst span{display:block;font-size:15px;color:rgba(255,255,255,.6);margin-top:6px;white-space:nowrap}
-.pst.fact b,.pst.fact span{color:#cbb8ff}
+.pst span{display:inline-block;vertical-align:middle;font-size:26px;margin-right:8px}
+.pst b{display:inline-block;vertical-align:middle;font-size:48px;font-weight:700;line-height:1}
+.pst.fact b{color:#cbb8ff}
 .widgets2 .wsmall{flex:0 0 auto;width:300px;height:280px}
 .bl{flex:1;min-width:0;display:flex}
 .br{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column}
@@ -1229,9 +1229,9 @@ function loadPipe(){
 function pipeWidget(){
   var e = $('pw-st'); if (!e) return;
   if (!data.pipeCache){ e.innerHTML = ''; return; }
-  var it = pipeItems(), n = {}, i, c, h = '', lab = {tourner:'à tourner', prod:'en prod', attente:'attente', fact:'à facturer'};
+  var it = pipeItems(), n = {}, i, c, h = '';
   for (i = 0; i < it.length; i++) n[it[i].col] = (n[it[i].col] || 0) + 1;
-  for (c = 0; c < PIPE_COLS.length; c++) h += '<div class="pst ' + PIPE_COLS[c][0] + '"><b>' + (n[PIPE_COLS[c][0]] || 0) + '</b><span>' + PIPE_COLS[c][1] + ' ' + lab[PIPE_COLS[c][0]] + '</span></div>';
+  for (c = 0; c < PIPE_COLS.length; c++) h += '<div class="pst ' + PIPE_COLS[c][0] + '"><span>' + PIPE_COLS[c][1] + '</span><b>' + (n[PIPE_COLS[c][0]] || 0) + '</b></div>';
   e.innerHTML = h;
 }
 /* étiquettes Trello = état du paiement (indépendant de l'étape) */
@@ -1258,10 +1258,10 @@ function renderPipeline(){
       rows += '<div class="ppc" data-act="popen" data-arg="' + esc(x.id) + '">' + (x.client ? '<div class="ppc-c">' + esc(x.client) + '</div>' : '') +
         '<div class="pc-n">' + esc(x.titre) + '</div>' + pipeTags(x.tags) + '<div class="pc-b"><div class="pc-v num">' + (x.montant ? eur(x.montant) : '—') + '</div><div class="pc-p num">' + esc(prog) + '</div></div></div>';
     }
-    h += '<div class="pcol ' + PIPE_COLS[c][0] + '"><div class="pcol-h"><div class="pcol-t">' + PIPE_COLS[c][1] + ' ' + PIPE_COLS[c][2] + '</div><div class="pcol-s num">' + (n ? n + ' projet' + (n > 1 ? 's' : '') : '') + '</div></div>' +
+    h += '<div class="pcol ' + PIPE_COLS[c][0] + '"><div class="pcol-h"><div class="pcol-t">' + PIPE_COLS[c][1] + ' ' + PIPE_COLS[c][2] + '</div></div>' +
       '<div class="pcol-l">' + (rows || '<div class="ppempty">Rien</div>') + '</div></div>';
   }
-  h += '</div>' + (s.npause ? '<div class="ppause num">⏸️ ' + s.npause + ' en pause</div>' : '');
+  h += '</div>' + (s.npause ? '<div class="ppause num">⏸️ ' + s.npause + '</div>' : '');
   $('s-pipeline').innerHTML = h;
 }
 function pipeOpen(id){
