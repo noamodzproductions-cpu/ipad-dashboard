@@ -125,8 +125,11 @@ def lecture(nom):
             procs.pop(nom, None)
         if nom in annulees:
             annulees.discard(nom)
-            if nom == "lire-facturenet":  # fichier peut-être à moitié écrit : on revient à la version du dépôt
+            # fichiers peut-être à moitié écrits : on revient à la version du dépôt
+            if nom == "lire-facturenet":
                 subprocess.run(["git", "-C", DOSSIER, "checkout", "--", "data/factures.json"])
+            elif nom == "lire-trello":
+                subprocess.run(["git", "-C", DOSSIER, "checkout", "--", "semaine.json", "data/production.json"])
             print("relais ->", nom, "-> annulée depuis l'iPad", flush=True)
             return
         r = subprocess.CompletedProcess(cmd, p.returncode, out, err)

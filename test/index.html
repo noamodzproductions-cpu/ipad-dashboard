@@ -127,9 +127,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-sub b{color:#cbb8ff}
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
 .ftots{margin:0 0 8px}
-.fprev{margin:0 0 12px;padding:12px 22px;border-radius:18px;background:#141416;font-size:21px;color:rgba(255,255,255,.5);align-items:baseline}
-.fprev .fp-v{font-size:26px;font-weight:700;color:rgba(255,255,255,.8)}
-.fprev .fp-n{margin-left:22px;font-size:22px;color:rgba(255,255,255,.5)}
+.tot-p{font-size:22px;font-weight:600;color:rgba(255,255,255,.4)}
 .fcard{display:block;padding:0;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
 .fcard.open .fc-in{-webkit-transform:translate3d(-230px,0,0);transform:translate3d(-230px,0,0)}
@@ -1087,7 +1085,7 @@ function renderFactures(){
   if (current !== 'factures') return;
   var old = document.querySelector('#s-factures .content'), scroll = old ? old.scrollTop : 0;
   var lf = lectOf('facturenet'), lfBusy = lf.st === 'wait' || lf.st === 'run';
-  var upd = lfBusy ? 'Lecture de facture.net…' : (data.facCache && data.facCache.updated ? 'facture.net · ' + esc(data.facCache.updated) : '');
+  var upd = lfBusy ? 'Lecture de facture.net…' : '';
   var rel = '<button class="rbtn fbtnF" data-act="flire" aria-label="Relire facture.net"' + (lfBusy ? ' style="opacity:.35"' : '') + '>F</button>';
   /* URSSAF et Net = sur l'encaissé du mois (demandé par Noam), pas sur ce qui reste à toucher */
   var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
@@ -1100,9 +1098,10 @@ function renderFactures(){
     if (pd) pd.setDate(pd.getDate() + num(pz.w) * 7); else { pd = new Date(rows[pk].entree); pd.setDate(pd.getDate() + 30); }
     if (pd.getTime() < finM) prevT += rows[pk].reste;
   }
-  var allU = Math.round(prevT * 0.232);
-  var h = hdr('Suivi des factures', upd, rel) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
-    (prevT > encT ? '<div class="fprev row"><div class="grow">Prévu fin ' + MOIS[new Date().getMonth()] + '</div><div class="fp-v num">' + eur(prevT) + '</div><div class="fp-n num">' + eur(prevT - allU) + ' net</div></div>' : '') +
+  /* case Encaissé : « 800 € » + en gris « / 1 200 € » = prévu fin de mois (seulement s'il y a plus que l'encaissé) */
+  var encBox = '<div class="glass tot"><div class="tot-l">Encaissé ' + MOIS_C[new Date().getMonth()] + (prevT > encT ? ' · prévu' : '') + '</div><div class="tot-v num">' + eur(encT) +
+    (prevT > encT ? '<span class="tot-p"> / ' + eur(prevT) + '</span>' : '') + '</div></div>';
+  var h = hdr('Suivi des factures', upd, rel) + '<div class="tots ftots row">' + encBox + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   var encM = facEncaisseMois(), paidH = false;
@@ -1254,8 +1253,10 @@ function pipeTags(t){
 function pipeDone(v){ var n = 0, i; for (i = 0; i < v.length; i++) if (/livr/i.test(v[i].etat || '')) n++; return n; }
 function renderPipeline(){
   var it = pipeItems(), s = pipeSums(), i, c, h, n, sum, rows, x, d;
-  var upd = data.pipeCache && parseIso(data.pipeCache.trello_vu) ? 'Trello · lu le ' + esc(dCourt(parseIso(data.pipeCache.trello_vu).getTime())) : 'Chargement…';
-  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('Pas encore touché', pipeTotal()) + '</div><div class="content pcols" style="margin-top:16px">';
+  var lt = lectOf('trello'), ltBusy = lt.st === 'wait' || lt.st === 'run';
+  var upd = ltBusy ? 'Lecture de Trello…' : '';
+  var relT = '<button class="rbtn fbtnF" data-act="flire" data-arg="trello" aria-label="Relire Trello"' + (ltBusy ? ' style="opacity:.35"' : '') + '>T</button>';
+  h = hdr('Pipeline', upd, relT) + '<div class="tots row">' + tot('Pas encore touché', pipeTotal()) + '</div><div class="content pcols" style="margin-top:16px">';
   for (c = 0; c < PIPE_COLS.length; c++){
     rows = ''; n = 0; sum = 0;
     for (i = 0; i < it.length; i++){
@@ -2484,10 +2485,12 @@ function lectSet(k, st, msg){
     showToast((k === 'trello' ? 'Trello' : (k === 'frameio' ? 'Frame.io' : (k === 'facturenet' ? 'facture.net' : 'WhatsApp'))) + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
     /* facture.net : le fichier met ~1 min à arriver sur GitHub Pages → on relit plusieurs fois */
     if (st === 'ok' && k === 'facturenet'){ loadFactures(); setTimeout(loadFactures, 30000); setTimeout(loadFactures, 75000); setTimeout(loadFactures, 150000); }
-    else if (st === 'ok'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
+    if (st === 'ok' && k === 'trello'){ loadPipe(); setTimeout(loadPipe, 30000); setTimeout(loadPipe, 75000); setTimeout(loadPipe, 150000); }
+    if (st === 'ok' && k !== 'facturenet'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
   }
   if (current === 'reglages') renderReglages();
   if (current === 'factures') renderFactures();
+  if (current === 'pipeline') renderPipeline();
 }
 function lectLine(k, last){
   var o = lectOf(k), txt, col = '';
@@ -2535,22 +2538,25 @@ function handle(act, arg){
     case 'go': closeModal(); go(arg); return;
     case 'regp': regPage = arg; renderReglages(); return;
     /* bouton F (Factures) : 5 s pour annuler un appui par erreur ; pendant la lecture, propose de l'arrêter */
+    /* boutons F (Factures) et T (Pipeline) : 5 s pour annuler un appui par erreur ; pendant la lecture, propose de l'arrêter */
     case 'flire':
-      var fl = lectOf('facturenet');
+      var fk = arg === 'trello' ? 'trello' : 'facturenet', fnm = fk === 'trello' ? 'Trello' : 'facture.net', fl = lectOf(fk);
       if (fl.st === 'wait' || fl.st === 'run'){
-        openModal({kind:'fstop'}, '<div class="mtitle">Arrêter la lecture de facture.net ?</div>' +
-          '<div class="row mbtns"><button data-act="mclose">Continuer</button><button class="white" data-act="fstop">Arrêter</button></div>');
+        openModal({kind:'fstop'}, '<div class="mtitle">Arrêter la lecture de ' + fnm + ' ?</div>' +
+          '<div class="row mbtns"><button data-act="mclose">Continuer</button><button class="white" data-act="fstop" data-arg="' + fk + '">Arrêter</button></div>');
         return;
       }
       if (facLireT) return;
-      facLireT = setTimeout(function(){ facLireT = null; hideToast(); handle('lire', 'lire-facturenet'); }, 5000);
-      showToast('Lecture de facture.net dans 5 s', function(){ clearTimeout(facLireT); facLireT = null; });
+      facLireT = setTimeout(function(){ facLireT = null; hideToast(); handle('lire', 'lire-' + fk); }, 5000);
+      showToast('Lecture de ' + fnm + ' dans 5 s', function(){ clearTimeout(facLireT); facLireT = null; });
       return;
     case 'fstop':
       closeModal();
-      var sx = new XMLHttpRequest(); sx.open('POST', MUSIC_RELAY, true); sx.send('stop-facturenet');
-      data.lect.facturenet = {st:'stop', t:Date.now()}; save(); renderFactures();
-      showToast('Lecture de facture.net arrêtée', null); return;
+      var sk = arg === 'trello' ? 'trello' : 'facturenet';
+      var sx = new XMLHttpRequest(); sx.open('POST', MUSIC_RELAY, true); sx.send('stop-' + sk);
+      data.lect[sk] = {st:'stop', t:Date.now()}; save();
+      if (current === 'factures') renderFactures(); if (current === 'pipeline') renderPipeline();
+      showToast('Lecture de ' + (sk === 'trello' ? 'Trello' : 'facture.net') + ' arrêtée', null); return;
     case 'lire':
       if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio' && arg !== 'lire-facturenet') return;
       var lk = arg.replace('lire-', ''), lc = lectOf(lk);
