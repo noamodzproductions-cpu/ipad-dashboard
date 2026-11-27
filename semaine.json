@@ -1,8 +1,8 @@
 {
- "updated": "vendredi 27 nov. à 13h23",
- "trello": "vendredi 27 nov. à 12h52",
- "whatsapp": "vendredi 27 nov. à 13h23",
- "auto": false,
+ "updated": "vendredi 27 nov. à 14h55",
+ "trello": "vendredi 27 nov. à 14h55",
+ "whatsapp": "vendredi 27 nov. à 14h55",
+ "auto": true,
  "days": [
   {
    "date": "2026-11-27",
@@ -19,7 +19,14 @@
      "id": "mich-noel-tournage-ssd",
      "client": "Michalak",
      "text": "Michalak : rushs + photos → SSD",
-     "done": false
+     "done": false,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Envoyer aussi → Drive (demande Zac)",
+       "done": false
+      }
+     ]
     },
     {
      "id": "mich-19nov-v1",
@@ -77,6 +84,11 @@
       {
        "id": "mich-19nov-v1-nounours-forme",
        "text": "Nounours : forme A, visage B",
+       "done": false
+      },
+      {
+       "id": "mich-19nov-v1-musique-celine",
+       "text": "Répondre à Zac : musiques choisies par Céline ?",
        "done": false
       }
      ],
