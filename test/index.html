@@ -689,6 +689,7 @@ var IC = {
   list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  play:'<path d="M8 5.5v13l11-6.5z"/>',
   pipe:'<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>'
 };
 /* Musique : le Mac (mac/musique.py) lance le live Lofi Girl ; sinon on propose de l'ouvrir sur l'iPad */
@@ -1764,7 +1765,7 @@ function renderTaches(){
     (W ? '<button class="rbtn wkbtn" data-act="tadd" data-arg="' + esc(tView) + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') +
     '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
-    lireBtn('whatsapp', 'W') + lireBtn('trello', 'T') + '</div><div class="content">';
+    lireBtn('whatsapp', 'W') + lireBtn('trello', 'T') + lireBtn('frameio', ico(IC.play)) + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
     /* week-end = repos : pas de tâches « en avance » le samedi / dimanche */
