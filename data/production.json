@@ -1,6 +1,6 @@
 {
  "lu_le": "2026-11-23",
- "trello_vu": "2026-11-27T14:55",
+ "trello_vu": "2026-11-27T19:55",
  "projets": [
   {
    "carte_id": "6ae533d46ad8850dc3233292",
@@ -87,8 +87,8 @@
    "liste": "🎬 En production",
    "etiquettes": [],
    "tournage": "2026-11-03",
-   "deadline": "2026-11-18",
-   "modif": "2026-11-15T00:05:29.652Z",
+   "deadline": "",
+   "modif": "2026-11-27T16:40:57.329Z",
    "videos": [
     {
      "nom": "photos",
@@ -110,27 +110,27 @@
    "nom": "Paris Select > Ladurée Gravelle · Octobre - 500€",
    "montant": 500,
    "facture_a": "ZENJI",
-   "liste": "⏳ Attente retour client",
+   "liste": "📝 Facture à faire",
    "etiquettes": [],
    "tournage": "2026-10-23",
    "deadline": "",
-   "modif": "2026-11-25T21:24:26.211Z",
+   "modif": "2026-11-27T17:15:03.157Z",
    "videos": [
     {
      "nom": "stop motion club",
-     "etat": "V1 envoyée"
+     "etat": "livrée"
     },
     {
      "nom": "duplicat macarons",
-     "etat": "à faire"
+     "etat": "livrée"
     },
     {
      "nom": "carte mode",
-     "etat": "V1 envoyée"
+     "etat": "livrée"
     },
     {
      "nom": "Marie-Antoinette plan large",
-     "etat": "V1 envoyée"
+     "etat": "livrée"
     }
    ]
   },

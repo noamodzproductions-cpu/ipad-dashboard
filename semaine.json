@@ -1,8 +1,8 @@
 {
- "updated": "vendredi 27 nov. à 17h03",
- "trello": "vendredi 27 nov. à 14h55",
- "whatsapp": "vendredi 27 nov. à 17h03",
- "auto": false,
+ "updated": "vendredi 27 nov. à 19h55",
+ "trello": "vendredi 27 nov. à 19h55",
+ "whatsapp": "vendredi 27 nov. à 19h55",
+ "auto": true,
  "days": [
   {
    "date": "2026-11-27",
@@ -125,6 +125,11 @@
       {
        "id": "cmc-evasion-maj-officielle",
        "text": "Envoyer MAJ vidéo officielle (Vincent)",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-sous-titres-v2",
+       "text": "Ajouter sous-titres manquants sur la V2",
        "done": false
       }
      ],
@@ -412,7 +417,7 @@
      "id": "laduree-halloween",
      "client": "Ladurée",
      "text": "Ladurée Halloween (octobre) : V1 des vidéos",
-     "done": false,
+     "done": true,
      "prio": 3,
      "deadline": "2026-10-30",
      "sous": [
@@ -424,7 +429,7 @@
       {
        "id": "laduree-halloween-v1-macarons",
        "text": "Duplicat macarons",
-       "done": false
+       "done": true
       },
       {
        "id": "laduree-halloween-v1-carte",
