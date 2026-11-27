@@ -58,7 +58,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .h1{font-size:36px;font-weight:600;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub{font-size:19px;color:rgba(255,255,255,.7);margin-top:3px;white-space:nowrap}
 .rbtn{width:70px;height:70px;padding:0;border-radius:35px}
-.fbtnF{font-size:32px;font-weight:800}
+.fbtnF{font-size:32px;font-weight:800;margin-left:14px}
 .rbtn svg{display:block;width:30px;height:30px;margin:auto}
 .content{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;z-index:0}
 /* Safari 12 : dans une longue liste qui défile, chaque carte garde ses calques chez elle (sinon elles se dessinent hors de la zone) */
@@ -1764,7 +1764,7 @@ function renderTaches(){
     (W ? '<button class="rbtn wkbtn" data-act="tadd" data-arg="' + esc(tView) + '" aria-label="Ajouter une tâche">' + ico(IC.plus) + '</button>' : '') +
     '<button class="rbtn" data-act="reload" aria-label="Recharger">' + ico(IC.reload) + '</button>' +
     (isToday && W ? '<button class="rbtn wkbtn" data-act="twk" aria-label="Tâches de la semaine">' + ico(IC.cal) + '</button>' : '') +
-    (day ? '<div class="bpill num">' + todo.length + '<small> / ' + day.tasks.length + '</small></div>' : '') + '</div><div class="content">';
+    lireBtn('whatsapp', 'W') + lireBtn('trello', 'T') + '</div><div class="content">';
   if (!W) h += '<div class="empty">Pas encore de planning.<br>Connecte l’iPad à Internet puis reviens ici.</div>';
   else {
     /* week-end = repos : pas de tâches « en avance » le samedi / dimanche */
@@ -2491,6 +2491,7 @@ function lectSet(k, st, msg){
   if (current === 'reglages') renderReglages();
   if (current === 'factures') renderFactures();
   if (current === 'pipeline') renderPipeline();
+  if (current === 'taches') renderTaches();
 }
 function lectLine(k, last){
   var o = lectOf(k), txt, col = '';
@@ -2531,6 +2532,13 @@ function lectCheck(){
   }
 }
 
+/* bouton lettre (F, T, W) qui lance une lecture sur le Mac ; estompé pendant la lecture */
+var LIRE_NOMS = {facturenet:'facture.net', trello:'Trello', whatsapp:'WhatsApp', frameio:'Frame.io'};
+function lireBtn(k, lettre){
+  var o = lectOf(k), busy = o.st === 'wait' || o.st === 'run';
+  return '<button class="rbtn fbtnF" data-act="flire" data-arg="' + k + '" aria-label="Lire ' + LIRE_NOMS[k] + '"' + (busy ? ' style="opacity:.35"' : '') + '>' + lettre + '</button>';
+}
+
 /* ---------- Actions ---------- */
 function handle(act, arg){
   var dv = data.devis, a, i, p, c;
@@ -2540,7 +2548,7 @@ function handle(act, arg){
     /* bouton F (Factures) : 5 s pour annuler un appui par erreur ; pendant la lecture, propose de l'arrêter */
     /* boutons F (Factures) et T (Pipeline) : 5 s pour annuler un appui par erreur ; pendant la lecture, propose de l'arrêter */
     case 'flire':
-      var fk = arg === 'trello' ? 'trello' : 'facturenet', fnm = fk === 'trello' ? 'Trello' : 'facture.net', fl = lectOf(fk);
+      var fk = LIRE_NOMS[arg] ? arg : 'facturenet', fnm = LIRE_NOMS[fk], fl = lectOf(fk);
       if (fl.st === 'wait' || fl.st === 'run'){
         openModal({kind:'fstop'}, '<div class="mtitle">Arrêter la lecture de ' + fnm + ' ?</div>' +
           '<div class="row mbtns"><button data-act="mclose">Continuer</button><button class="white" data-act="fstop" data-arg="' + fk + '">Arrêter</button></div>');
@@ -2552,11 +2560,11 @@ function handle(act, arg){
       return;
     case 'fstop':
       closeModal();
-      var sk = arg === 'trello' ? 'trello' : 'facturenet';
+      var sk = LIRE_NOMS[arg] ? arg : 'facturenet';
       var sx = new XMLHttpRequest(); sx.open('POST', MUSIC_RELAY, true); sx.send('stop-' + sk);
       data.lect[sk] = {st:'stop', t:Date.now()}; save();
-      if (current === 'factures') renderFactures(); if (current === 'pipeline') renderPipeline();
-      showToast('Lecture de ' + (sk === 'trello' ? 'Trello' : 'facture.net') + ' arrêtée', null); return;
+      if (current === 'factures') renderFactures(); if (current === 'pipeline') renderPipeline(); if (current === 'taches') renderTaches();
+      showToast('Lecture de ' + LIRE_NOMS[sk] + ' arrêtée', null); return;
     case 'lire':
       if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio' && arg !== 'lire-facturenet') return;
       var lk = arg.replace('lire-', ''), lc = lectOf(lk);
