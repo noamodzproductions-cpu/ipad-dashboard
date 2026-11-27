@@ -85,11 +85,11 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .widget.p2-pipe{flex:2}
 .widget.p2-mat{flex:1;margin-left:18px}
 .p2-bot{flex:1;min-height:0;margin-top:18px}
-.pstages{position:absolute;left:24px;right:24px;bottom:86px;display:flex}
-.pst{flex:1;min-width:0;text-align:left}
+.pstages{position:absolute;left:24px;right:24px;bottom:86px;display:flex;align-items:center}
+.pst{white-space:nowrap}
 .pst span{display:inline-block;vertical-align:middle;font-size:26px;margin-right:8px}
 .pst b{display:inline-block;vertical-align:middle;font-size:48px;font-weight:700;line-height:1}
-.pst.fact b{color:#cbb8ff}
+.pw-tot{margin-left:auto;font-size:48px;font-weight:700;line-height:1;white-space:nowrap}
 .widgets2 .wsmall{flex:0 0 auto;width:300px;height:280px}
 .bl{flex:1;min-width:0;display:flex}
 .br{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column}
@@ -170,7 +170,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .pcol{flex:1;min-width:0;display:flex;flex-direction:column}
 .pcol + .pcol{margin-left:14px}
 .pcol-h{flex-shrink:0;padding:4px 6px 10px}
-.pcol-t{font-size:22px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcol-t{font-size:30px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pcol-s{font-size:18px;color:rgba(255,255,255,.55);margin-top:2px;white-space:nowrap}
 .pcol-l{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px}
 .pcol.fact .pcol-t,.pcol.fact .pcol-s b{color:#cbb8ff}
@@ -943,7 +943,7 @@ function loadFactures(){
         var j = JSON.parse(x.responseText);
         if (!j || !(j.factures instanceof Array)) return;
         data.facCache = j;
-        facPurge(); save(); renderFactures(); if (current === 'pipeline') renderPipeline();
+        facPurge(); save(); renderFactures(); pipeWidget(); if (current === 'pipeline') renderPipeline();
       } catch(e){}
     };
     x.send();
@@ -1212,6 +1212,8 @@ function pipeItems(){
   }
   return out;
 }
+/* tout l'argent pas encore touché : projets Trello (pause comprise, hors « Paiement reçu ») + factures envoyées non payées */
+function pipeTotal(){ var s = pipeSums(); return s.fact + s.cours + s.pause + facTotals(facRows()).tot; }
 function pipeSums(){ var it = pipeItems(), s = {fact:0, cours:0, pause:0, npause:0}, i; for (i = 0; i < it.length; i++){ if (it[i].paye_tout){ if (it[i].col === 'pause') s.npause++; continue; } if (it[i].col === 'fact') s.fact += it[i].montant; else if (it[i].col === 'pause'){ s.pause += it[i].montant; s.npause++; } else s.cours += it[i].montant; } return s; }
 function loadPipe(){
   pipeLoadedAt = Date.now();
@@ -1229,10 +1231,9 @@ function loadPipe(){
 function pipeWidget(){
   var e = $('pw-st'); if (!e) return;
   if (!data.pipeCache){ e.innerHTML = ''; return; }
-  var it = pipeItems(), n = {}, i, c, h = '';
-  for (i = 0; i < it.length; i++) n[it[i].col] = (n[it[i].col] || 0) + 1;
-  for (c = 0; c < PIPE_COLS.length; c++) h += '<div class="pst ' + PIPE_COLS[c][0] + '"><span>' + PIPE_COLS[c][1] + '</span><b>' + (n[PIPE_COLS[c][0]] || 0) + '</b></div>';
-  e.innerHTML = h;
+  var it = pipeItems(), n = 0, i;
+  for (i = 0; i < it.length; i++) if (it[i].col === 'prod') n++;
+  e.innerHTML = '<div class="pst"><span>🎬</span><b>' + n + '</b></div><div class="pw-tot">' + eur(pipeTotal()) + '</div>';
 }
 /* étiquettes Trello = état du paiement (indépendant de l'étape) */
 var PIPE_TAGS = [['Paiement reçu', 'PAYÉ', '#4ade80'], ['Avance', 'AVANCE', '#fb923c'], ['Facture envoy', 'FACTURÉ', '#7dd3fc'], ['Faire Facture', 'À FACTURER', '#A78BFA'], ['Attente info', 'ATTENTE INFO', '#f87171']];
@@ -1246,7 +1247,7 @@ function pipeDone(v){ var n = 0, i; for (i = 0; i < v.length; i++) if (/livr/i.t
 function renderPipeline(){
   var it = pipeItems(), s = pipeSums(), i, c, h, n, sum, rows, x, d;
   var upd = data.pipeCache && parseIso(data.pipeCache.trello_vu) ? 'Trello · lu le ' + esc(dCourt(parseIso(data.pipeCache.trello_vu).getTime())) : 'Chargement…';
-  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('Pas encore touché', s.fact + s.cours + s.pause + facTotals(facRows()).tot) + '</div><div class="content pcols" style="margin-top:16px">';
+  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('Pas encore touché', pipeTotal()) + '</div><div class="content pcols" style="margin-top:16px">';
   for (c = 0; c < PIPE_COLS.length; c++){
     rows = ''; n = 0; sum = 0;
     for (i = 0; i < it.length; i++){
@@ -1258,7 +1259,7 @@ function renderPipeline(){
       rows += '<div class="ppc" data-act="popen" data-arg="' + esc(x.id) + '">' + (x.client ? '<div class="ppc-c">' + esc(x.client) + '</div>' : '') +
         '<div class="pc-n">' + esc(x.titre) + '</div>' + pipeTags(x.tags) + '<div class="pc-b"><div class="pc-v num">' + (x.montant ? eur(x.montant) : '—') + '</div><div class="pc-p num">' + esc(prog) + '</div></div></div>';
     }
-    h += '<div class="pcol ' + PIPE_COLS[c][0] + '"><div class="pcol-h"><div class="pcol-t">' + PIPE_COLS[c][1] + ' ' + PIPE_COLS[c][2] + '</div></div>' +
+    h += '<div class="pcol ' + PIPE_COLS[c][0] + '"><div class="pcol-h"><div class="pcol-t">' + PIPE_COLS[c][1] + '</div></div>' +
       '<div class="pcol-l">' + (rows || '<div class="ppempty">Rien</div>') + '</div></div>';
   }
   h += '</div>' + (s.npause ? '<div class="ppause num">⏸️ ' + s.npause + '</div>' : '');
