@@ -116,6 +116,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fw-sub b{color:#cbb8ff}
 .fw-name{font-size:38px;font-weight:600;margin-top:18px;white-space:nowrap}
 .ftots{margin:0 0 8px}
+.fprev{margin:-2px 6px 10px;font-size:19px;color:rgba(255,255,255,.45);text-align:right}
 .fcard{display:block;padding:0;margin-bottom:14px;border-left:8px solid #1c1c1e}
 .fc-in{position:relative;z-index:1;padding:18px 22px;background:#1c1c1e;transition:transform .45s cubic-bezier(.2,1.15,.36,1)}
 .fcard.open .fc-in{-webkit-transform:translate3d(-230px,0,0);transform:translate3d(-230px,0,0)}
@@ -871,8 +872,9 @@ function setHomePage(n){
 }
 
 /* ---------- Suivi des factures ----------
-   Source : ../data/factures.json, écrit par la routine du planning (liste Trello « 🧾 Solde en attente »).
-   Format : {updated, factures:[{id, projet, brut, reste, entree:'AAAA-MM-JJ'}]}
+   Source : ../data/factures.json, écrit UNIQUEMENT par la lecture facture.net (bouton ⟳ de l'écran, mac/lire-facturenet.md).
+   Format : {updated, factures:[{id:'F26…', projet:client, brut, reste, entree:'AAAA-MM-JJ'}], encaisses:[{id, projet, montant, date}]}
+   facture.net décide de ce qui est payé : pas de bouton « Payé » sur l'iPad.
    État décidé sur l'iPad : data.facEtat = {relances:{id:[ms…]}, payes:{id:ms}}, envoyé dans data/factures-etat.json
    (clé GitHub). La routine lit ce fichier : elle déplace les cartes payées dans « ✅ Payé & Archivé » et ajoute
    une tâche « relancer le paiement » (id relance-<6 derniers car. de l'id>-<AAAAMMJJ de l'échéance>) le jour venu.
@@ -906,15 +908,9 @@ function loadFactures(){
    + factures cochées « Payé » sur l'iPad que la routine n'a pas encore déplacées. */
 function facEncaisseMois(){
   var t = 0, now = new Date(), mois = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
-  var C = data.facCache || {}, enc = C.encaisses || [], vu = {}, i, k, d, r, P = data.facEtat.payes;
-  for (i = 0; i < enc.length; i++){
-    vu[enc[i].id] = 1;
+  var C = data.facCache || {}, enc = C.encaisses || [], i;
+  for (i = 0; i < enc.length; i++)
     if (!enc[i].masque && String(enc[i].date || '').slice(0, 7) === mois) t += num(enc[i].montant);
-  }
-  for (k in P) if (P.hasOwnProperty(k) && !vu[k]){
-    d = new Date(num(P[k])); r = facRow(k);
-    if (r && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()) t += num(r.reste);
-  }
   return t;
 }
 /* oublie relances / payés des cartes sorties de la liste (ex. déplacées dans Payé & Archivé) */
@@ -974,7 +970,7 @@ function facRows(){
     var days = Math.max(0, Math.round((today - dayStart(d)) / 86400000));
     var left = Math.round((due.getTime() - today) / 86400000);
     out.push({id:f.id, projet:f.projet, reste:num(f.reste), entree:d.getTime(), ent:ent, due:due.getTime(), days:days, left:left, last:last, nrel:rels.length, dl:dl,
-      paye:!!E.payes[f.id], taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
+      paye:false, taskId:'relance-' + String(f.id).slice(-6) + '-' + ymd(due.getTime())});
   }
   /* la plus en retard (envoyée depuis le plus longtemps) en haut, payées en bas */
   out.sort(function(a, b){ return (a.paye - b.paye) || (b.days - a.days) || (a.left - b.left); });
@@ -1026,8 +1022,7 @@ function facOpen(id){
   var h = '<div class="mtitle">' + esc(r.projet) + '</div>' +
     blk('Facture envoyée', cap(agoTxt(env)), dl(r.entree)) +
     blk('Dernière relance', r.last ? cap(agoTxt(Math.round((today - dayStart(new Date(r.last))) / 86400000))) : 'Jamais', r.last ? dl(r.last) : '') +
-    (r.paye ? blk('Payé', dl(data.facEtat.payes[id]), '') :
-      blk('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">Maintenant</span>' : 'Dans ' + r.left + ' j', r.left <= 0 ? '' : dl(r.due))) +
+    blk('Prochaine relance', r.left <= 0 ? '<span style="color:#cbb8ff">Maintenant</span>' : 'Dans ' + r.left + ' j', r.left <= 0 ? '' : dl(r.due)) +
     '<div class="row mbtns" style="margin-top:22px"><button class="white" data-act="mclose">OK</button></div>';
   openModal({kind:'fac', id:id}, h);
 }
@@ -1044,10 +1039,15 @@ function renderFactures(){
   }
   if (current !== 'factures') return;
   var old = document.querySelector('#s-factures .content'), scroll = old ? old.scrollTop : 0;
-  var upd = data.facCache && data.facCache.updated ? 'Trello · ' + esc(data.facCache.updated) : '';
+  var lf = lectOf('facturenet'), lfBusy = lf.st === 'wait' || lf.st === 'run';
+  var upd = lfBusy ? 'Lecture de facture.net…' : (data.facCache && data.facCache.updated ? 'facture.net · ' + esc(data.facCache.updated) : '');
+  var rel = '<button class="rbtn" data-act="lire" data-arg="lire-facturenet" aria-label="Relire facture.net"' + (lfBusy ? ' style="opacity:.35"' : '') + '>' + ico(IC.reload) + '</button>';
   /* URSSAF et Net = sur l'encaissé du mois (demandé par Noam), pas sur ce qui reste à toucher */
   var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
-  var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
+  /* « si tout est payé » = encaissé du mois + tout ce qui reste à toucher (petit, en gris : pour se projeter) */
+  var allT = encT + t.tot, allU = Math.round(allT * 0.232);
+  var h = hdr('Suivi des factures', upd, rel) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
+    (t.tot ? '<div class="fprev num">Si tout est payé : ' + eur(allT) + ' · net ' + eur(allT - allU) + '</div>' : '') +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   var encM = facEncaisseMois(), paidH = false;
@@ -1074,7 +1074,6 @@ function renderFactures(){
       '<div class="fbar"><i style="width:' + fill + '%' + bcol + '"></i></div>' +
       '<div class="fc-bot"><div class="grow" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="fc-when num">' + when + rb + '</div>' + (hist ? '<div class="fc-hist num">' + hist + '</div>' : '') + '</div>' +
       (late ? '<button class="ko" data-act="frel" data-arg="' + esc(r.id) + '">J’ai relancé</button>' : '') +
-      '<button class="' + (r.paye ? 'ok' : '') + '" data-act="fpaye" data-arg="' + esc(r.id) + '">' + (r.paye ? 'Payé ✓' : 'Payé') + '</button>' +
       '</div></div><div class="fc-act"><button class="white" data-act="fdelai" data-arg="' + esc(r.id) + '">Réglages</button></div></div>';
   }
   /* factures payées ce mois-ci (passées dans « ✅ Payé & Archivé ») : en vert, plus récentes en haut */
@@ -1127,9 +1126,8 @@ function facDelai(id, st){
   }
   var envD = today - st.env * 86400000, base = st.ago === null ? envD : Math.max(envD, today - st.ago * 86400000);
   var nx = new Date(base); nx.setDate(nx.getDate() + st.every);
-  /* paiement promis : relance le lendemain du jour promis */
-  var payD = null;
-  if (st.pro !== null){ payD = new Date(st.pro); nx = new Date(payD); nx.setDate(nx.getDate() + 1); }
+  /* paiement promis : la relance se fait LE JOUR promis (le rythme « tous les N j » ne compte plus) */
+  if (st.pro !== null) nx = new Date(st.pro);
   var left = Math.round((dayStart(nx) - today) / 86400000);
   function dt(ms){ return cap(JOURS[new Date(ms).getDay()]).slice(0, 3) + '. ' + dCourt(ms); }
   function row(lab, sub, ctl, cls){ return '<div class="rgl' + (cls ? ' ' + cls : '') + '"><div class="rgl-l">' + lab + (sub ? '<span>' + sub + '</span>' : '') + '</div>' + ctl + '</div>'; }
@@ -1138,8 +1136,8 @@ function facDelai(id, st){
     row('Envoyée', agoTxt(st.env), date('f-env', envD, true)) +
     row('Relances', st.nb ? '' : 'jamais', stepper('', st.nb + '×', 'fnb', 'x')) +
     (st.nb ? row('Dernière', agoTxt(st.ago), date('f-rel', today - st.ago * 86400000, true)) : '') +
-    row('Rythme', 'tous les…', stepper('', st.every + ' j', 'fev', 'x'));
-  /* le client a dit quand il paierait : une seule date ; relance le lendemain */
+    (st.pro === null ? row('Rythme', 'tous les…', stepper('', st.every + ' j', 'fev', 'x')) : '');
+  /* le client a dit quand il paierait : une seule date ; relance ce jour-là */
   if (st.pro === null) h += '<div class="rgl small"><button class="rgl-add" data-act="fpro" data-arg="on">+ Date de paiement prévue</button></div>';
   else h += row('Paiement prévu', '', date('f-pro', st.pro, false) + '<button class="rgl-x" data-act="fpro" data-arg="off" aria-label="Enlever">✕</button>', 'small');
   h += '<div class="rgl-next">Prochaine relance <b>' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' · dans ' + left + ' j') + '</b></div>' +
@@ -2339,10 +2337,13 @@ function lectSet(k, st, msg){
   if (st === 'wait') o = { t0: Date.now() };
   o.st = st; o.msg = msg || ''; o.t = Date.now(); data.lect[k] = o; save();
   if (st === 'ok' || st === 'err'){
-    showToast((k === 'trello' ? 'Trello' : (k === 'frameio' ? 'Frame.io' : 'WhatsApp')) + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
-    if (st === 'ok'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
+    showToast((k === 'trello' ? 'Trello' : (k === 'frameio' ? 'Frame.io' : (k === 'facturenet' ? 'facture.net' : 'WhatsApp'))) + (st === 'ok' ? ' lu ✓' + (msg ? ' · ' + msg : '') : ' : ' + msg), null);
+    /* facture.net : le fichier met ~1 min à arriver sur GitHub Pages → on relit plusieurs fois */
+    if (st === 'ok' && k === 'facturenet'){ loadFactures(); setTimeout(loadFactures, 30000); setTimeout(loadFactures, 75000); setTimeout(loadFactures, 150000); }
+    else if (st === 'ok'){ var rl = function(){ loadTasks(function(){ if (current === 'reglages') renderReglages(); if (current === 'taches') renderTaches(); }); }; rl(); setTimeout(rl, 75000); }
   }
   if (current === 'reglages') renderReglages();
+  if (current === 'factures') renderFactures();
 }
 function lectLine(k, last){
   var o = lectOf(k), txt, col = '';
@@ -2353,7 +2354,7 @@ function lectLine(k, last){
 }
 function lectPoll(){
   clearTimeout(lectTimer);
-  var ks = ['trello', 'whatsapp', 'frameio'], since = 0, busy = false, i, o;
+  var ks = ['trello', 'whatsapp', 'frameio', 'facturenet'], since = 0, busy = false, i, o;
   for (i = 0; i < ks.length; i++){ o = lectOf(ks[i]); if (o.st === 'wait' || o.st === 'run'){ busy = true; if (!since || o.t0 < since) since = o.t0; } }
   if (!busy) return;
   var x = new XMLHttpRequest();
@@ -2375,7 +2376,7 @@ function lectPoll(){
   x.send();
 }
 function lectCheck(){
-  var ks = ['trello', 'whatsapp', 'frameio'], i, o, now = Date.now();
+  var ks = ['trello', 'whatsapp', 'frameio', 'facturenet'], i, o, now = Date.now();
   for (i = 0; i < ks.length; i++){
     o = lectOf(ks[i]);
     if (o.st === 'wait' && now - o.t0 > 45000) lectSet(ks[i], 'err', 'Le Mac ne répond pas (éteint ou en veille ?)');
@@ -2390,7 +2391,7 @@ function handle(act, arg){
     case 'go': closeModal(); go(arg); return;
     case 'regp': regPage = arg; renderReglages(); return;
     case 'lire':
-      if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio') return;
+      if (arg !== 'lire-trello' && arg !== 'lire-whatsapp' && arg !== 'lire-frameio' && arg !== 'lire-facturenet') return;
       var lk = arg.replace('lire-', ''), lc = lectOf(lk);
       if (lc.st === 'wait' || lc.st === 'run') return;
       lectSet(lk, 'wait', 'Demande envoyée au Mac…');
@@ -2572,8 +2573,7 @@ function handle(act, arg){
       if (!FE.promis) FE.promis = {};
       if (!FE.prochaine) FE.prochaine = {};
       if (modal.pro !== null){
-        var pd = new Date(modal.pro); pd.setDate(pd.getDate() + 1);
-        FE.promis[fid] = {d:isoDate(new Date(modal.pro)), w:0}; FE.prochaine[fid] = isoDate(pd);
+        FE.promis[fid] = {d:isoDate(new Date(modal.pro)), w:0}; FE.prochaine[fid] = isoDate(new Date(modal.pro));
       } else { delete FE.promis[fid]; delete FE.prochaine[fid]; }
       closeModal(); facSchedule(); renderFactures(); return;
 

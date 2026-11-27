@@ -48,7 +48,7 @@ CLAUDE = "/Users/noamoudiz/.local/bin/claude"
 LECTURES = {
     "lire-trello": ("lire-trello.md", "Read,Edit,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
                     "mcp__claude_ai_Trello__trelloReadBoard,mcp__claude_ai_Trello__trelloReadCard,mcp__claude_ai_Trello__trelloReadList,"
-                    "mcp__claude_ai_Trello__trelloReadChecklist,mcp__claude_ai_Trello__trelloSearch,mcp__claude_ai_Trello__trelloWriteCard", False),
+                    "mcp__claude_ai_Trello__trelloReadChecklist,mcp__claude_ai_Trello__trelloSearch", False),
     "lire-whatsapp": ("lire-whatsapp.md", "Read,Edit,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
                       "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
                       "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__read_page,"
@@ -57,6 +57,11 @@ LECTURES = {
                      "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_create_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
                      "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__read_page,"
                      "mcp__claude-in-chrome__find,mcp__claude-in-chrome__computer,mcp__claude-in-chrome__javascript_tool", True),
+    # bouton ⟳ de l'écran Factures : facture.net est la seule source des factures (lecture seule)
+    "lire-facturenet": ("lire-facturenet.md", "Read,Write,Bash(git -C /Users/noamoudiz/ipad-dashboard:*),Bash(date:*),Bash(TZ=*),"
+                        "mcp__claude-in-chrome__tabs_context_mcp,mcp__claude-in-chrome__tabs_close_mcp,"
+                        "mcp__claude-in-chrome__navigate,mcp__claude-in-chrome__get_page_text,mcp__claude-in-chrome__find,"
+                        "mcp__claude-in-chrome__computer", True),
 }
 en_cours = threading.Lock()
 ETAT_TOPIC = NTFY_TOPIC + "-etat"   # le Mac y écrit l'état des lectures, l'iPad le lit
