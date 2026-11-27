@@ -1045,7 +1045,9 @@ function renderFactures(){
   if (current !== 'factures') return;
   var old = document.querySelector('#s-factures .content'), scroll = old ? old.scrollTop : 0;
   var upd = data.facCache && data.facCache.updated ? 'Trello · ' + esc(data.facCache.updated) : '';
-  var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('À toucher', t.tot) + tot('URSSAF 23,2 %', t.urs) + tot('Net', t.net) + tot('Encaissé ' + MOIS_C[new Date().getMonth()], facEncaisseMois()) + '</div>' +
+  /* URSSAF et Net = sur l'encaissé du mois (demandé par Noam), pas sur ce qui reste à toucher */
+  var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
+  var h = hdr('Suivi des factures', upd) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   var encM = facEncaisseMois(), paidH = false;

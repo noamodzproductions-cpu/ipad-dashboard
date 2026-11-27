@@ -18,6 +18,7 @@
  ],
  "encaisses": [
   {"id": "6aa7e0fc0d98e0e16690039a", "projet": "Paris Select > Astotel Bradford", "montant": 250, "date": "2026-11-01", "masque": true},
+  {"id": "6aa7e41865107ecd5fb63c71", "projet": "Lunaindaclub Turn uppers (LIBRE Maxime)", "montant": 200, "date": "2026-11-02"},
   {"id": "6aa7ddd609cbd1ef81a1071f", "projet": "Paris Select > Astotel George", "montant": 250, "date": "2026-11-01", "masque": true},
   {"id": "6ad7687692f62b80387e617b", "projet": "Paris Select > KURV", "montant": 250, "date": "2026-11-04", "masque": true},
   {"id": "6ae63eabc40141f215491dfe", "projet": "Le Barranco", "montant": 150, "date": "2026-11-24"},
