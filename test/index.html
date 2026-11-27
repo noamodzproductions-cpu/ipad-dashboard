@@ -1066,8 +1066,7 @@ function renderFactures(){
     /* barre = temps depuis l'envoi sur 30 j : vert → jaune → rouge */
     var fill = r.paye ? 100 : Math.max(4, Math.min(100, Math.round(r.days / 30 * 100)));
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
-    var jd = cap(JOURS[new Date(r.due).getDay()]).slice(0, 3) + '. ' + dCourt(r.due);
-    var when = late ? (r.left === 0 ? 'À relancer aujourd’hui' : 'À relancer depuis le ' + dCourt(r.due)) : 'Relance ' + jd + ' · dans ' + r.left + ' j';
+    var when = late ? 'À relancer maintenant' : 'Relance dans ' + r.left + ' j';
     /* bas de carte épuré : pastille ×N (relances, de plus en plus rouge) + « paiement promis dans N j » si promesse */
     var pmz = (data.facEtat.promis || {})[r.id], hist = '';
     if (pmz && !r.paye){ var pzd = parseIso(pmz.d); if (pzd){ pzd.setDate(pzd.getDate() + num(pmz.w) * 7); var pzl = Math.round((dayStart(pzd) - dayStart(new Date())) / 86400000);
