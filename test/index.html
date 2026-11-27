@@ -1091,10 +1091,18 @@ function renderFactures(){
   var rel = '<button class="rbtn fbtnF" data-act="flire" aria-label="Relire facture.net"' + (lfBusy ? ' style="opacity:.35"' : '') + '>F</button>';
   /* URSSAF et Net = sur l'encaissé du mois (demandé par Noam), pas sur ce qui reste à toucher */
   var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
-  /* « si tout est payé » = encaissé du mois + tout ce qui reste à toucher (petit, en gris : pour se projeter) */
-  var allT = encT + t.tot, allU = Math.round(allT * 0.232);
+  /* « Prévu fin <mois> » = encaissé du mois + factures attendues avant la fin du mois :
+     date promise si Noam en a mis une, sinon envoi + 30 jours (conditions de règlement) */
+  var finM = new Date(); finM = new Date(finM.getFullYear(), finM.getMonth() + 1, 1).getTime(), prevT = encT, pk, pz, pd;
+  for (pk = 0; pk < rows.length; pk++){
+    if (rows[pk].paye) continue;
+    pz = (data.facEtat.promis || {})[rows[pk].id]; pd = pz && parseIso(pz.d);
+    if (pd) pd.setDate(pd.getDate() + num(pz.w) * 7); else { pd = new Date(rows[pk].entree); pd.setDate(pd.getDate() + 30); }
+    if (pd.getTime() < finM) prevT += rows[pk].reste;
+  }
+  var allU = Math.round(prevT * 0.232);
   var h = hdr('Suivi des factures', upd, rel) + '<div class="tots ftots row">' + tot('Encaissé ' + MOIS_C[new Date().getMonth()], encT) + tot('URSSAF 23,2 %', encU) + tot('Net', encT - encU) + tot('À toucher', t.tot) + '</div>' +
-    (t.tot ? '<div class="fprev row"><div class="grow">Si tout est payé</div><div class="fp-v num">' + eur(allT) + '</div><div class="fp-n num">' + eur(allT - allU) + ' net</div></div>' : '') +
+    (prevT > encT ? '<div class="fprev row"><div class="grow">Prévu fin ' + MOIS[new Date().getMonth()] + '</div><div class="fp-v num">' + eur(prevT) + '</div><div class="fp-n num">' + eur(prevT - allU) + ' net</div></div>' : '') +
     '<div class="content">';
   if (!nb) h += '<div class="empty">' + (data.facCache ? 'Tout est payé ✓' : 'Chargement…') + '</div>';
   var encM = facEncaisseMois(), paidH = false;
