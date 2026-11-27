@@ -841,7 +841,7 @@ function go(name){
   if (name === 'home') renderHome();
   if (name === 'devis') renderDevis();
   if (name === 'factures'){ renderFactures(); loadFactures(); }
-  if (name === 'pipeline'){ renderPipeline(); loadPipe(); }
+  if (name === 'pipeline'){ renderPipeline(); loadPipe(); loadFactures(); }
   if (name === 'materiel'){ matEdit = false; renderMateriel(); }
   if (name === 'listes') renderListes();
   if (name === 'planning'){ renderPlanning(); loadTasks(function(){ if (current === 'planning') renderPlanning(); }); }
@@ -943,7 +943,7 @@ function loadFactures(){
         var j = JSON.parse(x.responseText);
         if (!j || !(j.factures instanceof Array)) return;
         data.facCache = j;
-        facPurge(); save(); renderFactures();
+        facPurge(); save(); renderFactures(); if (current === 'pipeline') renderPipeline();
       } catch(e){}
     };
     x.send();
@@ -1246,7 +1246,7 @@ function pipeDone(v){ var n = 0, i; for (i = 0; i < v.length; i++) if (/livr/i.t
 function renderPipeline(){
   var it = pipeItems(), s = pipeSums(), i, c, h, n, sum, rows, x, d;
   var upd = data.pipeCache && parseIso(data.pipeCache.trello_vu) ? 'Trello · lu le ' + esc(dCourt(parseIso(data.pipeCache.trello_vu).getTime())) : 'Chargement…';
-  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('À toucher sur ces projets', s.fact + s.cours + s.pause) + '</div><div class="content pcols" style="margin-top:16px">';
+  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('Pas encore touché', s.fact + s.cours + s.pause + facTotals(facRows()).tot) + '</div><div class="content pcols" style="margin-top:16px">';
   for (c = 0; c < PIPE_COLS.length; c++){
     rows = ''; n = 0; sum = 0;
     for (i = 0; i < it.length; i++){
