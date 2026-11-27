@@ -1118,12 +1118,13 @@ function renderFactures(){
     var hue = Math.round(120 * (1 - Math.min(r.days, 30) / 30)), bcol = r.paye ? '' : ';background:hsl(' + hue + ',75%,58%)';
     var when = late ? 'À relancer maintenant' : 'Relance dans ' + r.left + ' j';
     /* bas de carte épuré : pastille ×N (relances, de plus en plus rouge) + « paiement promis dans N j » si promesse */
-    var pmz = (data.facEtat.promis || {})[r.id], hist = '';
+    var pmz = (data.facEtat.promis || {})[r.id], hist = '', pzl = -1;
     if (pmz && !r.paye){ var pzd = parseIso(pmz.d); if (pzd){ pzd.setDate(pzd.getDate() + num(pmz.w) * 7); var pzl = Math.round((dayStart(pzd) - dayStart(new Date())) / 86400000);
-      hist = pzl > 0 ? 'Paiement prévu dans ' + pzl + ' j' : (pzl === 0 ? 'Paiement prévu aujourd’hui' : 'Paiement prévu dépassé'); } }
+      /* promesse = la relance tombe ce jour-là : UNE seule ligne (pas « Relance dans… » + « Paiement prévu dans… ») */
+      if (pzl > 0) when = 'Paiement prévu dans ' + pzl + ' j'; else if (pzl === 0) when = 'Paiement prévu aujourd’hui'; } }
     var rb = r.nrel ? '<span class="rbadge r' + Math.min(4, r.nrel) + '">×' + r.nrel + '</span>' : '';
     /* touche de couleur : vert = ça va, violet = à relancer, rouge = plus de 30 j sans paiement */
-    var bad = !r.paye && r.days > 30; /* retard = jours au-delà des 30 jours */
+    var bad = !r.paye && r.days > 30 && !(pmz && pzl >= 0); /* retard = jours au-delà des 30 jours (masqué tant qu'un paiement est promis) */
     h += '<div class="glass fcard' + (bad ? ' bad' : (late ? ' late' : (r.paye ? '' : ' good'))) + (r.paye ? ' paid' : '') + '" data-fid="' + esc(r.id) + '"><div class="fc-in">' +
       '<div class="fc-top" data-act="facopen" data-arg="' + esc(r.id) + '"><div class="grow fc-nw"><div class="fc-n">' + esc(r.projet) + (bad ? '<span class="rtag num">RETARD ' + (r.days - 30) + ' j</span>' : '') + '</div>' +
         (r.detail ? '<div class="fc-p">' + esc(r.detail) + '</div>' : '') + '</div><div class="fc-v num">' + eur(r.reste) + '</div></div>' +
