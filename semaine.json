@@ -1,8 +1,8 @@
 {
- "updated": "vendredi 27 nov. à 14h55",
+ "updated": "vendredi 27 nov. à 17h03",
  "trello": "vendredi 27 nov. à 14h55",
- "whatsapp": "vendredi 27 nov. à 14h55",
- "auto": true,
+ "whatsapp": "vendredi 27 nov. à 17h03",
+ "auto": false,
  "days": [
   {
    "date": "2026-11-27",
@@ -120,6 +120,11 @@
       {
        "id": "cmc-evasion-retours-vincent",
        "text": "Retours Vincent sur Frame à traiter",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-maj-officielle",
+       "text": "Envoyer MAJ vidéo officielle (Vincent)",
        "done": false
       }
      ],
@@ -320,6 +325,14 @@
      "at": 1795521903000,
      "notes": "Début coupé, fin en hook",
      "deadline": "2026-11-23"
+    },
+    {
+     "id": "cmc-beaute-oraya",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : vidéos Oraya, retours Vincent",
+     "done": false,
+     "notes": "Retours de mardi, rappel Vincent",
+     "deadline": "2026-11-27"
     },
     {
      "id": "mich-masterclass-tournage-ssd",
