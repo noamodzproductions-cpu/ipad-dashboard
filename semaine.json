@@ -1,12 +1,12 @@
 {
- "updated": "jeudi 26 nov. à 19h55",
- "trello": "jeudi 26 nov. à 19h55",
- "whatsapp": "jeudi 26 nov. à 14h52",
+ "updated": "vendredi 27 nov. à 7h56",
+ "trello": "vendredi 27 nov. à 7h56",
+ "whatsapp": "vendredi 27 nov. à 7h56",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-26",
-   "jour": "Jeudi 26 novembre",
+   "date": "2026-11-27",
+   "jour": "Vendredi 27 novembre",
    "tasks": [
     {
      "id": "mich-noel-tournage",
@@ -22,60 +22,12 @@
      "done": false
     },
     {
-     "id": "cmc-toki-v2",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Lifestyle : modif vidéo Toki",
-     "done": false,
-     "prio": 1,
-     "deadline": "2026-11-26",
-     "notes": "Demandé par Selma, en prio",
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Retirer la répétition après le générique",
-       "done": false
-      }
-     ]
-    },
-    {
-     "id": "mich-frame-v3-noelie",
-     "client": "Michalak",
-     "text": "Michalak : aider Noélie à télécharger la V3 sur Frame",
-     "done": true,
-     "deadline": "2026-11-26"
-    },
-    {
-     "id": "fally-paiement",
-     "client": "Fally",
-     "text": "Fally : confirmer une date de paiement",
-     "done": false,
-     "prio": 1,
-     "notes": "Facture en retard, Roger relance"
-    },
-    {
-     "id": "mich-retouche-photos",
-     "client": "Michalak",
-     "text": "Michalak : retoucher toutes les photos",
-     "done": true,
-     "prio": 3,
-     "perso": true,
-     "at": 1795385893928,
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Envoyer sur le Drive (relance Noélie)",
-       "done": true
-      }
-     ],
-     "deadline": "2026-11-27"
-    },
-    {
      "id": "mich-19nov-v1",
      "client": "Michalak",
      "text": "Michalak : V1 des vidéos",
      "done": false,
-     "prio": 1,
-     "notes": "Vidéo à publier aujourd'hui (Noélie)",
+     "prio": 2,
+     "notes": "Demandé par Noélie",
      "sous": [
       {
        "id": "mich-19nov-v1-nounours",
@@ -151,6 +103,11 @@
       {
        "id": "cmc-evasion-v1-pornic",
        "text": "Uploader rush Destination Pornic (Vincent)",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-retours-vincent",
+       "text": "Retours Vincent sur Frame à traiter",
        "done": false
       }
      ],
@@ -306,6 +263,11 @@
        "id": "s1",
        "text": "Reel du chef (bûche) sur Frame.io pour l'équipe Michalak",
        "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Modérer réponse itw Damien (classiques revisités)",
+       "done": false
       }
      ]
     },
@@ -317,14 +279,6 @@
      "notes": "Demandé par Gam · respecter la nomenclature des noms",
      "perso": true,
      "at": 1795521903000
-    },
-    {
-     "id": "cmc-retours-vincent",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire : lire les retours de Vincent",
-     "done": true,
-     "deadline": "2026-11-25",
-     "notes": "Tableau + Frame à jour"
     },
     {
      "id": "cmc-beaute-v2-miye",
@@ -371,11 +325,6 @@
      "notes": "Décalé du 17"
     }
    ]
-  },
-  {
-   "date": "2026-11-27",
-   "jour": "Vendredi 27 novembre",
-   "tasks": []
   },
   {
    "date": "2026-11-28",
@@ -508,6 +457,11 @@
   {
    "date": "2026-12-03",
    "jour": "Jeudi 3 décembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-12-04",
+   "jour": "Vendredi 4 décembre",
    "tasks": []
   }
  ],
