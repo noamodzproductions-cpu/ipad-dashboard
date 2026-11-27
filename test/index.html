@@ -81,19 +81,15 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .hdots span.on{background:#fff}
 .widgets2{align-items:stretch}
 .p2{flex:1;min-width:0;display:flex;flex-direction:column}
-.p2-top{flex:1.35;min-height:0;display:flex}
+.p2-top{flex:1;min-height:0;display:flex}
 .p2-pipe{flex:2}
 .p2-mat{flex:1;margin-left:18px}
-.p2-bot{flex:1;min-height:0;margin-top:18px;display:flex}
+.p2-bot{flex:1;min-height:0;margin-top:18px}
 .pstages{position:absolute;left:24px;right:24px;bottom:84px;display:flex}
 .pst{flex:1;min-width:0;text-align:left}
 .pst b{display:block;font-size:52px;font-weight:700;line-height:1}
 .pst span{display:block;font-size:15px;color:rgba(255,255,255,.6);margin-top:6px;white-space:nowrap}
 .pst.fact b,.pst.fact span{color:#cbb8ff}
-.lchips{position:absolute;right:24px;bottom:22px;display:flex}
-.lchip{background:rgba(255,255,255,.08);border-radius:18px;padding:12px 18px;margin-left:12px;max-width:220px}
-.lchip span{display:block;font-size:17px;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lchip b{display:block;font-size:24px;font-weight:700;margin-top:2px;white-space:nowrap}
 .widgets2 .wsmall{flex:0 0 auto;width:300px;height:280px}
 .bl{flex:1;min-width:0;display:flex}
 .br{flex:1;min-width:0;margin-left:18px;display:flex;flex-direction:column}
@@ -902,11 +898,12 @@ function renderHome(){
       '<div class="glass widget" data-act="go" data-arg="taches"><div class="wtile">' + ico(IC.check) + '</div>' + chev + '<div class="wname">Projets</div></div>' +
     '</div><div class="br-bot"><div class="glass widget" id="hm-card" data-act="music"><div class="wtile" id="hm-tile">' + ico(IC.music) + '</div><div class="wname">Musique</div></div></div></div>';
   $('widgets').innerHTML = h;
-  /* page 2 : Pipeline (grand) + Matériel (petit) en haut, Listes (grand, toute la largeur) en bas */
+  /* page 2 : en haut Pipeline (grand) + Matériel et Listes (petits carrés, comme Devis / Projets) ; le bas reste libre */
   $('widgets2').innerHTML = '<div class="p2"><div class="p2-top">' +
       '<div class="glass widget p2-pipe" data-act="go" data-arg="pipeline"><div class="wtile">' + ico(IC.pipe) + '</div>' + chev + '<div class="pstages num" id="pw-st"></div><div class="wname">Pipeline</div></div>' +
       '<div class="glass widget p2-mat" data-act="go" data-arg="materiel"><div class="wtile">' + ico(IC.cam) + '</div>' + chev + '<div class="wname">Matériel</div></div>' +
-    '</div><div class="p2-bot"><div class="glass widget" data-act="go" data-arg="listes"><div class="wtile">' + ico(IC.list) + '</div>' + chev + '<div class="lchips">' + listChips() + '</div><div class="wname">Listes</div></div></div></div>';
+      '<div class="glass widget p2-mat" data-act="go" data-arg="listes"><div class="wtile">' + ico(IC.list) + '</div>' + chev + '<div class="wname">Listes</div></div>' +
+    '</div><div class="p2-bot"></div></div>';
   pipeWidget();
   if (Date.now() - pipeLoadedAt > 300000) loadPipe();
   setHomePage(homePg);
@@ -1236,16 +1233,6 @@ function pipeWidget(){
   for (i = 0; i < it.length; i++) n[it[i].col] = (n[it[i].col] || 0) + 1;
   for (c = 0; c < PIPE_COLS.length; c++) h += '<div class="pst ' + PIPE_COLS[c][0] + '"><b>' + (n[PIPE_COLS[c][0]] || 0) + '</b><span>' + PIPE_COLS[c][1] + ' ' + lab[PIPE_COLS[c][0]] + '</span></div>';
   e.innerHTML = h;
-}
-/* widget Listes : un aperçu de chaque liste (nom + nombre, ou prix / mois) */
-function listChips(){
-  var L = data.listes || [], h = '', i, j, m, k;
-  for (i = 0; i < L.length && i < 4; i++){
-    if (L[i].prix){ m = 0; for (j = 0; j < L[i].items.length; j++) m += lMois(L[i].items[j]); k = prixTxt(m) + ' / mois'; }
-    else { m = 0; for (j = 0; j < L[i].items.length; j++) if (!L[i].items[j].ok) m++; k = m + ' à faire'; }
-    h += '<div class="lchip"><span>' + esc(L[i].nom) + '</span><b class="num">' + k + '</b></div>';
-  }
-  return h;
 }
 /* étiquettes Trello = état du paiement (indépendant de l'étape) */
 var PIPE_TAGS = [['Paiement reçu', 'PAYÉ', '#4ade80'], ['Avance', 'AVANCE', '#fb923c'], ['Facture envoy', 'FACTURÉ', '#7dd3fc'], ['Faire Facture', 'À FACTURER', '#A78BFA'], ['Attente info', 'ATTENTE INFO', '#f87171']];
