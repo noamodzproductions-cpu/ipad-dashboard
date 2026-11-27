@@ -17,13 +17,13 @@
   }
  ],
  "encaisses": [
-  {"id": "6aa7e0fc0d98e0e16690039a", "projet": "Paris Select > Astotel Bradford", "montant": 250, "date": "2026-11-01"},
-  {"id": "6aa7ddd609cbd1ef81a1071f", "projet": "Paris Select > Astotel George", "montant": 250, "date": "2026-11-01"},
+  {"id": "6aa7e0fc0d98e0e16690039a", "projet": "Paris Select > Astotel Bradford", "montant": 250, "date": "2026-11-01", "masque": true},
+  {"id": "6aa7ddd609cbd1ef81a1071f", "projet": "Paris Select > Astotel George", "montant": 250, "date": "2026-11-01", "masque": true},
   {"id": "6ad7687692f62b80387e617b", "projet": "Paris Select > KURV", "montant": 250, "date": "2026-11-04", "masque": true},
   {"id": "6ae63eabc40141f215491dfe", "projet": "Le Barranco", "montant": 150, "date": "2026-11-24"},
-  {"id": "6aa7ea58c924d0e320b29427", "projet": "benito Appart", "montant": 250, "date": "2026-11-24"},
-  {"id": "6afdb912e1c2ba205f3e22c5", "projet": "Cercle de Théia > 2ème Forum Femmes et Industrie", "montant": 300, "date": "2026-11-25"},
+  {"id": "6aa7ea58c924d0e320b29427", "projet": "benito Appart", "montant": 250, "date": "2026-11-24", "masque": true},
+  {"id": "6afdb912e1c2ba205f3e22c5", "projet": "Cercle de Théia > 2ème Forum Femmes et Industrie", "montant": 300, "date": "2026-11-25", "masque": true},
   {"id": "6ac78823857392850fdcb663", "projet": "Mika Maison de la Santé", "montant": 450, "date": "2026-11-26"},
-  {"id": "6aedf6b52e3b3c02022d6d19", "projet": "Cercle de Théia > Gala de l'Espoir", "montant": 250, "date": "2026-11-26"}
+  {"id": "6aedf6b52e3b3c02022d6d19", "projet": "Cercle de Théia > Gala de l'Espoir", "montant": 250, "date": "2026-11-26", "masque": true}
  ]
 }
