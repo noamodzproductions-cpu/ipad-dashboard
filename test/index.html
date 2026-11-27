@@ -154,6 +154,27 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 .fc-act button + button{margin-left:12px}
 /* Listes : colonnes comme Matériel, lignes compactes, glisser à gauche = Modifier / Supprimer */
 .widgets2 .wsmall + .wsmall{margin-left:18px}
+.wsub{position:absolute;left:24px;bottom:72px;font-size:22px;color:rgba(255,255,255,.6);white-space:nowrap}
+.wsub b{color:#fff}
+.pcols{display:flex;overflow:hidden}
+.pcol{flex:1;min-width:0;display:flex;flex-direction:column}
+.pcol + .pcol{margin-left:14px}
+.pcol-h{flex-shrink:0;padding:4px 6px 10px}
+.pcol-t{font-size:22px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcol-s{font-size:18px;color:rgba(255,255,255,.55);margin-top:2px;white-space:nowrap}
+.pcol-l{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px}
+.pcol.fact .pcol-t,.pcol.fact .pcol-s b{color:#cbb8ff}
+.pcard{background:#1c1c1e;border-radius:18px;padding:12px 14px;margin-bottom:10px}
+.pcol.fact .pcard{background:#241f33}
+.pc-c{font-size:15px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-n{font-size:21px;font-weight:700;margin-top:2px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-b{display:flex;align-items:baseline;margin-top:8px}
+.pc-v{font-size:22px;font-weight:700}
+.pc-p{margin-left:auto;font-size:17px;color:rgba(255,255,255,.5);white-space:nowrap}
+.pempty{font-size:18px;color:rgba(255,255,255,.35);padding:8px 6px}
+.ppause{flex-shrink:0;font-size:18px;color:rgba(255,255,255,.45);padding:10px 6px 0}
+.pi-r{display:flex;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:22px}
+.pi-r span{color:rgba(255,255,255,.55);width:170px;flex-shrink:0}
 .ltab-add{color:rgba(255,255,255,.6);text-align:center}
 .lsum{display:flex;align-items:baseline;padding:10px 6px 14px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:12px}
 .lsum b{flex:1;font-size:44px;font-weight:800}
@@ -480,6 +501,7 @@ textarea{height:auto;font-size:15px;font-weight:400;padding:12px;width:100%;font
 <section id="s-factures" class="screen"></section>
 <section id="s-materiel" class="screen"></section>
 <section id="s-listes" class="screen"></section>
+<section id="s-pipeline" class="screen"></section>
 <section id="s-planning" class="screen"></section>
 
 <div id="modal" class="overlay"></div>
@@ -656,7 +678,8 @@ var IC = {
   plus:'<path d="M12 5v14M5 12h14"/>',
   list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>'
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  pipe:'<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/>'
 };
 /* Musique : le Mac (mac/musique.py) lance le live Lofi Girl ; sinon on propose de l'ouvrir sur l'iPad */
 /* Safari bloque l'appel http direct au Mac depuis la page https : on passe par le relais https ntfy.sh */
@@ -801,11 +824,12 @@ function go(name){
   if (name === 'projets' && current !== 'projets') viewMonth = monthKey(new Date());
   if (name === 'reglages' && current !== 'reglages') regPage = '';
   current = name;
-  var ids = ['home','devis','projets','reglages','taches','factures','materiel','planning','listes'];
+  var ids = ['home','devis','projets','reglages','taches','factures','materiel','planning','listes','pipeline'];
   for (var i = 0; i < ids.length; i++) $('s-' + ids[i]).className = 'screen' + (ids[i] === name ? ' active' : '');
   if (name === 'home') renderHome();
   if (name === 'devis') renderDevis();
   if (name === 'factures'){ renderFactures(); loadFactures(); }
+  if (name === 'pipeline'){ renderPipeline(); loadPipe(); }
   if (name === 'materiel'){ matEdit = false; renderMateriel(); }
   if (name === 'listes') renderListes();
   if (name === 'planning'){ renderPlanning(); loadTasks(function(){ if (current === 'planning') renderPlanning(); }); }
@@ -863,7 +887,10 @@ function renderHome(){
     '</div><div class="br-bot"><div class="glass widget" id="hm-card" data-act="music"><div class="wtile" id="hm-tile">' + ico(IC.music) + '</div><div class="wname">Musique</div></div></div></div>';
   $('widgets').innerHTML = h;
   $('widgets2').innerHTML = '<div class="glass widget wsmall" data-act="go" data-arg="materiel"><div class="wtile">' + ico(IC.cam) + '</div>' + chev + '<div class="wname">Matériel</div></div>' +
-    '<div class="glass widget wsmall" data-act="go" data-arg="listes"><div class="wtile">' + ico(IC.list) + '</div>' + chev + '<div class="wname">Listes</div></div>';
+    '<div class="glass widget wsmall" data-act="go" data-arg="listes"><div class="wtile">' + ico(IC.list) + '</div>' + chev + '<div class="wname">Listes</div></div>' +
+    '<div class="glass widget wsmall" data-act="go" data-arg="pipeline"><div class="wtile">' + ico(IC.pipe) + '</div>' + chev + '<div class="wsub num" id="pw-sub"></div><div class="wname">Pipeline</div></div>';
+  pipeWidget();
+  if (Date.now() - pipeLoadedAt > 300000) loadPipe();
   setHomePage(homePg);
   alignGlass($('s-home'));
   renderFactures();
@@ -1149,6 +1176,81 @@ function facDelai(id, st){
   h += '<div class="rgl-next">Prochaine relance <b>' + (left <= 0 ? '<span style="color:#cbb8ff">maintenant</span>' : dt(nx.getTime()) + ' · dans ' + left + ' j') + '</b></div>' +
     '<div class="row mbtns"><button data-act="mclose">Annuler</button><button class="white" data-act="fdlok">OK</button></div>';
   openModal(st, h);
+}
+
+/* ---------- Pipeline : les projets Trello par étape (lecture seule) ----------
+   Source : ../data/production.json, écrit par la routine planning-semaine et « Lire Trello »
+   ({projets:[{carte_id, projet, nom, montant, facture_a, liste, tournage, deadline, videos:[{nom, etat}]}]}).
+   L'iPad n'appelle jamais Trello (la page est publique). « À facturer » = liste « 📝 Facture à faire ». */
+var PIPE_URL = '../data/production.json', pipeLoadedAt = 0;
+var PIPE_COLS = [['tourner', '🎥', 'À tourner'], ['prod', '🎬', 'En production'], ['attente', '⏳', 'Attente retour'], ['fact', '📝', 'À facturer']];
+function pipeCol(l){ l = String(l || '').toLowerCase(); if (/factur/.test(l)) return 'fact'; if (/pause/.test(l)) return 'pause'; if (/attente/.test(l)) return 'attente'; if (/tourner/.test(l)) return 'tourner'; return 'prod'; }
+function pipeItems(){
+  var P = (data.pipeCache && data.pipeCache.projets) || [], out = [], i, p, nm, m, k;
+  for (i = 0; i < P.length; i++){
+    p = P[i]; nm = String(p.nom || p.projet || '');
+    k = nm.indexOf(' > ');
+    m = /\s*-\s*[\d\s.,]+\s*€\s*$/.exec(nm); if (m) nm = nm.slice(0, m.index);
+    out.push({id:p.carte_id, col:pipeCol(p.liste), client:k > 0 ? nm.slice(0, k) : '', titre:k > 0 ? nm.slice(k + 3) : nm, montant:num(p.montant), paye:p.facture_a || '',
+      tournage:p.tournage || '', deadline:p.deadline || '', liste:p.liste || '', videos:p.videos || []});
+  }
+  return out;
+}
+function pipeSums(){ var it = pipeItems(), s = {fact:0, cours:0, pause:0, npause:0}, i; for (i = 0; i < it.length; i++){ if (it[i].col === 'fact') s.fact += it[i].montant; else if (it[i].col === 'pause'){ s.pause += it[i].montant; s.npause++; } else s.cours += it[i].montant; } return s; }
+function loadPipe(){
+  pipeLoadedAt = Date.now();
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', PIPE_URL + '?t=' + Date.now(), true);
+    x.onload = function(){
+      if (x.status !== 200) return;
+      try { var j = JSON.parse(x.responseText); if (!j || !(j.projets instanceof Array)) return; data.pipeCache = j; save(); pipeWidget(); if (current === 'pipeline') renderPipeline(); } catch(e){}
+    };
+    x.send();
+  } catch(e){}
+}
+function pipeWidget(){
+  var e = $('pw-sub'); if (!e) return;
+  if (!data.pipeCache){ e.innerHTML = ''; return; }
+  var s = pipeSums();
+  e.innerHTML = s.fact ? '<b>' + eur(s.fact) + '</b> à facturer' : eur(s.cours) + ' en cours';
+}
+function pipeDone(v){ var n = 0, i; for (i = 0; i < v.length; i++) if (/livr/i.test(v[i].etat || '')) n++; return n; }
+function renderPipeline(){
+  var it = pipeItems(), s = pipeSums(), i, c, h, n, sum, rows, x, d;
+  var upd = data.pipeCache && parseIso(data.pipeCache.trello_vu) ? 'Trello · lu le ' + esc(dCourt(parseIso(data.pipeCache.trello_vu).getTime())) : 'Chargement…';
+  h = hdr('Pipeline', upd) + '<div class="tots row">' + tot('À facturer', s.fact) + tot('En cours', s.cours) + '</div><div class="content pcols" style="margin-top:16px">';
+  for (c = 0; c < PIPE_COLS.length; c++){
+    rows = ''; n = 0; sum = 0;
+    for (i = 0; i < it.length; i++){
+      x = it[i]; if (x.col !== PIPE_COLS[c][0]) continue;
+      n++; sum += x.montant;
+      var prog = x.videos.length ? pipeDone(x.videos) + '/' + x.videos.length : '';
+      d = parseIso(x.tournage);
+      if (!prog && d) prog = (x.col === 'tourner' ? '' : 'tourné ') + dCourt(d.getTime());
+      rows += '<div class="pcard" data-act="popen" data-arg="' + esc(x.id) + '">' + (x.client ? '<div class="pc-c">' + esc(x.client) + '</div>' : '') +
+        '<div class="pc-n">' + esc(x.titre) + '</div><div class="pc-b"><div class="pc-v num">' + (x.montant ? eur(x.montant) : '—') + '</div><div class="pc-p num">' + esc(prog) + '</div></div></div>';
+    }
+    h += '<div class="pcol ' + PIPE_COLS[c][0] + '"><div class="pcol-h"><div class="pcol-t">' + PIPE_COLS[c][1] + ' ' + PIPE_COLS[c][2] + '</div><div class="pcol-s num">' + n + ' · <b>' + eur(sum) + '</b></div></div>' +
+      '<div class="pcol-l">' + (rows || '<div class="pempty">Rien</div>') + '</div></div>';
+  }
+  h += '</div>' + (s.npause ? '<div class="ppause num">⏸️ ' + s.npause + ' en pause · ' + eur(s.pause) + '</div>' : '');
+  $('s-pipeline').innerHTML = h;
+}
+function pipeOpen(id){
+  var it = pipeItems(), x = null, i, h, d;
+  for (i = 0; i < it.length; i++) if (it[i].id === id) x = it[i];
+  if (!x) return;
+  function r(l, v){ return v ? '<div class="pi-r"><span>' + l + '</span><div class="grow">' + v + '</div></div>' : ''; }
+  var vids = '';
+  for (i = 0; i < x.videos.length; i++) vids += '<div>' + esc(x.videos[i].nom) + ' · <span class="muted">' + esc(x.videos[i].etat) + '</span></div>';
+  d = parseIso(x.tournage);
+  var dl = parseIso(x.deadline);
+  h = (x.client ? '<div class="pc-c" style="font-size:18px">' + esc(x.client) + '</div>' : '') + '<div class="mtitle" style="margin-bottom:16px">' + esc(x.titre) + '</div>' +
+    r('Montant', x.montant ? '<b class="num">' + eur(x.montant) + '</b>' : '') + r('Facturé à', esc(x.paye)) + r('Étape', esc(x.liste)) +
+    r('Tournage', d ? cap(JOURS[d.getDay()]) + ' ' + dCourt(d.getTime()) : '') + r('Deadline', dl ? cap(JOURS[dl.getDay()]) + ' ' + dCourt(dl.getTime()) : '') + r('Vidéos', vids) +
+    '<div class="row mbtns" style="margin-top:22px"><button class="white" data-act="mclose">OK</button></div>';
+  openModal({kind:'pipe', id:id}, h);
 }
 
 /* ---------- Matériel : une carte par appareil, sa checklist d'accessoires (gardé sur l'iPad) ---------- */
@@ -2552,6 +2654,7 @@ function handle(act, arg){
     case 'funrel': closeModal(); facUnrelance(arg); return;
     case 'fpaye': closeModal(); var fp = facRow(arg); facPaye(arg, !(fp && fp.paye)); return;
     case 'facopen': facOpen(arg); return;
+    case 'popen': pipeOpen(arg); return;
     case 'fundo': facUndo(arg); return;
     case 'fdelai': facDelai(arg); return;
     case 'fla':
@@ -2921,7 +3024,7 @@ document.addEventListener('visibilitychange', function(){ if (!document.hidden){
 load();
 var reopen = null;
 try { reopen = window.localStorage.getItem('noamdash-reopen'); window.localStorage.removeItem('noamdash-reopen'); } catch(e){}
-go(['taches','reglages','factures','materiel','devis','planning','listes'].indexOf(reopen) >= 0 ? reopen : 'home');
+go(['taches','reglages','factures','materiel','devis','planning','listes','pipeline'].indexOf(reopen) >= 0 ? reopen : 'home');
 loadTasks(null);
 loadFactures();
 setInterval(tick, 500);
