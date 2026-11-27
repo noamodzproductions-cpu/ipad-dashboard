@@ -1093,7 +1093,7 @@ function renderFactures(){
   var encT = facEncaisseMois(), encU = Math.round(encT * 0.232);
   /* « Prévu fin <mois> » = encaissé du mois + factures attendues avant la fin du mois :
      date promise si Noam en a mis une, sinon envoi + 30 jours (conditions de règlement) */
-  var finM = new Date(); finM = new Date(finM.getFullYear(), finM.getMonth() + 1, 1).getTime(), prevT = encT, pk, pz, pd;
+  var now0 = new Date(), finM = new Date(now0.getFullYear(), now0.getMonth() + 1, 1).getTime(), prevT = encT, pk, pz, pd;
   for (pk = 0; pk < rows.length; pk++){
     if (rows[pk].paye) continue;
     pz = (data.facEtat.promis || {})[rows[pk].id]; pd = pz && parseIso(pz.d);
