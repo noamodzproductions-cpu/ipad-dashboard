@@ -1,6 +1,6 @@
 {
  "lu_le": "2026-11-23",
- "trello_vu": "2026-11-28T12:42",
+ "trello_vu": "2026-11-28T12:53",
  "projets": [
   {
    "carte_id": "6ae533d46ad8850dc3233292",
@@ -13,7 +13,7 @@
    "tournage": "2026-10-30",
    "heure": "",
    "deadline": "",
-   "modif": "2026-11-26T11:17:33.629Z",
+   "modif": "2026-11-27T16:41:56.900Z",
    "videos": []
   },
   {
@@ -26,7 +26,7 @@
    "etiquettes": [],
    "tournage": "2026-11-24",
    "deadline": "",
-   "modif": "2026-11-25T21:17:46.539Z",
+   "modif": "2026-11-27T16:41:42.351Z",
    "videos": [
     {
      "nom": "publi Sophie Davant",
@@ -44,7 +44,7 @@
    "etiquettes": [],
    "tournage": "2026-11-10",
    "deadline": "",
-   "modif": "2026-11-25T21:17:38.314Z",
+   "modif": "2026-11-27T16:41:54.735Z",
    "videos": [
     {
      "nom": "photos",
@@ -66,7 +66,7 @@
    "etiquettes": [],
    "tournage": "2026-10-06",
    "deadline": "",
-   "modif": "2026-11-16T22:19:43.249Z",
+   "modif": "2026-11-27T16:41:44.497Z",
    "videos": [
     {
      "nom": "récap",
@@ -88,7 +88,7 @@
    "etiquettes": [],
    "tournage": "2026-11-03",
    "deadline": "",
-   "modif": "2026-11-27T16:40:57.329Z",
+   "modif": "2026-11-27T16:41:46.459Z",
    "videos": [
     {
      "nom": "photos",
@@ -188,7 +188,7 @@
    ],
    "tournage": "",
    "deadline": "2026-11-20",
-   "modif": "2026-11-25T21:23:08.144Z",
+   "modif": "2026-11-27T16:41:58.751Z",
    "videos": [
     {
      "nom": "vidéo",
@@ -208,7 +208,7 @@
    ],
    "tournage": "2026-09-26",
    "deadline": "2026-11-16",
-   "modif": "2026-11-25T21:23:09.778Z",
+   "modif": "2026-11-27T16:42:00.796Z",
    "videos": [
     {
      "nom": "the last race",
@@ -229,7 +229,7 @@
    ],
    "tournage": "2026-06-18",
    "deadline": "2026-11-23",
-   "modif": "2026-11-25T21:23:12.041Z",
+   "modif": "2026-11-27T16:37:59.874Z",
    "videos": [
     {
      "nom": "vidéo",
@@ -247,7 +247,7 @@
    "etiquettes": [],
    "tournage": "2026-11-12",
    "deadline": "",
-   "modif": "2026-11-25T21:23:56.902Z",
+   "modif": "2026-11-27T16:41:48.394Z",
    "videos": [
     {
      "nom": "Lieu 1",
@@ -277,7 +277,7 @@
    "etiquettes": [],
    "tournage": "2026-10-13",
    "deadline": "",
-   "modif": "2026-11-16T22:19:45.670Z",
+   "modif": "2026-11-27T16:41:40.299Z",
    "videos": [
     {
      "nom": "récap vertical",
@@ -299,7 +299,7 @@
    "etiquettes": [],
    "tournage": "2026-10-08",
    "deadline": "",
-   "modif": "2026-11-15T00:08:36.925Z",
+   "modif": "2026-11-27T16:41:52.712Z",
    "videos": [
     {
      "nom": "vidéo",
