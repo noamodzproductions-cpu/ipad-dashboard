@@ -1,32 +1,84 @@
 {
- "updated": "vendredi 27 nov. à 19h55",
- "trello": "vendredi 27 nov. à 19h55",
- "whatsapp": "vendredi 27 nov. à 19h55",
+ "updated": "samedi 28 nov. à 12h42",
+ "trello": "samedi 28 nov. à 12h42",
+ "whatsapp": "samedi 28 nov. à 12h42",
  "auto": true,
  "days": [
   {
-   "date": "2026-11-27",
-   "jour": "Vendredi 27 novembre",
+   "date": "2026-11-28",
+   "jour": "Samedi 28 novembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-11-29",
+   "jour": "Dimanche 29 novembre",
    "tasks": [
     {
-     "id": "mich-noel-tournage",
-     "client": "Michalak",
-     "text": "Michalak : tournage collection de Noël",
-     "done": false,
-     "notes": "Bûches, pâtisserie, plaquette chocolat"
-    },
+     "id": "noam-1795606990999",
+     "client": "Astotel",
+     "text": "Astotel - Lorette : faire la V2",
+     "done": true,
+     "deadline": "2026-11-29",
+     "perso": true,
+     "at": 1795606990999
+    }
+   ]
+  },
+  {
+   "date": "2026-11-30",
+   "jour": "Lundi 30 novembre",
+   "tasks": [
     {
-     "id": "mich-noel-tournage-ssd",
-     "client": "Michalak",
-     "text": "Michalak : rushs + photos → SSD",
+     "id": "cmc-evasion",
+     "client": "Marie Claire",
+     "text": "Café Marie Claire Evasion : V1",
      "done": false,
+     "prio": 3,
+     "deadline": "2026-11-25",
      "sous": [
       {
-       "id": "s1",
-       "text": "Envoyer aussi → Drive (demande Zac)",
+       "id": "cmc-evasion-v1",
+       "text": "Récap",
+       "done": true
+      },
+      {
+       "id": "cmc-evasion-v1-interviews",
+       "text": "Interviews",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-v1-pornic",
+       "text": "Uploader rush Destination Pornic (Vincent)",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-retours-vincent",
+       "text": "Retours Vincent sur Frame à traiter",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-maj-officielle",
+       "text": "Envoyer MAJ vidéo officielle (Vincent)",
+       "done": false
+      },
+      {
+       "id": "cmc-evasion-sous-titres-v2",
+       "text": "Ajouter sous-titres manquants sur la V2",
        "done": false
       }
-     ]
+     ],
+     "perso": true,
+     "at": 1795521903000
+    },
+    {
+     "id": "curve-photos-toutes",
+     "client": "Kurv Studio",
+     "text": "Kurv Studio : envoyer toutes les photos",
+     "done": false,
+     "notes": "Email à Noélie + Nathalie",
+     "prio": 3,
+     "perso": true,
+     "at": 1795521903000
     },
     {
      "id": "mich-19nov-v1",
@@ -95,58 +147,6 @@
      "deadline": "2026-11-26"
     },
     {
-     "id": "cmc-evasion",
-     "client": "Marie Claire",
-     "text": "Café Marie Claire Evasion : V1",
-     "done": false,
-     "prio": 3,
-     "deadline": "2026-11-25",
-     "sous": [
-      {
-       "id": "cmc-evasion-v1",
-       "text": "Récap",
-       "done": true
-      },
-      {
-       "id": "cmc-evasion-v1-interviews",
-       "text": "Interviews",
-       "done": false
-      },
-      {
-       "id": "cmc-evasion-v1-pornic",
-       "text": "Uploader rush Destination Pornic (Vincent)",
-       "done": false
-      },
-      {
-       "id": "cmc-evasion-retours-vincent",
-       "text": "Retours Vincent sur Frame à traiter",
-       "done": false
-      },
-      {
-       "id": "cmc-evasion-maj-officielle",
-       "text": "Envoyer MAJ vidéo officielle (Vincent)",
-       "done": false
-      },
-      {
-       "id": "cmc-evasion-sous-titres-v2",
-       "text": "Ajouter sous-titres manquants sur la V2",
-       "done": false
-      }
-     ],
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "curve-photos-toutes",
-     "client": "Kurv Studio",
-     "text": "Kurv Studio : envoyer toutes les photos",
-     "done": false,
-     "notes": "Email à Noélie + Nathalie",
-     "prio": 3,
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
      "id": "laduree-gravelle",
      "client": "Ladurée",
      "text": "Ladurée Pavillon Gravelle (novembre) : V1 des vidéos",
@@ -177,6 +177,85 @@
      ],
      "perso": true,
      "at": 1795385893928
+    },
+    {
+     "id": "nuance-v1",
+     "client": "Zack",
+     "text": "Nuance Audio : faire la V1",
+     "done": false,
+     "deadline": "2026-11-25",
+     "notes": "Raccourcir, garder la musique",
+     "prio": 2,
+     "perso": true,
+     "at": 1795543959902,
+     "sous": [
+      {
+       "id": "nuance-v1-musique",
+       "text": "Ajouter la musique",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "mich-damien-buches",
+     "client": "Michalak",
+     "text": "Michalak : vidéo de Damien + bûches de Noël",
+     "done": false,
+     "deadline": "2026-11-25",
+     "notes": "Demandé par Noélie",
+     "prio": 2,
+     "perso": true,
+     "at": 1795543800050,
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Reel du chef (bûche) sur Frame.io pour l'équipe Michalak",
+       "done": false
+      },
+      {
+       "id": "s2",
+       "text": "Modérer réponse itw Damien (classiques revisités)",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "cmc-beaute-v2-miye",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : V2 Miye",
+     "done": false,
+     "prio": 2,
+     "perso": true,
+     "at": 1795521903000,
+     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
+     "sous": [
+      {
+       "id": "s1",
+       "text": "Remonter, viser 45s (retour Vincent)",
+       "done": false
+      }
+     ],
+     "deadline": "2026-11-23"
+    },
+    {
+     "id": "cmc-beaute-v2-kj",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : V2 KJ Locks",
+     "done": false,
+     "prio": 2,
+     "perso": true,
+     "at": 1795521903000,
+     "notes": "Début coupé, fin en hook",
+     "deadline": "2026-11-23"
+    },
+    {
+     "id": "cmc-beaute-oraya",
+     "client": "Marie Claire",
+     "text": "Grand Café Beauté : vidéos Oraya, retours Vincent",
+     "done": false,
+     "prio": 2,
+     "notes": "Retours de mardi, rappel Vincent",
+     "deadline": "2026-11-27"
     },
     {
      "id": "cmc-lifestyle-lien",
@@ -253,91 +332,24 @@
      "at": 1795521903000
     },
     {
-     "id": "nuance-v1",
-     "client": "Zack",
-     "text": "Nuance Audio : faire la V1",
-     "done": false,
-     "deadline": "2026-11-25",
-     "notes": "Raccourcir, garder la musique",
-     "prio": 2,
-     "perso": true,
-     "at": 1795543959902,
-     "sous": [
-      {
-       "id": "nuance-v1-musique",
-       "text": "Ajouter la musique",
-       "done": false
-      }
-     ]
-    },
-    {
-     "id": "mich-damien-buches",
+     "id": "mich-noel-tournage",
      "client": "Michalak",
-     "text": "Michalak : vidéo de Damien + bûches de Noël",
+     "text": "Michalak : tournage collection de Noël",
      "done": false,
-     "deadline": "2026-11-25",
-     "notes": "Demandé par Noélie",
-     "prio": 2,
-     "perso": true,
-     "at": 1795543800050,
+     "notes": "Bûches, pâtisserie, plaquette chocolat"
+    },
+    {
+     "id": "mich-noel-tournage-ssd",
+     "client": "Michalak",
+     "text": "Michalak : rushs + photos → SSD",
+     "done": false,
      "sous": [
       {
        "id": "s1",
-       "text": "Reel du chef (bûche) sur Frame.io pour l'équipe Michalak",
-       "done": false
-      },
-      {
-       "id": "s2",
-       "text": "Modérer réponse itw Damien (classiques revisités)",
+       "text": "Envoyer aussi → Drive (demande Zac)",
        "done": false
       }
      ]
-    },
-    {
-     "id": "cmc-food-liens",
-     "client": "Marie Claire",
-     "text": "Café MC : liens des vidéos dans le tableau de suivi",
-     "done": false,
-     "notes": "Demandé par Gam · respecter la nomenclature des noms",
-     "perso": true,
-     "at": 1795521903000
-    },
-    {
-     "id": "cmc-beaute-v2-miye",
-     "client": "Marie Claire",
-     "text": "Grand Café Beauté : V2 Miye",
-     "done": false,
-     "prio": 2,
-     "perso": true,
-     "at": 1795521903000,
-     "notes": "Coins, « La deuxième », fin + fondu · renommer VDEF",
-     "sous": [
-      {
-       "id": "s1",
-       "text": "Remonter, viser 45s (retour Vincent)",
-       "done": false
-      }
-     ],
-     "deadline": "2026-11-23"
-    },
-    {
-     "id": "cmc-beaute-v2-kj",
-     "client": "Marie Claire",
-     "text": "Grand Café Beauté : V2 KJ Locks",
-     "done": false,
-     "prio": 2,
-     "perso": true,
-     "at": 1795521903000,
-     "notes": "Début coupé, fin en hook",
-     "deadline": "2026-11-23"
-    },
-    {
-     "id": "cmc-beaute-oraya",
-     "client": "Marie Claire",
-     "text": "Grand Café Beauté : vidéos Oraya, retours Vincent",
-     "done": false,
-     "notes": "Retours de mardi, rappel Vincent",
-     "deadline": "2026-11-27"
     },
     {
      "id": "mich-masterclass-tournage-ssd",
@@ -353,33 +365,16 @@
      "text": "Nuance Audio : rushs + photos → SSD",
      "done": false,
      "notes": "Décalé du 17"
-    }
-   ]
-  },
-  {
-   "date": "2026-11-28",
-   "jour": "Samedi 28 novembre",
-   "tasks": []
-  },
-  {
-   "date": "2026-11-29",
-   "jour": "Dimanche 29 novembre",
-   "tasks": [
+    },
     {
-     "id": "noam-1795606990999",
-     "client": "Astotel",
-     "text": "Astotel - Lorette : faire la V2",
-     "done": true,
-     "deadline": "2026-11-29",
+     "id": "cmc-food-liens",
+     "client": "Marie Claire",
+     "text": "Café MC : liens des vidéos dans le tableau de suivi",
+     "done": false,
+     "notes": "Demandé par Gam · respecter la nomenclature des noms",
      "perso": true,
-     "at": 1795606990999
-    }
-   ]
-  },
-  {
-   "date": "2026-11-30",
-   "jour": "Lundi 30 novembre",
-   "tasks": [
+     "at": 1795521903000
+    },
     {
      "id": "ensemble-solum-v1",
      "client": "Ensemble",
@@ -492,6 +487,11 @@
   {
    "date": "2026-12-04",
    "jour": "Vendredi 4 décembre",
+   "tasks": []
+  },
+  {
+   "date": "2026-12-05",
+   "jour": "Samedi 5 décembre",
    "tasks": []
   }
  ],
